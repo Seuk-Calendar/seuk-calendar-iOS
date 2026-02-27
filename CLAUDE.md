@@ -1,11 +1,10 @@
-# Pool iOS
+# SeukCalendar
 
-Pool iOS 프로젝트입니다.
+SeukCalendar 프로젝트입니다.
 
-## 크로스 툴
+## 룰
 
-- 도구 공용 설정은 `AGENTS.md`를 참조합니다.
-- 크로스 툴 공유 규칙은 `.agent/rules/`에서 관리합니다.
+- 에이전트가 지켜야 할 프로젝트 규칙은 `.agent/rules/`에서 관리합니다.
 
 ## 문서 구조
 
