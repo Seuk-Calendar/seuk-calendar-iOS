@@ -1,13 +1,13 @@
 //
-//  PLError.swift
+//  SCError.swift
 //  Core
 //
-//  Created by YoungK on 12/22/25.
+//  Created by YoungK on 2/27/26.
 //
 
 import Foundation
 
-public protocol PLError: Error {
+public protocol SCError: Error {
   /// Debug용: 프린트 또는 로그 등에 사용되는 디버깅용 상세 메시지
   var errorDescription: String { get }
 
