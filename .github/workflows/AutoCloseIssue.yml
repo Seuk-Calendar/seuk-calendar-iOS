@@ -1,0 +1,45 @@
+name: 🗑️ Close Issue
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  on-merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Extract Issue Number from PR Title # (#이슈넘버) PR 제목 형식에서 이슈 넘버만 얻기
+        id: get-issue-number
+        run: |
+           echo "PR Title: ${{ github.event.pull_request.title }}" # 현재 PR 제목 얻기
+           issue_number=$(echo "${{ github.event.pull_request.title }}" | grep -oP '(?<=\(#)\d+(?=\))')
+           echo "issue_number=$issue_number" >> $GITHUB_OUTPUT
+
+      - name: Close Issue
+        uses: peter-evans/close-issue@v2
+        with:
+            issue-number: ${{ steps.get-issue-number.outputs.issue_number }}
+            comment: Issue 번호 ${{steps.get-issue-number.outputs.issue_number}}은 PR 번호 ${{ github.event.pull_request.number }}에서 닫혔습니다.
+            token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+            
+
+      - name: Comment success result to closing Issue
+        uses: mshick/add-pr-comment@v2
+        if: ${{ success() }}
+        with:
+          message: |
+            #### ✅ 이슈 닫기를 성공했습니다.!
+          allow-repeats: true
+          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Comment failure result to PR
+        uses: mshick/add-pr-comment@v2
+        if: ${{ failure() }}
+        with:
+          message: "#### ❌ 이슈 닫기를 실패했습니다."
+          allow-repeats: true
+          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

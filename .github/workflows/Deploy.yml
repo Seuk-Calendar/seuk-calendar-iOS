@@ -1,0 +1,114 @@
+name: 🚀 Deploy
+
+on:
+  push:
+    tags:
+      - 'v*-beta*'                       # e.g. v1.0.0-beta.1 → TestFlight
+      - 'v[0-9]+.[0-9]+.[0-9]+'          # e.g. v1.0.0 → App Store
+
+env:
+  FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
+  FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 5
+  CACHED_SPM_DEPENDENCY_PATH: /Users/runner/Library/Developer/Xcode/DerivedData/Pool*/SourcePackages/
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false # 배포 중 취소 방지
+
+jobs:
+  deploy:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      # Match
+      GIT_URL: "https://github.com/ES-Pool/pool-iOS-certificate.git"
+      MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      # App identifiers
+      APP_IDENTIFIER: "com.pool.pool-ios"
+      TEAM_ID: "MPMHNJMTGA"
+      ITC_TEAM_ID: "124941576"
+      # App Store Connect API
+      APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      APP_STORE_CONNECT_KEY: ${{ secrets.APP_STORE_CONNECT_KEY }}
+
+    steps:
+      # 1. 체크아웃
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. 태그에서 배포 대상 결정
+      - name: 🎯 Determine deploy target
+        id: target
+        run: Scripts/DetermineDeployTarget.sh "${{ github.ref }}"
+
+      # 3. Xcode 설정
+      - name: 🔧 Select Xcode 16.4
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+
+      - name: 🔧 Show Xcode version
+        run: xcodebuild -version
+
+      # 4. 의존성 설치
+      - name: 🛜 Install Dependency
+        run: |
+          brew install needle
+          brew install fastlane
+
+      # 5. Private SPM repo 접근을 위한 .netrc 설정
+      - name: 🎫 Setup .netrc for GitHub
+        run: |
+          echo "machine github.com" >> ~/.netrc
+          echo "  login ${GITHUB_ACTOR}" >> ~/.netrc
+          echo "  password ${{ secrets.PERSONAL_ACCESS_TOKEN }}" >> ~/.netrc
+          chmod 600 ~/.netrc
+
+      # 6. SPM 캐시
+      - name: 🏷️ Cache SPM
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHED_SPM_DEPENDENCY_PATH }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('Pool.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      # 7. Secrets.xcconfig 생성(깃이그노어됨)
+      - name: 🔐 Create Secrets.xcconfig
+        env:
+          KAKAO_NATIVE_APP_KEY: ${{ secrets.KAKAO_NATIVE_APP_KEY }}
+          NID_APP_NAME: ${{ secrets.NID_APP_NAME }}
+          NID_URL_SCHEME: ${{ secrets.NID_URL_SCHEME }}
+          NID_CLIENT_ID: ${{ secrets.NID_CLIENT_ID }}
+          NID_CLIENT_SECRET: ${{ secrets.NID_CLIENT_SECRET }}
+        run: Scripts/CreateSecretsXcconfig.sh
+
+      # 8. GoogleService-Info.plist 생성(깃이그노어됨)
+      - name: 🔐 Create GoogleService-Info.plist
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICE_INFO_PLIST_BASE64 }}" | base64 --decode > Pool/Pool/App/Resources/GoogleService-Info.plist
+
+      # 9. CI 전용 Keychain 생성 (Match 인증서 설치용)
+      - name: 🔑 Setup Keychain
+        run: |
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
+
+      # 10. 배포 실행
+      - name: 🚀 Deploy (${{ steps.target.outputs.lane }})
+        env:
+          GIT_TAG: ${{ steps.target.outputs.tag }}
+          MATCH_KEYCHAIN_NAME: build.keychain
+          MATCH_KEYCHAIN_PASSWORD: ""
+        run: fastlane ${{ steps.target.outputs.lane }}
+
+      # 11. 결과 알림 (추후 디스코드 웹훅 적용)
+      - name: ✅ Deploy Success
+        if: success()
+        run: echo "🎉 ${{ steps.target.outputs.tag }} → ${{ steps.target.outputs.lane }} 배포 성공!"
+
+      - name: ❌ Deploy Failed
+        if: failure()
+        run: echo "💥 ${{ steps.target.outputs.tag }} → ${{ steps.target.outputs.lane }} 배포 실패"

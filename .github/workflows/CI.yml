@@ -1,0 +1,125 @@
+name: ⚙️ CI
+
+on:
+    push:
+      branches: [main, develop]
+    pull_request:
+      types:
+        - opened
+        - reopened
+        - synchronize
+      branches: [main, develop]
+
+env:
+  FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 120
+  FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 5
+  CACHED_SPM_DEPENDENCY_PATH: /Users/runner/Library/Developer/Xcode/DerivedData/Pool*/SourcePackages/
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+  build_test:
+    runs-on: macos-15
+    env:
+        FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT: 60
+        FASTLANE_XCODEBUILD_SETTINGS_RETRIES: 5
+    steps:
+      - name: 🔍 Check PR labels
+        id: check
+        run: |
+          # push 이벤트는 항상 CI 실행
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "✅ Push event - CI will always run"
+            echo "run_ci=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # pull_request 이벤트만 레이블 체크
+          labels=$(jq -r '(.pull_request.labels // []) | .[].name' "$GITHUB_EVENT_PATH")
+          echo "📋 Current labels: $labels"
+
+          # 결과를 output으로 전달
+          if echo "$labels" | grep -q "🌀 RUN CI"; then
+            echo "✅ '🌀 RUN CI' label detected - CI will run"
+            echo "run_ci=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "❎ '🌀 RUN CI' label not found - CI will be skipped"
+            echo "run_ci=false" >> "$GITHUB_OUTPUT"
+          fi
+              
+      - name: Checkout repository
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        uses: actions/checkout@v4
+
+      - name: 🛜 Install Dependency
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        run: |
+          brew install needle
+          brew install fastlane
+
+      - name: 🔧 List Xcode installations
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        run: sudo ls -1 /Applications | grep "Xcode"
+
+      - name: 🔧 Select XCode 16.4
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+
+      - name: 🔧 Show Xcode version
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        run: |
+          sudo xcodebuild -version
+
+      - name: 🔧 Show swift version
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        run: swift --version
+
+      - name: 🏷️ Cache SPM
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.CACHED_SPM_DEPENDENCY_PATH }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('Pool.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      # private repo, open-api-client 접근을 위한 인증 작업
+      - name: 🎫 Setup .netrc for GitHub
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        run: |
+          echo "machine github.com" >> ~/.netrc
+          echo "  login ${GITHUB_ACTOR}" >> ~/.netrc
+          echo "  password  ${{ secrets.PERSONAL_ACCESS_TOKEN }} " >> ~/.netrc
+          chmod 600 ~/.netrc
+
+      - name: 🧪 Run build test
+        id: build_test
+        if: ${{ steps.check.outputs.run_ci == 'true' }}
+        run: fastlane build_test
+
+      - name: Comment success result to PR
+        uses: mshick/add-pr-comment@v2
+        if: ${{ steps.build_test.outcome == 'success' }}
+        with:
+          message: |
+            #### ✅ Build Test가 성공했습니다!
+          allow-repeats: true
+          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Comment failure result to PR
+        uses: mshick/add-pr-comment@v2
+        if: ${{ steps.build_test.outcome == 'failure' }}
+        with:
+          message: "#### ❌ Build Test가 실패했습니다."
+          allow-repeats: true
+          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Comment ci skip message to PR
+        uses: mshick/add-pr-comment@v2
+        if: ${{ steps.check.outputs.run_ci == 'false' }}
+        with:
+          message: "#### 🌀 RUN CI 라벨이 없어 CI를 건너뜁니다."
+          allow-repeats: true
+          repo-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

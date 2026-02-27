@@ -1,0 +1,128 @@
+default_platform(:ios)
+
+# ─── Helper Methods ───
+
+# App Store Connect API 인증 키를 생성합니다.
+# .p8 키 파일(base64 인코딩)을 사용하여 API에 접근합니다.
+# 반환된 api_key 객체는 이후 모든 App Store Connect 작업에 사용됩니다.
+def setup_api_key
+  app_store_connect_api_key(
+    key_id: ENV["APP_STORE_CONNECT_KEY_ID"],
+    issuer_id: ENV["APP_STORE_CONNECT_ISSUER_ID"],
+    key_content: ENV["APP_STORE_CONNECT_KEY"],
+    is_key_content_base64: true,
+    in_house: false
+  )
+end
+
+# Git 태그에서 버전을 추출하고, 빌드 넘버를 자동 증가시켜 IPA를 빌드합니다.
+#
+# [버전 추출 - gsub]
+#   gsub는 Ruby의 문자열 치환 메서드입니다. (Global SUBstitution)
+#   "v1.0.0-beta.3"
+#     .gsub(/^v/, '')          → "1.0.0-beta.3"   # 앞의 "v" 제거
+#     .gsub(/-beta.*$/, '')    → "1.0.0"           # "-beta" 이후 전부 제거
+#
+# [빌드 넘버 자동 증가]
+#   App Store Connect API로 현재 최신 빌드 넘버를 조회한 뒤 +1 합니다.
+#   해당 버전의 첫 빌드인 경우, initial_build_number: 0 → 빌드 1부터 시작됩니다.
+#
+# [gym]
+#   Fastlane의 빌드 액션입니다. (내부적으로 xcodebuild를 실행)
+#   xcargs로 MARKETING_VERSION과 CURRENT_PROJECT_VERSION을 빌드 시점에 주입하여,
+#   Xcode 프로젝트 파일(pbxproj)을 직접 수정하지 않고도 버전을 설정할 수 있습니다.
+#
+# @param api_key [Object] setup_api_key()가 반환한 인증 객체
+# @param export_method [String] "app-store" (TestFlight/App Store 모두 동일)
+# @return [Hash] { version: "1.0.0", build_number: 14 }
+def build_app_with_version(api_key, export_method)
+  # 1. 환경변수에서 Git 태그 가져오기 (Deploy.yml에서 GIT_TAG으로 주입됨)
+  tag = ENV["GIT_TAG"]
+
+  # 2. 태그에서 마케팅 버전 추출
+  #    "v1.0.0-beta.3" → "1.0.0" / "v2.1.0" → "2.1.0"
+  version = tag.gsub(/^v/, '').gsub(/-beta.*$/, '')
+
+  # 3. App Store Connect에서 해당 버전의 최신 빌드 넘버 조회
+  #    e.g. 1.0.0 버전의 마지막 빌드가 13이면 → current_build = 13
+  current_build = latest_testflight_build_number(
+    api_key: api_key,
+    app_identifier: ENV["APP_IDENTIFIER"],
+    version: version,
+    initial_build_number: 0  # 해당 버전의 첫 빌드면 0을 반환 → +1 = 빌드 1
+  )
+  new_build = current_build + 1
+
+  # 4. IPA 빌드 (gym = xcodebuild + 아카이브 + 익스포트)
+  #    xcargs로 버전/빌드넘버를 빌드 시점에 오버라이드합니다.
+  gym(
+    scheme: "Pool",
+    workspace: "Pool/Pool.xcworkspace",
+    configuration: "Release",
+    export_method: export_method,        # "app-store" → 배포용 서명
+    xcargs: "MARKETING_VERSION=#{version} CURRENT_PROJECT_VERSION=#{new_build}",
+    output_directory: "./build",
+    output_name: "Pool.ipa"
+  )
+
+  { version: version, build_number: new_build }
+end
+
+# ─── Lanes ───
+
+platform :ios do
+
+  desc "🧱 빌드 테스트를 진행합니다."
+  lane :build_test do
+    scan(
+      scheme: "Pool",
+      workspace: "Pool/Pool.xcworkspace",
+      build_for_testing: true
+    )
+  end
+
+  desc "🚀 TestFlight에 배포합니다."
+  lane :beta do
+    api_key = setup_api_key
+
+    # 인증서 & 프로비저닝 프로필 다운로드 (readonly: 새로 생성하지 않음)
+    match(type: "appstore", api_key: api_key, readonly: true)
+
+    # 빌드
+    version_info = build_app_with_version(api_key, "app-store")
+
+    # TestFlight 업로드 (pilot = Fastlane의 TestFlight 업로드 액션)
+    pilot(
+      api_key: api_key,
+      ipa: "./build/Pool.ipa",
+      skip_waiting_for_build_processing: true,  # 업로드 후 처리 완료를 기다리지 않음
+      skip_submission: true,                    # 심사 제출하지 않음
+      distribute_external: false                # 외부 테스터에게 배포하지 않음
+    )
+
+    UI.success("✅ TestFlight 배포 완료: v#{version_info[:version]} (#{version_info[:build_number]})")
+  end
+
+  desc "🏪 App Store에 제출합니다."
+  lane :release do
+    api_key = setup_api_key
+
+    match(type: "appstore", api_key: api_key, readonly: true)
+
+    version_info = build_app_with_version(api_key, "app-store")
+
+    # App Store에 빌드 업로드 (deliver = Fastlane의 App Store 제출 액션)
+    deliver(
+      api_key: api_key,
+      ipa: "./build/Pool.ipa",
+      skip_metadata: true,                       # 메타데이터(설명, 키워드 등) 업데이트 안 함
+      skip_screenshots: true,                    # 스크린샷 업데이트 안 함
+      submit_for_review: false,                  # 자동 심사 제출 안 함 (수동으로 제출)
+      automatic_release: false,                  # 심사 통과 후 자동 출시 안 함
+      precheck_include_in_app_purchases: false   # 인앱 결제 사전 검사 스킵
+    )
+
+    UI.success("✅ App Store 제출 완료: v#{version_info[:version]} (#{version_info[:build_number]})")
+  end
+
+end

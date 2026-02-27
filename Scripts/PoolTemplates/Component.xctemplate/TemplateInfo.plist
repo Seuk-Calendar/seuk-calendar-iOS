@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>SupportsSwiftPackage</key>
+    <true/>
+    <key>Description</key>
+    <string>An Interface Builder document for creating an iOS view.</string>
+    <key>MainTemplateFile</key>
+    <string>___FILEBASENAME___.swift</string>
+    <key>SortOrder</key>
+    <integer>10</integer>
+    <key>Platforms</key>
+    <array>
+        <string>com.apple.platform.iphoneos</string>
+    </array>
+    <key>Options</key>
+    <array>
+        <dict>
+            <key>Identifier</key>
+            <string>component</string>
+            <key>Required</key>
+            <true/>
+            <key>Name</key>
+            <string>Prefix:</string>
+            <key>Description</key>
+            <string>접두어를 입력해주세요.</string>
+            <key>Type</key>
+            <string>text</string>
+            <key>NotPersisted</key>
+            <true/>
+        </dict>
+    </array>
+</dict>
+</plist>

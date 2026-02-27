@@ -1,0 +1,62 @@
+--exclude fastlane # 제외할 경로 및 파일 (포맷팅 대상 아님)
+
+# options
+--maxwidth 120                       # 한 줄 최대 길이: 120자
+--indent 2                           # 들여쓰기 공백 수: 2칸
+--trimwhitespace always              # 줄 끝 공백 항상 제거 (trailingSpace 규칙 관련)
+--lineaftermarks false               # // MARK: 뒤에 빈 줄 삽입 안 함 (fileHeader 규칙 관련)
+--wraparguments before-first         # 함수 인자 줄바꿈 방식: 첫 번째 인자 전에서 줄바꿈
+--wrapparameters before-first        # 파라미터 줄바꿈 방식: 첫 번째 파라미터 전에서 줄바꿈
+--wrapcollections before-first       # 컬렉션 줄바꿈 방식: 첫 번째 요소 전에서 줄바꿈
+
+# rules
+--rules anyObjectProtocol            # `AnyObject` 대신 `class` 키워드 사용 금지
+--rules blankLineAfterImports        # import 구문 뒤에 빈 줄 추가
+--rules blankLinesAroundMark         # // MARK: 위아래에 빈 줄 추가
+--rules blankLinesAtEndOfScope       # 범위(scope) 끝에 빈 줄 추가
+--rules blankLinesAtStartOfScope     # 범위(scope) 시작에 빈 줄 추가
+--rules blankLinesBetweenImports     # import 문 그룹 사이 빈 줄 허용
+--rules blankLinesBetweenScopes      # 타입/함수/구조체 등 사이에 빈 줄 추가
+--rules braces                       # 중괄호({}) 위치 일관되게 정리
+--rules consecutiveBlankLines        # 연속된 빈 줄 제거
+--rules consecutiveSpaces            # 연속된 공백 제거
+--rules docComments                  # 문서 주석 (`///`) 형식 정리
+--rules duplicateImports             # 중복 import 제거
+--rules elseOnSameLine               # `else`는 닫는 괄호(}) 뒤 같은 줄에 위치
+--rules emptyBraces                  # 빈 중괄호 `{}` 포맷팅 정리
+--rules enumNamespaces               # enum 내 중첩 타입 네임스페이스 정리
+--rules extensionAccessControl       # extension 접근제어자(public 등) 위치 정리
+--rules fileHeader                   # 파일 헤더 주석 정리
+--rules hoistAwait                   # await 키워드 끌어올림 (명확한 위치로 이동)
+--rules hoistPatternLet              # `case let` 구문 정리
+--rules hoistTry                     # try 키워드 끌어올림 (명확한 위치로 이동)
+--rules initCoderUnavailable         # NSCoding 관련 init 제거 또는 unavailable 처리
+--rules indent                       # 들여쓰기 일관성 유지
+--rules isEmpty                      # `.isEmpty == false` → `!isEmpty`로 변경
+--rules leadingDelimiters            # 콤마, 세미콜론 등 앞 공백 제거
+--rules linebreakAtEndOfFile         # 파일 끝 줄바꿈 1줄 유지
+--rules modifierOrder                # private, static 등 키워드 순서 정리
+--rules numberFormatting             # 숫자 리터럴 포맷 (ex: 1000 → 1_000)
+--rules opaqueGenericParameters      # opaque 타입 사용 시 불필요한 generic 제거
+--rules redundantExtensionACL        # extension의 불필요한 접근제어 제거
+--rules redundantOptionalBinding     # 불필요한 옵셔널 바인딩 제거
+--rules redundantParens              # 불필요한 괄호 제거
+--rules redundantVoidReturnType      # 반환 타입이 Void일 때 생략
+--rules sortImports                  # import 구문 알파벳 순 정렬
+--rules spaceAroundBraces            # 중괄호 주변 공백 조정
+--rules spaceAroundBrackets          # 대괄호([]) 주변 공백 조정
+--rules spaceAroundComments          # 주석 앞뒤 공백 조정
+--rules spaceAroundGenerics          # 제네릭 문법(<>) 주변 공백 조정
+--rules spaceAroundOperators         # 연산자(+,-,= 등) 앞뒤 공백 조정
+--rules spaceInsideBraces            # 중괄호 내부 공백 조정
+--rules spaceInsideBrackets          # 대괄호 내부 공백 조정
+--rules spaceInsideComments          # 주석 내부 공백 조정
+--rules spaceInsideGenerics          # 제네릭 문법(<>) 내부 공백 조정
+--rules spaceInsideParens            # 괄호() 내부 공백 조정
+--rules todos                        # TODO, FIXME 주석 형식 정리
+--rules trailingClosures             # 마지막 클로저 파라미터 괄호 밖으로 이동
+--rules trailingSpace                # 줄 끝 공백 제거
+--rules typeSugar                    # `Array<Int>` → `[Int]` 등 축약 문법 사용
+--rules void                         # `Void` → `()` 사용 통일
+--rules wrap                         # 긴 코드 줄바꿈 처리
+--rules wrapArguments                # 함수 인자 줄바꿈 처리
