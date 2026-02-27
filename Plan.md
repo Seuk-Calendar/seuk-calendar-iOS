@@ -141,7 +141,10 @@
 ### 5-4. 기기 간 완전 동기화
 EventKit + iCloud 기반으로 별도 계정 없이 Apple 기기 전반에 동기화된다.
 
-### 5-5. 프라이버시 퍼스트
+### 5-5. 크로스 플랫폼 동기화
+Google Calendar API 연동을 통해 구글 캘린더와 양방향 동기화를 지원한다. Android, Windows 등 다른 플랫폼 사용자도 일정을 공유할 수 있다.
+
+### 5-6. 프라이버시 퍼스트
 Foundation Models 온디바이스 처리로 일정 데이터가 기본적으로 외부 서버에 전송되지 않는다.
 
 ---
@@ -320,6 +323,7 @@ func parseEvent(_ text: String) async -> ParsedEvent {
 | 알림 설정 | "30분 전에 알려줘" 등 자연어 알림 설정 | 무료 |
 | 일정 수정/삭제 | 자연어로 수정 ("이번 회의 1시간 뒤로 미뤄줘") | 무료 |
 | iCloud 동기화 | EventKit 기반 자동 동기화 | 무료 |
+| 구글 캘린더 연동 | Google Calendar API를 통한 양방향 동기화 | 무료 |
 | 이미지 OCR 파싱 | 포스터/스크린샷에서 일정 추출 | 무료 |
 
 ### 8-2. 데일리 프리뷰
@@ -375,6 +379,7 @@ Foundation Models를 활용해 사용자의 일정 패턴을 온디바이스에�
 | 일정 CRUD | EventKit | iOS 26+ |
 | 일정 편집 UI | EventKitUI | iOS 26+ |
 | iCloud 동기화 | EventKit + CloudKit | iOS 26+ |
+| 구글 캘린더 연동 | Google Calendar API v3 | — |
 
 ### 9-2. AI / ML
 
@@ -422,6 +427,7 @@ Foundation Models를 활용해 사용자의 일정 패턴을 온디바이스에�
 | 클립보드 감지 (macOS) | ✅ 완전 지원 | NSPasteboard | 백그라운드 감지 가능 |
 | Raycast Extension | ✅ 완전 지원 | Raycast Extension API | macOS 전용 |
 | 기기 간 동기화 | ✅ 완전 지원 | EventKit + iCloud | 별도 서버 불필요 |
+| 구글 캘린더 연동 | ✅ 완전 지원 | Google Calendar API v3 | OAuth 2.0 인증 필요 |
 | 데일리 프리뷰 | ✅ 가능 | Foundation Models, Google Imagen API | |
 | 주간 리캡 / 월간 리캡 | ✅ 가능 | Foundation Models, Google Imagen API | |
 | 스마트 일정 제안 | ✅ 가능 | Foundation Models | 온디바이스 처리 |
@@ -455,6 +461,7 @@ Foundation Models를 활용해 사용자의 일정 패턴을 온디바이스에�
 - [ ] 데일리 프리뷰 (Google Imagen API)
 - [ ] 스마트 일정 제안
 - [ ] 광고 SDK 연동 (MAU 임계점 도달 시 활성화)
+- [ ] 구글 캘린더 연동 (Google Calendar API v3)
 
 ### Phase 3 — 프리미엄 플랜 출시 (약 1개월)
 프리미엄 구독 기능 구현 및 수익화 시작.
