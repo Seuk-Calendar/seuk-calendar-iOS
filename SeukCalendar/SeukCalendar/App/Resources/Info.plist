@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.843212508121-h4l1im2057nm42umd5loh325fla8l9ar</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>naver</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.Pool</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>kakao</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao1271803</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+		<string>kakaoplus</string>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>Secrets</key>
+	<dict>
+		<key>BASE_URL</key>
+		<string>$(BASE_URL)</string>
+		<key>KAKAO_NATIVE_APP_KEY</key>
+		<string>$(KAKAO_NATIVE_APP_KEY)</string>
+		<key>NID_APP_NAME</key>
+		<string>$(NID_APP_NAME)</string>
+		<key>NID_CLIENT_ID</key>
+		<string>$(NID_CLIENT_ID)</string>
+		<key>NID_CLIENT_SECRET</key>
+		<string>$(NID_CLIENT_SECRET)</string>
+		<key>NID_URL_SCHEME</key>
+		<string>$(NID_URL_SCHEME)</string>
+	</dict>
+</dict>
+</plist>

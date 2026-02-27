@@ -13,26 +13,24 @@ AI 관련 기능을 제공하는 모듈입니다.
 
 ```
 AI/
-├── Package.swift
+├── AI.xcodeproj
 ├── Module.md
-├── Sources/
-│   └── AI/
-│       ├── FoundationModels/
-│       │   ├── FoundationModelsParser.swift
-│       │   ├── LanguageModelManager.swift
-│       │   └── ParsedEventGenerable.swift
-│       ├── ExternalAPI/
-│       │   ├── ClaudeAPIClient.swift
-│       │   ├── OpenAIAPIClient.swift
-│       │   └── ImagenAPIClient.swift
-│       ├── OCR/
-│       │   ├── VisionOCRProcessor.swift
-│       │   └── OCRResult.swift
-│       └── Speech/
-│           ├── SpeechRecognizer.swift
-│           └── SpeechResult.swift
-└── Tests/
-    └── AITests/
+├── AI/
+│   ├── FoundationModels/
+│   │   ├── FoundationModelsParser.swift
+│   │   ├── LanguageModelManager.swift
+│   │   └── ParsedEventGenerable.swift
+│   ├── ExternalAPI/
+│   │   ├── ClaudeAPIClient.swift
+│   │   ├── OpenAIAPIClient.swift
+│   │   └── ImagenAPIClient.swift
+│   ├── OCR/
+│   │   ├── VisionOCRProcessor.swift
+│   │   └── OCRResult.swift
+│   └── Speech/
+│       ├── SpeechRecognizer.swift
+│       └── SpeechResult.swift
+└── AITests/
 ```
 
 ## 주요 구성요소
@@ -41,7 +39,7 @@ AI/
 
 **역할**: iOS 26+ Foundation Models Framework를 활용한 온디바이스 AI 파싱
 
-**위치**: `Sources/AI/FoundationModels/`
+**위치**: `AI/FoundationModels/`
 
 **파일**:
 - FoundationModelsParser.swift: 자연어 → ParsedEvent 파싱
@@ -58,7 +56,7 @@ AI/
 
 **역할**: 외부 AI API 연동 (구형 기기 폴백)
 
-**위치**: `Sources/AI/ExternalAPI/`
+**위치**: `AI/ExternalAPI/`
 
 **파일**:
 - ClaudeAPIClient.swift: Anthropic Claude API 클라이언트
@@ -74,7 +72,7 @@ AI/
 
 **역할**: Vision Framework를 활용한 이미지 텍스트 인식
 
-**위치**: `Sources/AI/OCR/`
+**위치**: `AI/OCR/`
 
 **파일**:
 - VisionOCRProcessor.swift: VNRecognizeTextRequest 처리
@@ -89,7 +87,7 @@ AI/
 
 **역할**: Speech Framework를 활용한 음성 인식
 
-**위치**: `Sources/AI/Speech/`
+**위치**: `AI/Speech/`
 
 **파일**:
 - SpeechRecognizer.swift: SFSpeechRecognizer 래퍼
@@ -105,20 +103,21 @@ AI/
 - **Core**: 공통 유틸리티
 - **Domain**: ParsingDomain (ParsedEvent 모델 사용)
 
-## Package.swift
+## Xcode 프로젝트 설정
 
-**위치**: `Package.swift`
+**위치**: `AI.xcodeproj`
 
 **주요 설정**:
 - 플랫폼: iOS 18+
-- 의존성: Core, ParsingDomain
-- Products: AI
+- 프레임워크 타입: Dynamic Framework
+- 의존성: Core.framework, ParsingDomain.framework
+- 타겟: AI (Framework), AITests (Unit Test)
 
 ## 사용 가이드
 
 ### Foundation Models 파싱
 
-**참고**: `Sources/AI/FoundationModels/FoundationModelsParser.swift`
+**참고**: `AI/FoundationModels/FoundationModelsParser.swift`
 
 ```swift
 let parser = FoundationModelsParser()
@@ -127,7 +126,7 @@ let parsedEvent = try await parser.parse(text: "내일 오후 3시 강남역 미
 
 ### 외부 API 파싱 (폴백)
 
-**참고**: `Sources/AI/ExternalAPI/ClaudeAPIClient.swift`
+**참고**: `AI/ExternalAPI/ClaudeAPIClient.swift`
 
 ```swift
 let client = ClaudeAPIClient()
@@ -136,7 +135,7 @@ let parsedEvent = try await client.parseEvent(text: "내일 오후 3시 강남�
 
 ### OCR 처리
 
-**참고**: `Sources/AI/OCR/VisionOCRProcessor.swift`
+**참고**: `AI/OCR/VisionOCRProcessor.swift`
 
 ```swift
 let processor = VisionOCRProcessor()
@@ -145,7 +144,7 @@ let ocrResult = try await processor.recognizeText(from: image)
 
 ### 음성 인식
 
-**참고**: `Sources/AI/Speech/SpeechRecognizer.swift`
+**참고**: `AI/Speech/SpeechRecognizer.swift`
 
 ```swift
 let recognizer = SpeechRecognizer()

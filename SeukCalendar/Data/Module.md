@@ -1,136 +1,102 @@
 # Data Module
 
-데이터 레이어 모듈로, Repository 구현체와 외부 데이터 소스와의 통신을 담당합니다.
+데이터 레이어를 담당하는 모듈입니다. 4개의 타겟으로 구성되어 있습니다.
 
 ## 역할
 
 - Repository 인터페이스 구현
-- 외부 데이터 소스와의 통신 (EventKit, API, UserDefaults 등)
-- DTO ↔ Domain Model 변환
+- 외부 데이터 소스와의 통신 (API, KeyChain 등)
+- DTO → Domain Model 변환
+- 인증 토큰 관리
 
 ## 디렉토리 구조
 
 ```
 Data/
-├── Package.swift
-├── Module.md
-├── Sources/
-│   ├── CalendarData/
-│   │   ├── Repository/             # Repository 구현
-│   │   │   └── CalendarRepositoryImpl.swift
-│   │   ├── DataSource/             # EventKit 연동
-│   │   │   ├── EventKitDataSource.swift
-│   │   │   └── EventKitMapper.swift
-│   │   └── DTO/                    # EKEvent → Event 변환
-│   ├── ParsingData/
-│   │   ├── Repository/
-│   │   │   └── ParsingRepositoryImpl.swift
-│   │   ├── DataSource/
-│   │   │   ├── FoundationModelsDataSource.swift
-│   │   │   ├── ClaudeAPIDataSource.swift
-│   │   │   └── OpenAIAPIDataSource.swift
-│   │   └── DTO/
-│   ├── RecapData/
-│   │   ├── Repository/
-│   │   │   └── RecapRepositoryImpl.swift
-│   │   ├── DataSource/
-│   │   │   └── ImagenAPIDataSource.swift
-│   │   └── DTO/
-│   └── WidgetData/
-│       ├── Repository/
-│       │   └── WidgetRepositoryImpl.swift
-│       ├── DataSource/
-│       │   └── WidgetDataSource.swift
-│       └── DTO/
-└── Tests/
-    └── DataTests/
+├── Data.xcodeproj
+├── Common/
+│   ├── Interceptor/
+│   └── Network/
+├── CalendarData/
+│   ├── Repository/
+│   │   └── CalendarRepositoryImpl.swift
+│   └── Mapper/
+├── UserData/
+│   └── Repository/
+├── KeyChainData/
+│   ├── KeyChain.swift
+│   └── KeyChainType.swift
+└── DataTests/
 ```
 
 ## 타겟 구성
 
-### 1. CalendarData
+### 1. Common
 
-CalendarDomain의 Repository 구현. EventKit 연동.
+공통 네트워크 유틸리티.
 
-**Repository**: `Sources/CalendarData/Repository/`
-- CalendarRepositoryImpl.swift: CalendarRepository 구현체
+**Interceptor**: `Common/Interceptor/`
+- AuthInterceptor.swift (향후): 자동 토큰 주입
 
-**DataSource**: `Sources/CalendarData/DataSource/`
-- EventKitDataSource.swift: EventKit CRUD 작업
-- EventKitMapper.swift: EKEvent ↔ Event 변환
+**Network**: `Common/Network/`
+- 공통 네트워크 헬퍼
 
-**DTO**: `Sources/CalendarData/DTO/`
-- EKEvent Extension: Domain Model 변환
+### 2. CalendarData
 
-### 2. ParsingData
+CalendarDomain의 Repository 구현.
 
-ParsingDomain의 Repository 구현. AI 파싱 API 연동.
+**Repository**: `CalendarData/Repository/`
+- CalendarRepositoryImpl.swift: 실제 구현
 
-**Repository**: `Sources/ParsingData/Repository/`
-- ParsingRepositoryImpl.swift: ParsingRepository 구현체
+**Mapper**: `CalendarData/Mapper/`
+- DTO → Domain Model 변환 로직
 
-**DataSource**: `Sources/ParsingData/DataSource/`
-- FoundationModelsDataSource.swift: 온디바이스 AI 파싱
-- ClaudeAPIDataSource.swift: Claude API 파싱 (폴백)
-- OpenAIAPIDataSource.swift: OpenAI API 파싱 (폴백)
+**구현 참고**:
+- Repository 구현: `CalendarData/Repository/CalendarRepositoryImpl.swift`
+- DTO 변환: `toDomain()` 메서드
 
-**DTO**: `Sources/ParsingData/DTO/`
-- API Response ↔ ParsedEvent 변환
+### 3. UserData
 
-### 3. RecapData
+UserDomain의 Repository 구현.
 
-RecapDomain의 Repository 구현. AI 이미지 생성 API 연동.
+**Repository**: `UserData/Repository/`
+- UserRepositoryImpl.swift: 실제 구현
 
-**Repository**: `Sources/RecapData/Repository/`
-- RecapRepositoryImpl.swift: RecapRepository 구현체
+### 4. KeyChainData
 
-**DataSource**: `Sources/RecapData/DataSource/`
-- ImagenAPIDataSource.swift: Google Imagen API 연동
+인증 토큰 등 보안 데이터 저장.
 
-**DTO**: `Sources/RecapData/DTO/`
-- API Response ↔ RecapImage 변환
+**위치**: `KeyChainData/`
 
-### 4. WidgetData
+**주요 파일**:
+- KeyChain.swift: iOS Keychain Services 래퍼
+- KeyChainType.swift: 저장 타입 정의 (accessToken, refreshToken, userId)
 
-WidgetDomain의 Repository 구현.
-
-**Repository**: `Sources/WidgetData/Repository/`
-- WidgetRepositoryImpl.swift: WidgetRepository 구현체
-
-**DataSource**: `Sources/WidgetData/DataSource/`
-- WidgetDataSource.swift: UserDefaults 기반 위젯 데이터 저장/조회
-
-**DTO**: `Sources/WidgetData/DTO/`
-- WidgetData 변환 로직
+**구현 참고**:
+- KeyChain 사용: `KeyChainData/KeyChain.swift`
+- 저장 타입: `KeyChainData/KeyChainType.swift`
 
 ## 의존성
 
 - **Core**: 공통 유틸리티
-- **Domain**: 각 Data 타겟은 해당하는 Domain 타겟에 의존
+- **Domain**: 각 Data 타겟은 해당 Domain 타겟에 의존
   - CalendarData → CalendarDomain
-  - ParsingData → ParsingDomain
-  - RecapData → RecapDomain
-  - WidgetData → WidgetDomain
+  - UserData → UserDomain
+- **Common**: CalendarData, UserData가 Common에 의존
+- **외부 라이브러리**:
+  - Alamofire: HTTP 통신 (Common)
 
-## Package.swift
+## Xcode 프로젝트 설정
 
-**위치**: `Package.swift`
+**위치**: `Data.xcodeproj`
 
 **주요 설정**:
 - 플랫폼: iOS 18+
-- 의존성: Core, Domain
-- Products: CalendarData, ParsingData, RecapData, WidgetData
-
-## 사용 가이드
-
-### Repository 구현
-
-**참고**: `Sources/{Data}/Repository/` 디렉토리의 각 Repository 구현체
-
-### DataSource 사용
-
-**참고**: `Sources/{Data}/DataSource/` 디렉토리의 각 DataSource 파일
-
-### DTO 변환
-
-**참고**: `Sources/{Data}/DTO/` 디렉토리의 각 DTO 변환 로직
+- 프레임워크 타입: Dynamic Framework
+- 의존성: Core.framework, CalendarDomain.framework, UserDomain.framework, Alamofire
+- 타겟:
+  - Common (Framework)
+  - CalendarData (Framework)
+  - UserData (Framework)
+  - KeyChainData (Framework)
+  - DataTests (Unit Test)

@@ -13,18 +13,16 @@
 
 ```
 Core/
-├── Package.swift
-├── Sources/
-│   └── Core/
-│       ├── Error/
-│       │   └── SCError.swift
-│       ├── Extensions/
-│       │   ├── String+Extensions.swift
-│       │   ├── Date+Extensions.swift
-│       │   └── ...
-│       └── Utilities/
-└── Tests/
-    └── CoreTests/
+├── Core.xcodeproj
+├── Core/
+│   ├── Error/
+│   │   └── SCError.swift
+│   ├── Extensions/
+│   │   ├── Collection+Safe.swift
+│   │   ├── Double+UnixTime.swift
+│   │   └── ...
+│   └── Utils/
+└── CoreTests/
 ```
 
 ## 주요 구성요소
@@ -33,36 +31,37 @@ Core/
 
 모든 도메인 에러가 따라야 하는 프로토콜.
 
-**위치**: `Sources/Core/Error/SCError.swift`
+**위치**: `Core/Error/SCError.swift`
 
 ### Extensions
 
 Foundation 타입에 대한 Extension.
 
-**위치**: `Sources/Core/Extensions/`
+**위치**: `Core/Extensions/`
 - String 유틸리티
 - Date 변환 및 포맷팅
 - 기타 Foundation 타입 Extension
 
-### Utilities
+### Utils
 
 공통 헬퍼 함수 및 유틸리티 클래스.
 
-**위치**: `Sources/Core/Utilities/`
+**위치**: `Core/Utils/`
 
 ## 의존성
 
 - **외부 의존성 없음** (최하위 레이어)
 - 모든 다른 모듈이 Core에 의존
 
-## Package.swift
+## Xcode 프로젝트 설정
 
-**위치**: `Package.swift`
+**위치**: `Core.xcodeproj`
 
 **주요 설정**:
-- 플랫폼: iOS 26+
+- 플랫폼: iOS 18+
+- 프레임워크 타입: Dynamic Framework
 - 의존성: 없음
-- 타겟: Core, CoreTests
+- 타겟: Core (Framework), CoreTests (Unit Test)
 
 ## 사용 가이드
 
@@ -70,8 +69,8 @@ Foundation 타입에 대한 Extension.
 
 새로운 도메인 에러를 정의할 때 SCError를 채택.
 
-**참고**: `Sources/Core/Error/SCError.swift`
+**참고**: `Core/Error/SCError.swift`
 
 ### Extension 사용
 
-**참고**: `Sources/Core/Extensions/` 디렉토리의 각 Extension 파일
+**참고**: `Core/Extensions/` 디렉토리의 각 Extension 파일

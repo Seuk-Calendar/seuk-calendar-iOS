@@ -92,33 +92,42 @@ SeukCalendar는 **Clean Architecture 기반의 3계층 구조**를 따릅니다.
 
 ---
 
-## 패키지 구성
+## 모듈 구성
 
-Swift Package Manager(SPM)로 각 레이어와 Feature를 **패키지**로 관리합니다.
+Xcode 프로젝트 기반으로 각 레이어와 Feature를 **모듈**로 관리합니다.
 
-### 전체 패키지 구조
+### 전체 모듈 구조
 
 ```
 SeukCalendar/
 ├── Core/                   # 공통 기반 모듈
+│   └── Core.xcodeproj
 ├── DesignSystem/           # UI 디자인 시스템
+│   └── DesignSystem.xcodeproj
 ├── Navigation/             # 네비게이션 시스템
+│   └── Navigation.xcodeproj
 ├── Coordinator/            # 의존성 조립 및 라우팅
+│   └── Coordinator.xcodeproj
 ├── Domain/                 # 비즈니스 로직 (다중 타겟)
+│   └── Domain.xcodeproj
 ├── Data/                   # 데이터 레이어 (다중 타겟)
+│   └── Data.xcodeproj
 ├── AI/                     # AI 레이어 (다중 타겟)
+│   └── AI.xcodeproj
 ├── Feature/                # UI 레이어 (다중 타겟)
+│   └── Feature.xcodeproj
 └── SeukCalendar/           # App Target
+    └── SeukCalendar.xcodeproj
 ```
 
 **핵심 설계 원칙**:
-- **단일 패키지 구조**: Domain, Data, AI, Feature는 각각 하나의 패키지로 구성
-- **멀티 타겟**: 각 패키지 내부에 여러 타겟을 포함하여 모듈 분리
-- **명확한 의존성**: Package.swift로 타겟 간 의존 관계 관리
+- **독립 xcodeproj 구조**: 각 모듈은 독립적인 Xcode 프로젝트로 구성
+- **멀티 타겟**: 각 프로젝트 내부에 여러 타겟을 포함하여 모듈 분리
+- **명확한 의존성**: Framework 링크를 통한 타겟 간 의존 관계 관리
 
-### 패키지별 역할
+### 모듈별 역할
 
-| 패키지 | 역할 | 의존성 | 상세 |
+| 모듈 | 역할 | 의존성 | 상세 |
 |--------|------|--------|------|
 | **Core** | 공통 유틸리티, Extension, 에러 타입 | 없음 | [Module.md](SeukCalendar/Core/Module.md) |
 | **DesignSystem** | SwiftUI 공통 컴포넌트, 디자인 리소스 | Core | [Module.md](SeukCalendar/DesignSystem/Module.md) |
@@ -126,7 +135,7 @@ SeukCalendar/
 | **Coordinator** | DI Container, Coordinator | Core, Navigation | [Module.md](SeukCalendar/Coordinator/Module.md) |
 | **Domain** | Entity, UseCase, Repository Interface, Service | Core | [Module.md](SeukCalendar/Domain/Module.md) |
 | **Data** | Repository 구현, API Client, KeyChain | Core, Domain | [Module.md](SeukCalendar/Data/Module.md) |
-| **AI** | 작성 필요 | [Module.md](SeukCalendar/AI/Module.md) |
+| **AI** | Foundation Models, External API, OCR, Speech | Core, Domain | [Module.md](SeukCalendar/AI/Module.md) |
 | **Feature** | View, ViewModel, ViewFactory | Core, DesignSystem, Domain, Navigation | [Module.md](SeukCalendar/Feature/Module.md) |
 
 **의존성 방향**:
@@ -134,10 +143,10 @@ SeukCalendar/
 2. **DesignSystem, Navigation**: Core에만 의존
 3. **Domain**: Core에만 의존 (각 타겟 독립)
 4. **Data**: 해당 Domain + Core에 의존
-4. **AI**: 해당 Domain + Core에 의존
-5. **Feature**: 필요한 Domain + DesignSystem + Core에 의존
-6. **Coordinator**: Feature + Domain + Navigation에 의존
-7. **App**: 모든 패키지 통합
+5. **AI**: 해당 Domain + Core에 의존
+6. **Feature**: 필요한 Domain + DesignSystem + Core에 의존
+7. **Coordinator**: Feature + Domain + Navigation에 의존
+8. **App**: 모든 Framework 통합
 
 ---
 
@@ -332,7 +341,7 @@ Pool iOS 프로젝트에서 사용하는 주요 기술 및 라이브러리입니
 
 | 도구 | 용도 |
 |------|------|
-| **Swift Package Manager** | 의존성 관리 |
+| **Xcode Projects** | 모듈 관리 |
 | **SwiftLint** | 코드 스타일 검사 |
 | **Fastlane** | 빌드 및 배포 자동화 |
 
@@ -345,6 +354,6 @@ Pool iOS 프로젝트에서 사용하는 주요 기술 및 라이브러리입니
 | **DI** | Swinject |
 | **네트워킹** | 작성 필요 |
 | **보안** | Keychain Services |
-| **패키지 관리** | Swift Package Manager |
+| **모듈 관리** | Xcode Projects (xcodeproj) |
 
 ---

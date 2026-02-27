@@ -2,6 +2,30 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Navigation/Navigation.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Feature/Feature.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Domain/Domain.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:DesignSystem/DesignSystem.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Core/Core.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Coordinator/Coordinator.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:AI/AI.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Data/Data.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:SeukCalendar.xcodeproj">
    </FileRef>
 </Workspace>

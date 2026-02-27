@@ -12,14 +12,12 @@ SwiftUI 기반의 선언적 네비게이션 시스템을 제공합니다.
 
 ```
 Navigation/
-├── Package.swift
-├── Sources/
-│   └── Navigation/
-│       ├── Destination.swift
-│       ├── Router.swift
-│       └── Extensions/
-└── Tests/
-    └── NavigationTests/
+├── Navigation.xcodeproj
+├── Navigation/
+│   ├── Destination.swift
+│   ├── Router.swift
+│   └── Extensions/
+└── NavigationTests/
 ```
 
 ## 주요 구성요소
@@ -28,7 +26,7 @@ Navigation/
 
 모든 네비게이션 타입을 열거형으로 정의하여 타입 안전성 보장.
 
-**위치**: `Sources/Navigation/Destination.swift`
+**위치**: `Navigation/Destination.swift`
 
 **주요 타입**:
 - `Destination`: 전체 네비게이션 타입
@@ -41,7 +39,7 @@ Navigation/
 
 계층적 라우터 구조로 네비게이션 상태 관리.
 
-**위치**: `Sources/Navigation/Router.swift`
+**위치**: `Navigation/Router.swift`
 
 **주요 기능**:
 - `@Observable`: SwiftUI와 자동 바인딩
@@ -74,25 +72,26 @@ Root Router (level: 0)
 
 - **Core**: 공통 유틸리티
 
-## Package.swift
+## Xcode 프로젝트 설정
 
-**위치**: `Package.swift`
+**위치**: `Navigation.xcodeproj`
 
 **주요 설정**:
-- 플랫폼: iOS 26+
-- 의존성: Core
-- 타겟: Navigation, NavigationTests
+- 플랫폼: iOS 18+
+- 프레임워크 타입: Dynamic Framework
+- 의존성: Core.framework
+- 타겟: Navigation (Framework), NavigationTests (Unit Test)
 
 ## 사용 가이드
 
 ### Router를 통한 네비게이션
 
-**참고**: `Sources/Navigation/Router.swift`의 `navigate(to:)` 메서드
+**참고**: `Navigation/Router.swift`의 `navigate(to:)` 메서드
 
 ### NavigationStack 설정
 
-**참고**: SeukCalendar 앱의 `SeukCalendar/SeukCalendar/ContentView.swift`에서 NavigationContainer 사용 예시
+**참고**: SeukCalendar 앱의 `SeukCalendar/ContentView.swift`에서 NavigationContainer 사용 예시
 
 ### Destination 추가
 
-새로운 화면을 추가할 때 `Sources/Navigation/Destination.swift`에 케이스 추가.
+새로운 화면을 추가할 때 `Navigation/Destination.swift`에 케이스 추가.
