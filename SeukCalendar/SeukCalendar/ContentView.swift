@@ -5,6 +5,7 @@
 //  Created by YoungK on 2/27/26.
 //
 
+import AI
 import CalendarData
 import CalendarDomain
 import CalendarFeature
@@ -16,7 +17,11 @@ struct ContentView: View {
 
   init() {
     let repository: any ScheduleRepository = EventKitScheduleRepository()
-    self.calendarViewFactory = CalendarViewFactory(repository: repository)
+    let parser: any ScheduleNaturalLanguageParser = FoundationModelsParser()
+    self.calendarViewFactory = CalendarViewFactory(
+      repository: repository,
+      parser: parser
+    )
   }
 
   var body: some View {
@@ -25,5 +30,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+  ContentView()
 }

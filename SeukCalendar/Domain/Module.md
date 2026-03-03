@@ -7,6 +7,7 @@
 - 비즈니스 로직 캡슐화
 - 순수 도메인 엔티티 정의
 - Repository 인터페이스 제공 (Data Layer와의 계약)
+- AI 파서 인터페이스와 파싱 결과 → Schedule 변환 규칙 제공
 - 도메인 Service 구현
 
 ## 디렉토리 구조
@@ -37,15 +38,18 @@ Domain/
 
 **Entity**: `CalendarDomain/Entity/`
 - `Schedule.swift`: 일정 도메인 모델 (title, date/time, duration, recurrence)
+- `ParsedEvent.swift`: AI 자연어 파싱 결과 모델 (dateString/startTime/isAllDay 등)
 
 **UseCase**: `CalendarDomain/UseCase/`
 - `CreateScheduleUseCase.swift`: 일정 생성
 - `FetchSchedulesUseCase.swift`: 일정 단건/기간 조회
 - `UpdateScheduleUseCase.swift`: 일정 수정
 - `DeleteScheduleUseCase.swift`: 일정 삭제
+- `ParseEventUseCase.swift`: 자연어 파싱 실행 및 `ParsedEvent` → `Schedule` 변환
 
 **Repository**: `CalendarDomain/Repository/`
 - `ScheduleRepository.swift`: EventKit 기반 저장소와의 계약 인터페이스
+- `ScheduleNaturalLanguageParser.swift`: AI 파서 구현체와의 계약 인터페이스
 
 **Service**: `CalendarDomain/Service/`
 
@@ -111,4 +115,5 @@ Domain/
 ### Mock 사용
 
 - **CalendarDomain 참고**: `CalendarDomainTestSupport/MockScheduleRepository.swift`
+- **AI 파싱 Mock 참고**: `CalendarDomainTestSupport/MockScheduleNaturalLanguageParser.swift`
 - **UserDomain 참고**: `UserDomainTestSupport/` (현재 Mock 없음)

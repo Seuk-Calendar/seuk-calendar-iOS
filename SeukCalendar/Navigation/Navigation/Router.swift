@@ -83,7 +83,6 @@ public extension Router {
     }
   }
 
-#warning("영규님 dismiss나 pop 말고 진입하는건 통합으로 하고 나머지는 private으로 하는게 어떨까요?? 외부 공개 범위가 넓은 듯?")
   /// 탭 선택 (자식 → 부모 → 루트로 전송)
   func select(tab destination: TabDestination) {
     if level == 0 {

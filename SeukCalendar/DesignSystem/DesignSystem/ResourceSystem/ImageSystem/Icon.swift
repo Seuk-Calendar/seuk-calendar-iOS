@@ -54,7 +54,6 @@ public enum Icon {
   public static let comment = ImageResource(name: "ico-comment")
   public static let commentFill = ImageResource(name: "ico-comment-fill")
   public static let share = ImageResource(name: "ico-share")
-  #warning("나중에 어디로 옮기지 고민")
   public static let logo = ImageResource(name: "logo")
 }
 
