@@ -1,0 +1,25 @@
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
+
+[features]
+multi_agent = true
+
+[agents]
+max_threads = 4
+max_depth = 2
+
+[agents.explorer]
+description = "코드베이스 구조와 파일 위치를 빠르게 탐색"
+config_file = "agents/explorer.toml"
+
+[agents.planner]
+description = "요구사항 분석과 구현 계획 수립"
+config_file = "agents/planner.toml"
+
+[agents.researcher]
+description = "관련 구현/문서를 조사하고 근거를 정리"
+config_file = "agents/researcher.toml"
+
+[agents.implementer]
+description = "계획에 따라 최소 변경으로 코드 구현"
+config_file = "agents/implementer.toml"
