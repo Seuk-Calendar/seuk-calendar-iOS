@@ -16,7 +16,7 @@
 
 | 문서 | 사용 시점 | 위치 |
 |------|-----------|------|
-| **Architecture** | 프로젝트 전체 구조 파악 | `.agent/rules/Architecture.md` |
+| **Architecture** | 프로젝트 전체 구조 파악 | `.agents/rules/Architecture.md` |
 
 ---
 
@@ -39,10 +39,10 @@
 
 | 문서 | 사용 시점 | 위치 |
 |------|-----------|------|
-| **커밋 컨벤션** | 커밋 메시지 작성 | `.agent/rules/commit-convention.md` |
-| **PR 컨벤션** | Pull Request 작성 | `.agent/rules/pr-convention.md` |
-| **브랜치 컨벤션** | 브랜치 생성 | `.agent/rules/branch-convention.md` |
-| **코드 리뷰 컨벤션** | 코드 리뷰 | `.agent/rules/code-review-convention.md` |
+| **커밋 컨벤션** | 커밋 메시지 작성 | `.agents/rules/commit-convention.md` |
+| **PR 컨벤션** | Pull Request 작성 | `.agents/rules/pr-convention.md` |
+| **브랜치 컨벤션** | 브랜치 생성 | `.agents/rules/branch-convention.md` |
+| **코드 리뷰 컨벤션** | 코드 리뷰 | `.agents/rules/code-review-convention.md` |
 
 ---
 

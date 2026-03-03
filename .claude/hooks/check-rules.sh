@@ -13,7 +13,7 @@ input=$(cat)
 input_lower=$(echo "$input" | tr '[:upper:]' '[:lower:]')
 
 # 규칙 파일 경로
-rules_dir="$CLAUDE_PROJECT_DIR/.agent/rules"
+rules_dir="$CLAUDE_PROJECT_DIR/.agents/rules"
 injected_rules=""
 
 # 커밋 관련 키워드 감지

@@ -98,7 +98,7 @@
 
 ## 참고 문서
 
-- 커밋 컨벤션: `.agent/rules/commit-convention.md`
-- PR 컨벤션: `.agent/rules/pr-convention.md`
-- 브랜치 컨벤션: `.agent/rules/branch-convention.md`
-- 아키텍처: `.agent/rules/Architecture.md`
+- 커밋 컨벤션: `.agents/rules/commit-convention.md`
+- PR 컨벤션: `.agents/rules/pr-convention.md`
+- 브랜치 컨벤션: `.agents/rules/branch-convention.md`
+- 아키텍처: `.agents/rules/Architecture.md`

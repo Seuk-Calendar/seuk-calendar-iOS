@@ -90,7 +90,7 @@ user-invocable: true
 스크립트로 브랜치명 생성:
 
 \`\`\`bash
-branch_name=$(.agent/scripts/branch-name.sh "$type" "$issue_id" "$title")
+branch_name=$(.agents/scripts/branch-name.sh "$type" "$issue_id" "$title")
 \`\`\`
 
 → 결과를 `$branch_name` 변수로 사용

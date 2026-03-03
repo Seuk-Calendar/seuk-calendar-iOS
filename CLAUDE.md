@@ -4,12 +4,12 @@ SeukCalendar 프로젝트입니다.
 
 ## 룰
 
-- 에이전트가 지켜야 할 프로젝트 규칙은 `.agent/rules/`에서 관리합니다.
+- 에이전트가 지켜야 할 프로젝트 규칙은 `.agents/rules/`에서 관리합니다.
 
 ## 문서 구조
 
 프로젝트 문서는 계층적으로 구성되어 있습니다. 
-가장 먼저 `.agent/INDEX.md`를 읽고, 작업에 필요한 문서만 효율적으로 참조하세요.
+가장 먼저 `.agents/INDEX.md`를 읽고, 작업에 필요한 문서만 효율적으로 참조하세요.
 
 ## 스킬
 
@@ -19,7 +19,7 @@ SeukCalendar 프로젝트입니다.
 
 ### Architecture.md 업데이트 시점
 
-다음과 같은 변경 시 `.agent/rules/Architecture.md`를 업데이트해야 합니다:
+다음과 같은 변경 시 `.agents/rules/Architecture.md`를 업데이트해야 합니다:
 
 1. **새로운 모듈 추가**
    - 새로운 Feature 모듈 생성
@@ -43,7 +43,7 @@ SeukCalendar 프로젝트입니다.
 
 ### Module.md 업데이트 시점
 
-다음과 같은 변경 시 해당 `Pool/{모듈}/Module.md`를 업데이트해야 합니다:
+다음과 같은 변경 시 해당 `SeukCalendar/{모듈}/Module.md`를 업데이트해야 합니다:
 
 1. **새로운 타겟 추가**
 2. **디렉토리 구조 변경**

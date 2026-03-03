@@ -182,6 +182,6 @@ git checkout -b "{브랜치명}"
 
 ## 참고
 
-- 브랜치 컨벤션 상세: `.agent/rules/branch-convention.md`
+- 브랜치 컨벤션 상세: `.agents/rules/branch-convention.md`
 - 이슈 생성: `create-issue` 스킬
 - PR 생성: `create-pr` 스킬
