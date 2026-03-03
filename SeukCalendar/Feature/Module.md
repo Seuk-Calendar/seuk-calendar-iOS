@@ -23,7 +23,6 @@ Feature/
 │   │   ├── CalendarViewModel.swift
 │   │   ├── CalendarViewModel+Action.swift
 │   │   ├── CalendarViewModel+Model.swift
-│   │   ├── CalendarScheduleProvider.swift
 │   │   └── Components/
 │   │       └── ScheduleDetailView.swift
 │   └── CalendarViewFactory.swift
@@ -49,13 +48,12 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - CalendarViewModel.swift: Calendar ViewModel (@Observable)
 - CalendarViewModel+Action.swift: ViewModel Action enum 분리
 - CalendarViewModel+Model.swift: ViewModel 보조 enum(ViewMode/PermissionState) 분리
-- CalendarScheduleProvider.swift: EventKit 일정 조회/권한 Provider
 - Components/ScheduleDetailView.swift: 일정 상세 화면
 
 **ViewFactory**: `CalendarFeature/CalendarViewFactory.swift`
 - 화면 생성 팩토리
 - `CalendarViewModel` 생성/주입 책임 보유 (`CalendarView`는 필수 주입만 허용)
-- DIContainer 도입 전까지 `makeCalendarView()` 내부에서 `CalendarViewModel()`을 직접 생성
+- DIContainer 도입 전까지 `makeCalendarView()` 내부에서 전달받은 `ScheduleRepository`로 `CalendarViewModel`을 생성
 
 **구현 참고**:
 - ViewModel: `CalendarFeature/Calendar/CalendarViewModel.swift`

@@ -1,5 +1,5 @@
+import CalendarDomain
 import DesignSystem
-import EventKit
 import Foundation
 import Observation
 
@@ -12,33 +12,20 @@ public final class CalendarViewModel {
   public private(set) var isLoading = false
   public private(set) var visibleEvents: [CalendarEvent] = []
 
-  private let provider: any CalendarScheduleProviding
+  private let repository: any ScheduleRepository
   private let calendar: Calendar
   private var hasLoaded = false
 
-  public convenience init(
+  public init(
     selectedDate: Date = Date(),
     viewMode: ViewMode = .month,
-    calendar: Calendar = .current
-  ) {
-    self.init(
-      selectedDate: selectedDate,
-      viewMode: viewMode,
-      calendar: calendar,
-      provider: EventKitCalendarScheduleProvider()
-    )
-  }
-
-  init(
-    selectedDate: Date,
-    viewMode: ViewMode,
-    calendar: Calendar,
-    provider: any CalendarScheduleProviding
+    calendar: Calendar = .current,
+    repository: any ScheduleRepository
   ) {
     self.selectedDate = calendar.startOfDay(for: selectedDate)
     self.viewMode = viewMode
     self.calendar = calendar
-    self.provider = provider
+    self.repository = repository
   }
 
   public func send(_ action: Action) async {
@@ -137,13 +124,13 @@ private extension CalendarViewModel {
   }
 
   func ensureCalendarPermission() async -> Bool {
-    switch provider.authorizationStatus() {
-    case .authorized, .fullAccess:
+    switch repository.fetchAuthorizationStatus() {
+    case .fullAccess:
       permissionState = .granted
       return true
     case .notDetermined:
       do {
-        let granted = try await provider.requestFullAccess()
+        let granted = try await repository.requestAccess()
         permissionState = granted ? .granted : .denied("캘린더 접근 권한이 필요합니다.")
         return granted
       } catch {
@@ -171,17 +158,15 @@ private extension CalendarViewModel {
     defer { isLoading = false }
 
     do {
-      let fetched = try await provider.fetchEvents(in: visibleRange())
-      visibleEvents = fetched.sorted(by: { lhs, rhs in
-        if lhs.startDate == rhs.startDate {
-          return lhs.title < rhs.title
-        }
-
-        return lhs.startDate < rhs.startDate
-      })
+      let schedules = try await repository.fetchSchedules(in: visibleRange())
+      visibleEvents = toCalendarEvents(from: schedules)
     } catch {
       visibleEvents = []
-      permissionState = .denied("일정을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.")
+      if let repositoryError = error as? ScheduleRepositoryError {
+        permissionState = .denied(repositoryError.userMessage)
+      } else {
+        permissionState = .denied("일정을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.")
+      }
     }
   }
 
@@ -220,5 +205,35 @@ private extension CalendarViewModel {
     case .day:
       selectedDate = calendar.date(byAdding: .day, value: offset, to: selectedDate).map(calendar.startOfDay(for:)) ?? selectedDate
     }
+  }
+
+  func toCalendarEvents(from schedules: [Schedule]) -> [CalendarEvent] {
+    schedules
+      .compactMap(toCalendarEvent)
+      .sorted { lhs, rhs in
+        if lhs.startDate == rhs.startDate {
+          return lhs.title < rhs.title
+        }
+
+        return lhs.startDate < rhs.startDate
+      }
+  }
+
+  func toCalendarEvent(schedule: Schedule) -> CalendarEvent? {
+    guard let startDate = schedule.startDate(using: calendar),
+          let endDate = schedule.endDate(using: calendar)
+    else {
+      return nil
+    }
+
+    return CalendarEvent(
+      id: schedule.id ?? UUID().uuidString,
+      title: schedule.title.isEmpty ? "제목 없음" : schedule.title,
+      startDate: startDate,
+      endDate: endDate,
+      isAllDay: schedule.isAllDay,
+      location: schedule.location,
+      notes: schedule.notes
+    )
   }
 }

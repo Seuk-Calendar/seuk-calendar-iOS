@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A1B2C3012F60000100AA0001 /* CalendarDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3052F60000100AA0001 /* CalendarDomain.framework */; };
+		A1B2C3022F60000100AA0001 /* CalendarDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1B2C3052F60000100AA0001 /* CalendarDomain.framework */; };
 		7B0E0AFB2F514AD7008707E9 /* BaseFeature.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0AF22F514AD7008707E9 /* BaseFeature.framework */; };
 		7B0E0B152F514AE8008707E9 /* CalendarFeature.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0B0C2F514AE8008707E9 /* CalendarFeature.framework */; };
 		7B0E0D412F5150F0008707E9 /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D402F5150F0008707E9 /* Core.framework */; };
@@ -35,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A1B2C3052F60000100AA0001 /* CalendarDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CalendarDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0AF22F514AD7008707E9 /* BaseFeature.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseFeature.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0AFA2F514AD7008707E9 /* BaseFeatureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BaseFeatureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0B0C2F514AE8008707E9 /* CalendarFeature.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CalendarFeature.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -93,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3012F60000100AA0001 /* CalendarDomain.framework in Frameworks */,
 				7BF3D2992F51586E00B93884 /* DesignSystem.framework in Frameworks */,
 				7B0E0D492F5150FB008707E9 /* Navigation.framework in Frameworks */,
 				7B0E0D452F5150F6008707E9 /* Core.framework in Frameworks */,
@@ -103,6 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3022F60000100AA0001 /* CalendarDomain.framework in Frameworks */,
 				7B0E0B152F514AE8008707E9 /* CalendarFeature.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -136,6 +141,7 @@
 		7B0E0D3F2F5150F0008707E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3052F60000100AA0001 /* CalendarDomain.framework */,
 				7BF3D2982F51586E00B93884 /* DesignSystem.framework */,
 				7BF3D2942F51586600B93884 /* DesignSystem.framework */,
 				7B0E0D4C2F515100008707E9 /* Navigation.framework */,

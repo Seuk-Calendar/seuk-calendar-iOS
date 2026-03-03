@@ -1,41 +1,41 @@
 @testable import CalendarFeature
+import CalendarDomain
 import DesignSystem
-import EventKit
 import Testing
 
 struct CalendarFeatureTests {
   @Test
   @MainActor
   func onAppear_loadsVisibleEvents_whenPermissionGranted() async {
-    let mockProvider = MockCalendarScheduleProvider()
-    mockProvider.authorizationStatusValue = .fullAccess
-    mockProvider.eventsToReturn = [fixtureEvent()]
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
+    mockRepository.schedulesToReturn = [fixtureSchedule()]
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
       viewMode: .month,
       calendar: Self.fixedCalendar,
-      provider: mockProvider
+      repository: mockRepository
     )
 
     await viewModel.send(.onAppear)
 
     #expect(viewModel.visibleEvents.count == 1)
     #expect(viewModel.permissionState == .granted)
-    #expect(mockProvider.fetchedRanges.count == 1)
+    #expect(mockRepository.fetchedRanges.count == 1)
   }
 
   @Test
   @MainActor
   func movePeriod_shiftsMonthByOne_whenModeIsMonth() async {
-    let mockProvider = MockCalendarScheduleProvider()
-    mockProvider.authorizationStatusValue = .fullAccess
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
       viewMode: .month,
       calendar: Self.fixedCalendar,
-      provider: mockProvider
+      repository: mockRepository
     )
 
     await viewModel.send(.onAppear)
@@ -47,20 +47,20 @@ struct CalendarFeatureTests {
   @Test
   @MainActor
   func onAppear_setsDeniedState_whenPermissionDenied() async {
-    let mockProvider = MockCalendarScheduleProvider()
-    mockProvider.authorizationStatusValue = .denied
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .denied
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
       viewMode: .month,
       calendar: Self.fixedCalendar,
-      provider: mockProvider
+      repository: mockRepository
     )
 
     await viewModel.send(.onAppear)
 
     #expect(viewModel.permissionState.isDenied)
-    #expect(mockProvider.fetchedRanges.isEmpty)
+    #expect(mockRepository.fetchedRanges.isEmpty)
   }
 }
 
@@ -82,47 +82,70 @@ private extension CalendarFeatureTests {
     return components.date ?? .init(timeIntervalSince1970: 0)
   }
 
-  static func fixtureEvent() -> CalendarEvent {
-    let start = DateComponents(
+  static func fixtureSchedule() -> Schedule {
+    let dayComponents = DateComponents(
       calendar: fixedCalendar,
       timeZone: fixedCalendar.timeZone,
       year: 2026,
       month: 3,
-      day: 3,
-      hour: 10
-    ).date ?? fixedDate
-    let end = fixedCalendar.date(byAdding: .hour, value: 1, to: start) ?? start
+      day: 3
+    )
 
-    return CalendarEvent(
+    let timeComponents = DateComponents(
+      calendar: fixedCalendar,
+      timeZone: fixedCalendar.timeZone,
+      hour: 10
+    )
+
+    return Schedule(
       id: "event-1",
       title: "테스트 일정",
-      startDate: start,
-      endDate: end,
+      date: dayComponents,
+      time: timeComponents,
+      duration: 3600,
       isAllDay: false
     )
   }
 }
 
 @MainActor
-final class MockCalendarScheduleProvider: CalendarScheduleProviding {
-  var authorizationStatusValue: EKAuthorizationStatus = .notDetermined
-  var requestFullAccessResult: Result<Bool, Error> = .success(true)
-  var eventsToReturn: [CalendarEvent] = []
+final class MockScheduleRepository: ScheduleRepository {
+  var authorizationStatusValue: ScheduleAuthorizationStatus = .notDetermined
+  var requestAccessResult: Result<Bool, Error> = .success(true)
+  var schedulesToReturn: [Schedule] = []
 
   private(set) var requestAccessCallCount = 0
   private(set) var fetchedRanges: [DateInterval] = []
 
-  func authorizationStatus() -> EKAuthorizationStatus {
+  func requestAccess() async throws -> Bool {
+    requestAccessCallCount += 1
+    return try requestAccessResult.get()
+  }
+
+  func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus {
     authorizationStatusValue
   }
 
-  func requestFullAccess() async throws -> Bool {
-    requestAccessCallCount += 1
-    return try requestFullAccessResult.get()
+  func create(schedule: Schedule) async throws -> Schedule {
+    schedule
   }
 
-  func fetchEvents(in range: DateInterval) async throws -> [CalendarEvent] {
+  func fetchSchedule(id: String) async throws -> Schedule? {
+    schedulesToReturn.first(where: { $0.id == id })
+  }
+
+  func fetchSchedules(in range: DateInterval) async throws -> [Schedule] {
     fetchedRanges.append(range)
-    return eventsToReturn
+    return schedulesToReturn
+  }
+
+  func update(schedule: Schedule) async throws -> Schedule {
+    schedule
+  }
+
+  func deleteSchedule(id: String) async throws {}
+
+  func hasICloudCalendar() -> Bool {
+    false
   }
 }
