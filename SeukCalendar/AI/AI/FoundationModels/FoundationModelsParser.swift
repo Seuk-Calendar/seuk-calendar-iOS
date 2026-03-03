@@ -56,7 +56,11 @@ public final class FoundationModelsParser: ScheduleNaturalLanguageParser {
            text: trimmedText,
            referenceDate: referenceDate
          ) {
-        return foundationModelsResult
+        return normalizedFoundationModelsResult(
+          foundationModelsResult,
+          text: trimmedText,
+          referenceDate: referenceDate
+        )
       }
     #endif
 
@@ -75,15 +79,26 @@ private extension FoundationModelsParser {
       text: String,
       referenceDate: Date
     ) async throws -> ParsedEvent? {
+      let referenceWeekday = calendar.component(.weekday, from: referenceDate)
+      let timeZoneIdentifier = calendar.timeZone.identifier
+
       let session = LanguageModelSession(
         instructions:
         """
         당신은 한국어 일정 입력을 구조화된 데이터로 변환하는 파서입니다.
         다음 규칙을 반드시 지키세요.
+        - 기준 날짜와 시간대는 prompt에 제공된 값을 사용합니다.
+        - 상대 날짜 해석 규칙:
+          - "오늘"은 기준 날짜
+          - "내일"은 기준 날짜 +1일
+          - "모레"는 기준 날짜 +2일
+          - "다음주/담주 X요일"은 기준 날짜보다 최소 7일 이후의 X요일
+        - "에서" 앞 명사는 location으로 추출합니다. 예: "홍대에서" -> "홍대"
         - dateString은 반드시 절대 날짜(yyyy-MM-dd) 형식으로 출력합니다.
         - 시간이 없으면 isAllDay=true, startTime=null 입니다.
         - startTime은 24시간 형식(HH:mm)입니다.
         - durationMinutes가 불분명하면 null로 둡니다.
+        - 확실하지 않은 정보는 추측하지 말고 null로 둡니다.
         - title은 간결한 일정 제목으로 정리합니다.
         """
       )
@@ -98,6 +113,8 @@ private extension FoundationModelsParser {
       let prompt =
         """
         기준 날짜: \(referenceDateString)
+        기준 요일(일=1, 월=2, ..., 토=7): \(referenceWeekday)
+        기준 시간대: \(timeZoneIdentifier)
         사용자 입력: \(text)
         """
 
@@ -119,6 +136,55 @@ private extension FoundationModelsParser {
       }
     }
   #endif
+
+  func normalizedFoundationModelsResult(
+    _ foundationModelsResult: ParsedEvent,
+    text: String,
+    referenceDate: Date
+  ) -> ParsedEvent {
+    var normalized = foundationModelsResult
+    let heuristicResult = parseWithHeuristic(text: text, referenceDate: referenceDate)
+
+    if containsDateSignal(in: text), let heuristicDate = heuristicResult?.dateString {
+      normalized.dateString = heuristicDate
+    }
+
+    if containsTimeSignal(in: text) {
+      if let heuristicStartTime = heuristicResult?.startTime {
+        normalized.startTime = heuristicStartTime
+        normalized.isAllDay = false
+      }
+    }
+
+    if containsLocationSignal(in: text),
+       let heuristicLocation = heuristicResult?.location {
+      normalized.location = heuristicLocation
+    }
+
+    if normalized.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+       let heuristicTitle = heuristicResult?.title {
+      normalized.title = heuristicTitle
+    }
+
+    if !isValidDateString(normalized.dateString), let heuristicDate = heuristicResult?.dateString {
+      normalized.dateString = heuristicDate
+    }
+
+    if let startTime = normalized.startTime,
+       !startTime.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+       !isValidTimeString(startTime) {
+      normalized.startTime = heuristicResult?.startTime
+    }
+
+    if normalized.startTime?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+      normalized.startTime = nil
+      if containsTimeSignal(in: text) {
+        normalized.isAllDay = false
+      }
+    }
+
+    return normalized
+  }
 
   func parseWithHeuristic(text: String, referenceDate: Date) -> ParsedEvent? {
     guard let resolvedDate = resolveDate(from: text, referenceDate: referenceDate) else {
@@ -155,6 +221,7 @@ private extension FoundationModelsParser {
     }
 
     let normalizedReferenceDate = calendar.startOfDay(for: referenceDate)
+    let hasNextWeekKeyword = text.range(of: "다음\\s*주|담주", options: .regularExpression) != nil
 
     if text.contains("오늘") {
       return normalizedReferenceDate
@@ -167,6 +234,10 @@ private extension FoundationModelsParser {
     }
 
     guard let targetWeekday = parseWeekday(from: text) else {
+      // "다음주/담주" 신호는 있는데 요일을 해석하지 못하면 오답(기준일) 보정을 피하기 위해 실패로 처리한다.
+      if hasNextWeekKeyword {
+        return nil
+      }
       return normalizedReferenceDate
     }
 
@@ -176,7 +247,6 @@ private extension FoundationModelsParser {
       daysToAdd = 7
     }
 
-    let hasNextWeekKeyword = text.range(of: "다음\\s*주|담주", options: .regularExpression) != nil
     if hasNextWeekKeyword {
       daysToAdd += 7
     }
@@ -213,10 +283,13 @@ private extension FoundationModelsParser {
       "토": 7,
     ]
 
-    if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)요일") {
+    if let match = text.firstRegexMatch(pattern: "(?:다음\\s*주|담주)\\s*(일|월|화|수|목|금|토)(?:요일|요|욜)?") {
       return mapping[match[safe: 1] ?? ""]
     }
-    if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)요") {
+    if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)(?:요일|요|욜)") {
+      return mapping[match[safe: 1] ?? ""]
+    }
+    if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)\\b") {
       return mapping[match[safe: 1] ?? ""]
     }
 
@@ -308,6 +381,31 @@ private extension FoundationModelsParser {
     }
 
     return title
+  }
+
+  func isValidDateString(_ value: String) -> Bool {
+    value.range(of: "^\\d{4}-\\d{2}-\\d{2}$", options: .regularExpression) != nil
+  }
+
+  func isValidTimeString(_ value: String) -> Bool {
+    value.range(of: "^([01]\\d|2[0-3]):[0-5]\\d$", options: .regularExpression) != nil
+  }
+
+  func containsDateSignal(in text: String) -> Bool {
+    text.firstRegexMatch(pattern: "(\\d{4})[./-](\\d{1,2})[./-](\\d{1,2})") != nil ||
+      text.range(
+        of: "오늘|내일|모레|다음\\s*주|담주|(일|월|화|수|목|금|토)(요일|요|욜)",
+        options: .regularExpression
+      ) != nil
+  }
+
+  func containsTimeSignal(in text: String) -> Bool {
+    text.firstRegexMatch(pattern: "(오전|오후|아침|점심|저녁|밤)?\\s*(\\d{1,2})\\s*시(?:\\s*(\\d{1,2})\\s*분?)?") != nil ||
+      text.firstRegexMatch(pattern: "\\b(\\d{1,2}):(\\d{2})\\b") != nil
+  }
+
+  func containsLocationSignal(in text: String) -> Bool {
+    text.firstRegexMatch(pattern: "([가-힣A-Za-z0-9]+)에서") != nil
   }
 }
 
