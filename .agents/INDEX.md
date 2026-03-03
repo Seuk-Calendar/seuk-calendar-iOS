@@ -43,6 +43,7 @@
 | **PR 컨벤션** | Pull Request 작성 | `.agents/rules/pr-convention.md` |
 | **브랜치 컨벤션** | 브랜치 생성 | `.agents/rules/branch-convention.md` |
 | **코드 리뷰 컨벤션** | 코드 리뷰 | `.agents/rules/code-review-convention.md` |
+| **ViewModel 컨벤션** | ViewModel 파일 구조/DI 규칙 확인 | `.agents/rules/viewmodel-convention.md` |
 
 ---
 

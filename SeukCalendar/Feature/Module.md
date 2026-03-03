@@ -105,6 +105,13 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - Action: Lifecycle, ViewAction으로 구분
 - send(_:): Action 처리
 
+**ViewModel 파일 구조 표준**:
+- `SomeViewModel.swift`: 상태/비즈니스 로직/의존성 주입
+- `SomeViewModel+Action.swift`: `Action` enum만 정의
+- `SomeViewModel+Model.swift`: `ViewState`, `ViewMode` 등 보조 enum 정의
+- View는 `init(viewModel: SomeViewModel)` 형태의 필수 주입만 허용
+- Factory는 `makeView()`에서 ViewModel을 생성 후 View에 주입
+
 **View**: SwiftUI View
 
 **참고**: `CalendarFeature/Calendar/CalendarView.swift`
