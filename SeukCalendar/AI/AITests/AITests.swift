@@ -1,6 +1,7 @@
 @testable import AI
 import Foundation
 import Testing
+internal import CalendarDomain
 
 struct AITests {
   @Test("휴리스틱_내일_오후시간을_절대날짜와_24시간으로_파싱합니다")
