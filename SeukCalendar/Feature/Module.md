@@ -21,7 +21,11 @@ Feature/
 │   ├── Calendar/
 │   │   ├── CalendarView.swift
 │   │   ├── CalendarViewModel.swift
+│   │   ├── CalendarViewModel+Action.swift
+│   │   ├── CalendarViewModel+Model.swift
+│   │   ├── CalendarScheduleProvider.swift
 │   │   └── Components/
+│   │       └── ScheduleDetailView.swift
 │   └── CalendarViewFactory.swift
 └── FeatureTests/
 ```
@@ -43,7 +47,10 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 **Calendar**: `CalendarFeature/Calendar/`
 - CalendarView.swift: Calendar View
 - CalendarViewModel.swift: Calendar ViewModel (@Observable)
-- Components/: 하위 컴포넌트
+- CalendarViewModel+Action.swift: ViewModel Action enum 분리
+- CalendarViewModel+Model.swift: ViewModel 보조 enum(ViewMode/PermissionState) 분리
+- CalendarScheduleProvider.swift: EventKit 일정 조회/권한 Provider
+- Components/ScheduleDetailView.swift: 일정 상세 화면
 
 **ViewFactory**: `CalendarFeature/CalendarViewFactory.swift`
 - 화면 생성 팩토리

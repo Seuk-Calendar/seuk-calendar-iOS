@@ -5,18 +5,13 @@
 //  Created by YoungK on 2/27/26.
 //
 
+import CalendarFeature
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
+  var body: some View {
+    CalendarView()
+  }
 }
 
 #Preview {

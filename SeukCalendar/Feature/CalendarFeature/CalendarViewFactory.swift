@@ -1,7 +1,11 @@
-//
-//  CalendarViewFactory.swift
-//  Feature
-//
-//  Created by YoungK on 2/27/26.
-//
+import SwiftUI
 
+@MainActor
+public struct CalendarViewFactory {
+  public init() {}
+
+  @ViewBuilder
+  public func makeCalendarView() -> some View {
+    CalendarView()
+  }
+}
