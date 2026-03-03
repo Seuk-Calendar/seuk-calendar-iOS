@@ -46,6 +46,18 @@
 
 ---
 
+## 메모리 시스템
+
+| 문서 | 사용 시점 | 위치 |
+|------|-----------|------|
+| **Memory 시스템 컨텍스트** | 시스템 배경/운영 목적 파악 | `.agents/memorys/SYSTEM_CONTEXT.md` |
+| **Memory 운영 가이드** | 메모리 작성/검색 절차 확인 | `.agents/memorys/README.md` |
+| **Memory 템플릿** | 신규 memory 작성 | `.agents/memorys/templates/memory-template.md` |
+| **키워드 분류** | 키워드 표준 작성 | `.agents/memorys/index/KEYWORD_TAXONOMY.md` |
+| **메모리 인덱스** | 기존 memory 검색/참조 | `.agents/memorys/index/MEMORY_INDEX.md` |
+
+---
+
 ## 프로젝트 설정
 
 | 문서 | 사용 시점 | 위치 |

@@ -17,6 +17,7 @@
 		7B0E0D072F51501E008707E9 /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D062F51501E008707E9 /* Core.framework */; };
 		7B0E0D0B2F515024008707E9 /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D0A2F515024008707E9 /* Core.framework */; };
 		7B0E0D0F2F51502C008707E9 /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D0E2F51502C008707E9 /* Core.framework */; };
+		7B11AA012F517000008707E9 /* CalendarDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B11AA022F517000008707E9 /* CalendarDomain.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		7B0E0D062F51501E008707E9 /* Core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0D0A2F515024008707E9 /* Core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0D0E2F51502C008707E9 /* Core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B11AA022F517000008707E9 /* CalendarDomain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CalendarDomain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -164,6 +166,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B11AA012F517000008707E9 /* CalendarDomain.framework in Frameworks */,
 				7B0E0CEE2F514FEC008707E9 /* Common.framework in Frameworks */,
 				7B0E0D0B2F515024008707E9 /* Core.framework in Frameworks */,
 			);
@@ -183,6 +186,7 @@
 		7B0E0CDE2F514FDA008707E9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7B11AA022F517000008707E9 /* CalendarDomain.framework */,
 				7B0E0D0E2F51502C008707E9 /* Core.framework */,
 				7B0E0D0A2F515024008707E9 /* Core.framework */,
 				7B0E0D062F51501E008707E9 /* Core.framework */,

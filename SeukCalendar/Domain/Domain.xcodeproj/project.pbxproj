@@ -15,6 +15,7 @@
 		7B0E0D2D2F5150C7008707E9 /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D2C2F5150C7008707E9 /* Core.framework */; };
 		7B0E0D352F5150DA008707E9 /* CalendarDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0B982F514C1E008707E9 /* CalendarDomain.framework */; };
 		7B0E0D3A2F5150E2008707E9 /* UserDomain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0B7E2F514C05008707E9 /* UserDomain.framework */; };
+		7B37F3A32F52412300E7B101 /* CalendarDomainTestSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0BB22F514C91008707E9 /* CalendarDomainTestSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 7B0E0B7D2F514C05008707E9;
 			remoteInfo = UserDomain;
+		};
+		7B37F3A42F52413100E7B101 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7B0E0A3D2F5149A2008707E9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7B0E0BB12F514C91008707E9;
+			remoteInfo = CalendarDomainTestSupport;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -124,6 +132,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B0E0BA12F514C1E008707E9 /* CalendarDomain.framework in Frameworks */,
+				7B37F3A32F52412300E7B101 /* CalendarDomainTestSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -301,6 +310,7 @@
 			);
 			dependencies = (
 				7B0E0BA32F514C1E008707E9 /* PBXTargetDependency */,
+				7B37F3A52F52413A00E7B101 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				7B0E0BA42F514C1E008707E9 /* CalendarDomainTests */,
@@ -524,6 +534,11 @@
 			isa = PBXTargetDependency;
 			target = 7B0E0B7D2F514C05008707E9 /* UserDomain */;
 			targetProxy = 7B0E0D3C2F5150E2008707E9 /* PBXContainerItemProxy */;
+		};
+		7B37F3A52F52413A00E7B101 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7B0E0BB12F514C91008707E9 /* CalendarDomainTestSupport */;
+			targetProxy = 7B37F3A42F52413100E7B101 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
