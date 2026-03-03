@@ -11,7 +11,7 @@ public final class MockScheduleRepository: ScheduleRepository {
       title: "기본 일정",
       date: DateComponents(year: 2026, month: 3, day: 3),
       time: DateComponents(hour: 10, minute: 0),
-      duration: 3_600,
+      duration: 3600,
       location: nil,
       notes: nil,
       isAllDay: false,
@@ -22,10 +22,12 @@ public final class MockScheduleRepository: ScheduleRepository {
   public var deletedScheduleIDs: [String] = []
   public var fetchedScheduleIDs: [String] = []
   public var fetchedRanges: [DateInterval] = []
+  private var changesContinuation: AsyncStream<Void>.Continuation?
 
   public private(set) var requestAccessCallCount = 0
   public private(set) var fetchAuthorizationStatusCallCount = 0
   public private(set) var hasICloudCalendarCallCount = 0
+  public private(set) var observeScheduleChangesCallCount = 0
 
   public init() {}
 
@@ -37,6 +39,16 @@ public final class MockScheduleRepository: ScheduleRepository {
   public func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus {
     fetchAuthorizationStatusCallCount += 1
     return authorizationStatusValue
+  }
+
+  public func observeScheduleChanges() -> AsyncStream<Void> {
+    observeScheduleChangesCallCount += 1
+    return AsyncStream { continuation in
+      self.changesContinuation = continuation
+      continuation.onTermination = { [weak self] _ in
+        self?.changesContinuation = nil
+      }
+    }
   }
 
   public func create(schedule: Schedule) async throws -> Schedule {
@@ -76,5 +88,9 @@ public final class MockScheduleRepository: ScheduleRepository {
   public func hasICloudCalendar() -> Bool {
     hasICloudCalendarCallCount += 1
     return true
+  }
+
+  public func emitScheduleChange() {
+    changesContinuation?.yield(())
   }
 }

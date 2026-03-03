@@ -46,11 +46,13 @@ CalendarDomain의 Repository 구현.
 
 **Repository**: `CalendarData/Repository/`
 - `EventKitScheduleRepository.swift`: EventKit 권한 요청, 일정 CRUD, EKEvent ↔ Schedule 변환
+  - `observeScheduleChanges()`로 `EKEventStoreChanged` 알림을 AsyncStream으로 전달
 
 **구현 참고**:
 - Repository 구현: `CalendarData/Repository/EventKitScheduleRepository.swift`
 - EventKit 권한 요청: `requestAccess()`
 - iCloud 캘린더 확인: `hasICloudCalendar()`
+- 외부 변경 감지: `observeScheduleChanges()`
 
 ### 3. UserData
 

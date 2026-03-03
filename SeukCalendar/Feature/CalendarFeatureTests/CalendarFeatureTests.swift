@@ -1,6 +1,7 @@
 import CalendarDomain
 import CalendarDomainTestSupport
 @testable import CalendarFeature
+import DesignSystem
 import Foundation
 import Testing
 
@@ -24,6 +25,30 @@ struct CalendarFeatureTests {
     #expect(viewModel.visibleEvents.count == 1)
     #expect(viewModel.permissionState == .granted)
     #expect(mockRepository.fetchedRanges.count == 1)
+  }
+
+  @Test("refreshSchedules_수동_새로고침시_일정을_다시_로드합니다")
+  @MainActor
+  func refreshSchedules_reloadsVisibleEvents() async {
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule(title: "첫 일정")]
+
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      viewMode: .month,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository
+    )
+
+    await viewModel.send(.onAppear).value
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule(id: "event-2", title: "갱신 일정")]
+
+    await viewModel.send(.refreshSchedules).value
+
+    #expect(mockRepository.fetchedRanges.count == 2)
+    #expect(viewModel.visibleEvents.first?.title == "갱신 일정")
+    #expect(viewModel.syncStatusMessage?.contains("최근 동기화") == true)
   }
 
   @Test("movePeriod_월_모드에서_한달_이동합니다")
@@ -88,6 +113,31 @@ struct CalendarFeatureTests {
     #expect(viewModel.permissionState == .granted)
     #expect(viewModel.visibleEvents.count == 1)
     #expect(mockRepository.fetchedRanges.count == 1)
+  }
+
+  @Test("onAppear_이벤트스토어_변경시_자동으로_일정을_다시_로드합니다")
+  @MainActor
+  func onAppear_reloadsVisibleEvents_whenEventStoreChanged() async {
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule(title: "기존 일정")]
+
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      viewMode: .month,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository
+    )
+
+    await viewModel.send(.onAppear).value
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule(id: "event-2", title: "동기화 일정")]
+
+    mockRepository.emitScheduleChange()
+    try? await Task.sleep(for: .milliseconds(50))
+
+    #expect(mockRepository.observeScheduleChangesCallCount == 1)
+    #expect(mockRepository.fetchedRanges.count == 2)
+    #expect(viewModel.visibleEvents.first?.title == "동기화 일정")
   }
 
   @Test("eventsByDay_다일_일정을_각_일자에_포함합니다")
@@ -202,7 +252,7 @@ private extension CalendarFeatureTests {
     return components.date ?? .init(timeIntervalSince1970: 0)
   }
 
-  static func fixtureSchedule() -> Schedule {
+  static func fixtureSchedule(id: String = "event-1", title: String = "테스트 일정") -> Schedule {
     let dayComponents = DateComponents(
       calendar: fixedCalendar,
       timeZone: fixedCalendar.timeZone,
@@ -218,8 +268,8 @@ private extension CalendarFeatureTests {
     )
 
     return Schedule(
-      id: "event-1",
-      title: "테스트 일정",
+      id: id,
+      title: title,
       date: dayComponents,
       time: timeComponents,
       duration: 3600,

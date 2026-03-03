@@ -6,6 +6,7 @@
 
 | 날짜(Date) | 파일(File) | 제목(Title) | 핵심 키워드(Keywords) |
 |---|---|---|---|
+| 2026-03-03 | `entries/2026-03-03-mainactor-task-capture-cycle.md` | @MainActor ViewModel에서 deinit 격리 오류와 Task 강한 캡처 순환 참조가 발생한 사례 | workflow:review, failure:actor-isolation-error, failure:retain-cycle, action:weak-capture |
 | 2026-03-03 | `entries/2026-03-03-relative-date-assertion-in-tests.md` | 자연어 파싱 테스트에서 절대 날짜 하드코딩 기대값을 사용한 사례 | workflow:test, action:relative-date-assertion, failure:hardcoded-date, verify:dynamic-reference-date |
 | 2026-03-03 | `entries/2026-03-03-foundation-models-flaky-date-location.md` | Foundation Models 출력 변동을 그대로 신뢰해 날짜/장소 테스트가 플레이키해진 사례 | workflow:test, action:normalize-fm-result, failure:flaky-output, verify:repeated-only-testing |
 | 2026-03-03 | `entries/2026-03-03-core-safe-index-regex-capture.md` | 정규식 캡처 배열 인덱스를 직접 접근해 테스트 크래시가 발생한 사례 | workflow:test, action:safe-index, failure:index-out-of-range, verify:ai-test |

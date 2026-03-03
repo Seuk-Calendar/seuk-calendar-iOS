@@ -3,6 +3,7 @@ import Foundation
 public extension CalendarViewModel {
   enum Action {
     case onAppear
+    case refreshSchedules
     case changeMode(ViewMode)
     case selectDate(Date)
     case movePeriod(Int)

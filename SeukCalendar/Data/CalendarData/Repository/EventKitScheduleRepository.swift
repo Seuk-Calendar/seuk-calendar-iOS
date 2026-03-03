@@ -39,6 +39,22 @@ public final class EventKitScheduleRepository: ScheduleRepository {
     }
   }
 
+  public func observeScheduleChanges() -> AsyncStream<Void> {
+    AsyncStream { continuation in
+      let token = NotificationCenter.default.addObserver(
+        forName: .EKEventStoreChanged,
+        object: eventStore,
+        queue: nil
+      ) { _ in
+        continuation.yield(())
+      }
+
+      continuation.onTermination = { _ in
+        NotificationCenter.default.removeObserver(token)
+      }
+    }
+  }
+
   public func create(schedule: Schedule) async throws -> Schedule {
     try ensureReadWriteAccess()
 
@@ -130,8 +146,7 @@ private extension EventKitScheduleRepository {
 
   func preferredCalendar(for schedule: Schedule) -> EKCalendar? {
     if let calendarIdentifier = schedule.calendarIdentifier,
-       let specificCalendar = eventStore.calendar(withIdentifier: calendarIdentifier)
-    {
+       let specificCalendar = eventStore.calendar(withIdentifier: calendarIdentifier) {
       return specificCalendar
     }
 
