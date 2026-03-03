@@ -83,7 +83,12 @@ public struct Schedule: Equatable {
       return nil
     }
 
-    let appliedDuration = max(duration, isAllDay ? 86_400 : 60)
-    return startDate.addingTimeInterval(appliedDuration)
+    if isAllDay {
+      let dayCount = max(Int((duration / 86_400).rounded(.up)), 1)
+      return calendar.date(byAdding: .day, value: dayCount, to: startDate)
+    }
+
+    let appliedSeconds = max(Int(duration.rounded()), 60)
+    return calendar.date(byAdding: .second, value: appliedSeconds, to: startDate)
   }
 }

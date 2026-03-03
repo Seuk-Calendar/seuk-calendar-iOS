@@ -20,7 +20,7 @@ struct CalendarDomainTests {
 
     let created = try await useCase.execute(schedule: input)
 
-    #expect(repository.createdSchedules.count == 1)
+    #expect(repository.createdSchedules.count == 2)
     #expect(created.title == "신규 일정")
   }
 

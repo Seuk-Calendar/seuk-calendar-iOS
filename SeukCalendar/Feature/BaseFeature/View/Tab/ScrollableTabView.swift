@@ -17,8 +17,8 @@ public struct ScrollableTabView: View {
 
   public init(
     tabs: [ScrollableTabView.TabModel],
-    activatedColor: Color = .accentColor,
-    defaultColor: Color = .primary,
+    activatedColor: Color = PoolColor.Labels.primary,
+    defaultColor: Color = PoolColor.Fills.primary,
     isEnableTabScroll: Bool = true,
     tabBarHeight: CGFloat = 44,
     @AnyViewArrayBuilder _ builder: @escaping () -> [AnyView]

@@ -64,7 +64,7 @@ public enum ToolbarContent: Hashable {
     public init(
       title: String,
       fontStyle: any FontStyleType = Label2.bold,
-      color: Color = .primary
+      color: Color = .labels.primary
     ) {
       self.title = title
       self.fontStyle = fontStyle
@@ -88,7 +88,7 @@ public enum ToolbarContent: Hashable {
 
     public init(
       icon: ImageResource,
-      color: Color = .primary
+      color: Color = .labels.primary
     ) {
       self.icon = icon
       self.color = color
@@ -137,7 +137,7 @@ public struct ToolbarModel: Hashable {
       content: .icon(
         ToolbarContent.IconModel(
           icon: Icon.arrowLeft,
-          color: .primary
+          color: .labels.primary
         )
       ),
       action: action
