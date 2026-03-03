@@ -48,6 +48,7 @@ public enum ScheduleRepositoryError: SCError, Equatable {
 public protocol ScheduleRepository {
   func requestAccess() async throws -> Bool
   func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus
+  func observeScheduleChanges() -> AsyncStream<Void>
 
   func create(schedule: Schedule) async throws -> Schedule
   func fetchSchedule(id: String) async throws -> Schedule?
@@ -56,4 +57,12 @@ public protocol ScheduleRepository {
   func deleteSchedule(id: String) async throws
 
   func hasICloudCalendar() -> Bool
+}
+
+public extension ScheduleRepository {
+  func observeScheduleChanges() -> AsyncStream<Void> {
+    AsyncStream { continuation in
+      continuation.finish()
+    }
+  }
 }

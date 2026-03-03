@@ -17,6 +17,7 @@ public struct CalendarView: View {
         modePicker
         dateHeader
         permissionDescription
+        syncStatusDescription
 
         Group {
           switch viewModel.viewMode {
@@ -180,6 +181,14 @@ private extension CalendarView {
         viewModel.send(.moveToToday)
       }
       .font(.system(size: 14, weight: .medium))
+
+      Button {
+        viewModel.send(.refreshSchedules)
+      } label: {
+        Image(systemName: "arrow.clockwise")
+          .font(.system(size: 14, weight: .semibold))
+      }
+      .accessibilityLabel("일정 새로고침")
     }
   }
 
@@ -195,6 +204,29 @@ private extension CalendarView {
         .font(.system(size: 13, weight: .regular))
         .foregroundStyle(.red)
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+  }
+
+  @ViewBuilder
+  var syncStatusDescription: some View {
+    if let syncStatusMessage = viewModel.syncStatusMessage {
+      Text(syncStatusMessage)
+        .font(.system(size: 12, weight: .regular))
+        .foregroundStyle(syncStatusColor)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+  }
+
+  var syncStatusColor: Color {
+    switch viewModel.syncStatusTone {
+    case .normal:
+      return .secondary
+    case .warning:
+      return .orange
+    case .success:
+      return .green
+    case .error:
+      return .red
     }
   }
 

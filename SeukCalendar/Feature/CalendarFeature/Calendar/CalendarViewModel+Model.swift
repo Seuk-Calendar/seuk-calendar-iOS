@@ -35,6 +35,13 @@ public extension CalendarViewModel {
     }
   }
 
+  enum SyncStatusTone: Equatable {
+    case normal
+    case warning
+    case success
+    case error
+  }
+
   struct ParsedEventDraft: Equatable {
     public var title: String
     public var dateString: String

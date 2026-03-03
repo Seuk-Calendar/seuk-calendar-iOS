@@ -49,6 +49,7 @@ Domain/
 
 **Repository**: `CalendarDomain/Repository/`
 - `ScheduleRepository.swift`: EventKit 기반 저장소와의 계약 인터페이스
+  - 권한/CRUD/`hasICloudCalendar()` + `observeScheduleChanges()`(외부 일정 변경 스트림) 제공
 - `ScheduleNaturalLanguageParser.swift`: AI 파서 구현체와의 계약 인터페이스
 
 **Service**: `CalendarDomain/Service/`

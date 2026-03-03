@@ -12,6 +12,8 @@ public final class CalendarViewModel {
   public private(set) var permissionState: PermissionState = .idle
   public private(set) var isLoading = false
   public private(set) var visibleEvents: [CalendarEvent] = []
+  public private(set) var syncStatusMessage: String?
+  public private(set) var syncStatusTone: SyncStatusTone = .normal
 
   public private(set) var naturalLanguageInput = ""
   public private(set) var parsedEventDraft: ParsedEventDraft?
@@ -26,6 +28,7 @@ public final class CalendarViewModel {
   private let calendar: Calendar
   private var hasLoaded = false
   private var pendingActionTask: Task<Void, Never>?
+  private var changeObservationTask: Task<Void, Never>?
 
   public init(
     selectedDate: Date = Date(),
@@ -109,6 +112,8 @@ private extension CalendarViewModel {
     switch action {
     case .onAppear:
       await loadIfNeeded()
+    case .refreshSchedules:
+      await handleRefreshSchedules()
     case let .changeMode(mode):
       await handleChangeMode(mode)
     case let .selectDate(date):
@@ -178,6 +183,23 @@ private extension CalendarViewModel {
   func handleMoveToToday() async {
     selectedDate = calendar.startOfDay(for: Date())
     await reloadVisibleEvents()
+  }
+
+  func handleRefreshSchedules() async {
+    let isAuthorized = await ensureCalendarPermission()
+    guard isAuthorized else {
+      return
+    }
+
+    syncStatusMessage = "일정을 새로고침하는 중입니다..."
+    syncStatusTone = .normal
+
+    if await reloadVisibleEvents() {
+      applySyncedStatusMessage()
+    } else {
+      syncStatusMessage = "일정을 새로고침하지 못했습니다. 잠시 후 다시 시도해주세요."
+      syncStatusTone = .error
+    }
   }
 
   func handleUpdateNaturalLanguageInput(_ text: String) {
@@ -269,23 +291,33 @@ private extension CalendarViewModel {
       return
     }
 
+    startObservingScheduleChangesIfNeeded()
+
     guard !hasLoaded else {
       return
     }
 
     hasLoaded = true
-    await reloadVisibleEvents()
+    if await reloadVisibleEvents() {
+      applySyncedStatusMessage()
+    }
   }
 
   func ensureCalendarPermission() async -> Bool {
     switch repository.fetchAuthorizationStatus() {
     case .fullAccess:
       permissionState = .granted
+      applyICloudAvailabilityMessageIfNeeded()
       return true
     case .notDetermined:
       do {
         let granted = try await repository.requestAccess()
-        permissionState = granted ? .granted : .denied("캘린더 접근 권한이 필요합니다.")
+        if granted {
+          permissionState = .granted
+          applyICloudAvailabilityMessageIfNeeded()
+        } else {
+          permissionState = .denied("캘린더 접근 권한이 필요합니다.")
+        }
         return granted
       } catch {
         permissionState = .denied("캘린더 권한 요청 중 오류가 발생했습니다.")
@@ -303,9 +335,10 @@ private extension CalendarViewModel {
     }
   }
 
-  func reloadVisibleEvents() async {
+  @discardableResult
+  func reloadVisibleEvents() async -> Bool {
     guard permissionState == .granted else {
-      return
+      return false
     }
 
     isLoading = true
@@ -314,6 +347,7 @@ private extension CalendarViewModel {
     do {
       let schedules = try await repository.fetchSchedules(in: visibleRange())
       visibleEvents = toCalendarEvents(from: schedules)
+      return true
     } catch {
       visibleEvents = []
       if let repositoryError = error as? ScheduleRepositoryError {
@@ -321,7 +355,59 @@ private extension CalendarViewModel {
       } else {
         permissionState = .denied("일정을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.")
       }
+      return false
     }
+  }
+
+  func startObservingScheduleChangesIfNeeded() {
+    guard changeObservationTask == nil else {
+      return
+    }
+
+    syncStatusMessage = "iCloud 변경 사항을 모니터링하고 있습니다."
+    syncStatusTone = .normal
+
+    let repository = self.repository
+    changeObservationTask = Task { [weak self] in
+      for await _ in repository.observeScheduleChanges() {
+        if Task.isCancelled {
+          break
+        }
+        guard let self else {
+          break
+        }
+        await self.handleExternalScheduleChange()
+      }
+    }
+  }
+
+  func handleExternalScheduleChange() async {
+    syncStatusMessage = "iCloud 변경 사항을 반영하는 중입니다..."
+    syncStatusTone = .normal
+
+    if await reloadVisibleEvents() {
+      applySyncedStatusMessage()
+    } else {
+      syncStatusMessage = "변경 사항 동기화에 실패했습니다. 잠시 후 다시 시도해주세요."
+      syncStatusTone = .error
+    }
+  }
+
+  func applyICloudAvailabilityMessageIfNeeded() {
+    guard !repository.hasICloudCalendar() else {
+      return
+    }
+
+    syncStatusMessage = "iCloud 캘린더를 찾지 못해 로컬 일정만 보일 수 있습니다."
+    syncStatusTone = .warning
+  }
+
+  func applySyncedStatusMessage() {
+    let formatter = DateFormatter()
+    formatter.locale = Locale.current
+    formatter.dateFormat = "a h:mm"
+    syncStatusMessage = "최근 동기화: \(formatter.string(from: Date()))"
+    syncStatusTone = .success
   }
 
   func visibleRange() -> DateInterval {
