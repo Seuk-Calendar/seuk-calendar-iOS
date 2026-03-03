@@ -54,6 +54,7 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 
 **ViewFactory**: `CalendarFeature/CalendarViewFactory.swift`
 - 화면 생성 팩토리
+- `CalendarViewModel` 생성/주입 책임 보유 (`CalendarView`는 필수 주입만 허용)
 
 **구현 참고**:
 - ViewModel: `CalendarFeature/Calendar/CalendarViewModel.swift`

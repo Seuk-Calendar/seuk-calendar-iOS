@@ -8,9 +8,12 @@
 import CalendarFeature
 import SwiftUI
 
+@MainActor
 struct ContentView: View {
+  private let calendarViewFactory = CalendarViewFactory()
+
   var body: some View {
-    CalendarView()
+    calendarViewFactory.makeCalendarView()
   }
 }
 

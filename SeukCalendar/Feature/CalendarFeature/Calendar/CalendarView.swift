@@ -6,8 +6,8 @@ public struct CalendarView: View {
   @State private var path: [CalendarEvent] = []
 
   @MainActor
-  public init(viewModel: CalendarViewModel? = nil) {
-    _viewModel = State(initialValue: viewModel ?? CalendarViewModel())
+  public init(viewModel: CalendarViewModel) {
+    _viewModel = State(initialValue: viewModel)
   }
 
   public var body: some View {
