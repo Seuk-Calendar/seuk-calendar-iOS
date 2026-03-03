@@ -79,15 +79,26 @@ private extension FoundationModelsParser {
       text: String,
       referenceDate: Date
     ) async throws -> ParsedEvent? {
+      let referenceWeekday = calendar.component(.weekday, from: referenceDate)
+      let timeZoneIdentifier = calendar.timeZone.identifier
+
       let session = LanguageModelSession(
         instructions:
         """
         당신은 한국어 일정 입력을 구조화된 데이터로 변환하는 파서입니다.
         다음 규칙을 반드시 지키세요.
+        - 기준 날짜와 시간대는 prompt에 제공된 값을 사용합니다.
+        - 상대 날짜 해석 규칙:
+          - "오늘"은 기준 날짜
+          - "내일"은 기준 날짜 +1일
+          - "모레"는 기준 날짜 +2일
+          - "다음주/담주 X요일"은 기준 날짜보다 최소 7일 이후의 X요일
+        - "에서" 앞 명사는 location으로 추출합니다. 예: "홍대에서" -> "홍대"
         - dateString은 반드시 절대 날짜(yyyy-MM-dd) 형식으로 출력합니다.
         - 시간이 없으면 isAllDay=true, startTime=null 입니다.
         - startTime은 24시간 형식(HH:mm)입니다.
         - durationMinutes가 불분명하면 null로 둡니다.
+        - 확실하지 않은 정보는 추측하지 말고 null로 둡니다.
         - title은 간결한 일정 제목으로 정리합니다.
         """
       )
@@ -102,6 +113,8 @@ private extension FoundationModelsParser {
       let prompt =
         """
         기준 날짜: \(referenceDateString)
+        기준 요일(일=1, 월=2, ..., 토=7): \(referenceWeekday)
+        기준 시간대: \(timeZoneIdentifier)
         사용자 입력: \(text)
         """
 
