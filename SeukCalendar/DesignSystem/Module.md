@@ -15,6 +15,12 @@ DesignSystem/
 ├── DesignSystem.xcodeproj
 ├── DesignSystem/
 │   ├── Components/
+│   │   ├── Calendar/
+│   │   │   ├── CalendarMonthView.swift
+│   │   │   ├── CalendarWeekView.swift
+│   │   │   ├── CalendarDayView.swift
+│   │   │   ├── DateCell.swift
+│   │   │   └── ScheduleCard.swift
 │   │   ├── Tier1/    # 단일 컴포넌트
 │   │   ├── Tier2/    # 복수 개의 Tier1 컴포넌트
 │   │   └── Tier3/    # 복수 개의 Tier2 컴포넌트
@@ -30,6 +36,15 @@ DesignSystem/
 ```
 
 ## 주요 구성요소
+
+### Calendar 컴포넌트
+
+**위치**: `DesignSystem/Components/Calendar/`
+- CalendarMonthView: 월간 캘린더 그리드
+- CalendarWeekView: 주간 헤더 + 선택 날짜 타임라인
+- CalendarDayView: 일간 타임라인
+- DateCell: 날짜 셀 공통 컴포넌트
+- ScheduleCard: 일정 카드 공통 컴포넌트
 
 ### Atomic Design 구조
 

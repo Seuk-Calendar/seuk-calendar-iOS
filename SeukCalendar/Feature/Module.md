@@ -21,7 +21,10 @@ Feature/
 │   ├── Calendar/
 │   │   ├── CalendarView.swift
 │   │   ├── CalendarViewModel.swift
+│   │   ├── CalendarViewModel+Action.swift
+│   │   ├── CalendarViewModel+Model.swift
 │   │   └── Components/
+│   │       └── ScheduleDetailView.swift
 │   └── CalendarViewFactory.swift
 └── FeatureTests/
 ```
@@ -43,10 +46,14 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 **Calendar**: `CalendarFeature/Calendar/`
 - CalendarView.swift: Calendar View
 - CalendarViewModel.swift: Calendar ViewModel (@Observable)
-- Components/: 하위 컴포넌트
+- CalendarViewModel+Action.swift: ViewModel Action enum 분리
+- CalendarViewModel+Model.swift: ViewModel 보조 enum(ViewMode/PermissionState) 분리
+- Components/ScheduleDetailView.swift: 일정 상세 화면
 
 **ViewFactory**: `CalendarFeature/CalendarViewFactory.swift`
 - 화면 생성 팩토리
+- `CalendarViewModel` 생성/주입 책임 보유 (`CalendarView`는 필수 주입만 허용)
+- DIContainer 도입 전까지 `makeCalendarView()` 내부에서 전달받은 `ScheduleRepository`로 `CalendarViewModel`을 생성
 
 **구현 참고**:
 - ViewModel: `CalendarFeature/Calendar/CalendarViewModel.swift`
@@ -97,6 +104,13 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - Properties: 의존성, 공개 상태, 비공개 상태
 - Action: Lifecycle, ViewAction으로 구분
 - send(_:): Action 처리
+
+**ViewModel 파일 구조 표준**:
+- `SomeViewModel.swift`: 상태/비즈니스 로직/의존성 주입
+- `SomeViewModel+Action.swift`: `Action` enum만 정의
+- `SomeViewModel+Model.swift`: `ViewState`, `ViewMode` 등 보조 enum 정의
+- View는 `init(viewModel: SomeViewModel)` 형태의 필수 주입만 허용
+- Factory는 `makeView()`에서 ViewModel을 생성 후 View에 주입
 
 **View**: SwiftUI View
 
