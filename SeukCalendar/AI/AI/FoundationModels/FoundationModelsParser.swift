@@ -186,9 +186,9 @@ private extension FoundationModelsParser {
 
   func parseExplicitDate(from text: String) -> Date? {
     guard let match = text.firstRegexMatch(pattern: "(\\d{4})[./-](\\d{1,2})[./-](\\d{1,2})"),
-          let year = Int(match[1]),
-          let month = Int(match[2]),
-          let day = Int(match[3])
+          let year = Int(match[safe: 1] ?? ""),
+          let month = Int(match[safe: 2] ?? ""),
+          let day = Int(match[safe: 3] ?? "")
     else {
       return nil
     }
@@ -214,10 +214,10 @@ private extension FoundationModelsParser {
     ]
 
     if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)요일") {
-      return mapping[match[1]]
+      return mapping[match[safe: 1] ?? ""]
     }
     if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)요") {
-      return mapping[match[1]]
+      return mapping[match[safe: 1] ?? ""]
     }
 
     return nil
@@ -225,9 +225,9 @@ private extension FoundationModelsParser {
 
   func resolveTime(from text: String) -> String? {
     if let match = text.firstRegexMatch(pattern: "(오전|오후|아침|점심|저녁|밤)?\\s*(\\d{1,2})\\s*시(?:\\s*(\\d{1,2})\\s*분?)?"),
-       let parsedHour = Int(match[2]) {
-      let meridiem = match[1]
-      let minute = Int(match[3] ?? "") ?? 0
+       let parsedHour = Int(match[safe: 2] ?? "") {
+      let meridiem = match[safe: 1] ?? ""
+      let minute = Int(match[safe: 3] ?? "") ?? 0
       guard (0 ..< 60).contains(minute) else {
         return nil
       }
@@ -248,8 +248,8 @@ private extension FoundationModelsParser {
     }
 
     if let match = text.firstRegexMatch(pattern: "\\b(\\d{1,2}):(\\d{2})\\b"),
-       let hour = Int(match[1]),
-       let minute = Int(match[2]),
+       let hour = Int(match[safe: 1] ?? ""),
+       let minute = Int(match[safe: 2] ?? ""),
        (0 ..< 24).contains(hour),
        (0 ..< 60).contains(minute) {
       return String(format: "%02d:%02d", hour, minute)
@@ -262,19 +262,21 @@ private extension FoundationModelsParser {
     let hourMatch = text.firstRegexMatch(pattern: "(\\d+)\\s*시간")
     let minuteMatch = text.firstRegexMatch(pattern: "(\\d+)\\s*분")
 
-    let hours = hourMatch.flatMap { Int($0[1]) } ?? 0
-    let minutes = minuteMatch.flatMap { Int($0[1]) } ?? 0
+    let hours = hourMatch.flatMap { Int($0[safe: 1] ?? "") } ?? 0
+    let minutes = minuteMatch.flatMap { Int($0[safe: 1] ?? "") } ?? 0
     let total = (hours * 60) + minutes
 
     return total > 0 ? total : nil
   }
 
   func resolveLocation(from text: String) -> String? {
-    guard let match = text.firstRegexMatch(pattern: "([가-힣A-Za-z0-9\\s]{1,20})에서") else {
+    guard let match = text.firstRegexMatch(pattern: "([가-힣A-Za-z0-9]+)에서"),
+          let locationGroup = match[safe: 1]
+    else {
       return nil
     }
 
-    let location = match[1].trimmingCharacters(in: .whitespacesAndNewlines)
+    let location = locationGroup.trimmingCharacters(in: .whitespacesAndNewlines)
     return location.isEmpty ? nil : location
   }
 
@@ -319,10 +321,13 @@ private extension String {
       return nil
     }
 
-    return (0 ..< match.numberOfRanges).compactMap { index in
+    // Preserve capture indices even when optional groups are not matched.
+    return (0 ..< match.numberOfRanges).map { index in
       let nsRange = match.range(at: index)
-      guard let range = Range(nsRange, in: self) else {
-        return nil
+      guard nsRange.location != NSNotFound,
+            let range = Range(nsRange, in: self)
+      else {
+        return ""
       }
       return String(self[range])
     }
