@@ -6595,8 +6595,8 @@
     {
       "type": "frame",
       "id": "fgPYc",
-      "x": -50,
-      "y": 2846,
+      "x": -57,
+      "y": 3260,
       "name": "Home - Calendar",
       "clip": true,
       "width": 402,
@@ -7634,18 +7634,10 @@
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "ellipse",
-                          "id": "mBxIq",
-                          "name": "d26bg",
-                          "fill": "$primary1",
-                          "width": 32,
-                          "height": 32
-                        },
-                        {
                           "type": "text",
                           "id": "GH6eM",
                           "name": "d26t",
-                          "fill": "$white",
+                          "fill": "$gray9",
                           "content": "26",
                           "fontFamily": "Pretendard",
                           "fontSize": 14,
@@ -7655,7 +7647,7 @@
                           "type": "ellipse",
                           "id": "icihm",
                           "name": "d26dot",
-                          "fill": "$white",
+                          "fill": "#ffc5c5ff",
                           "width": 5,
                           "height": 5
                         }
@@ -7672,18 +7664,6 @@
                       "justifyContent": "center",
                       "alignItems": "center",
                       "children": [
-                        {
-                          "type": "ellipse",
-                          "id": "zfA05",
-                          "name": "d27bg",
-                          "width": 32,
-                          "height": 32,
-                          "stroke": {
-                            "align": "inside",
-                            "thickness": 2,
-                            "fill": "$primary1"
-                          }
-                        },
                         {
                           "type": "text",
                           "id": "KsgCK",
@@ -8067,8 +8047,8 @@
     {
       "type": "frame",
       "id": "LToCb",
-      "x": 502,
-      "y": 2846,
+      "x": 494,
+      "y": 3260,
       "name": "Add Schedule Sheet",
       "clip": true,
       "width": 402,
@@ -8414,8 +8394,8 @@
     {
       "type": "frame",
       "id": "xahay",
-      "x": 1054,
-      "y": 2846,
+      "x": 1046,
+      "y": 3260,
       "name": "AI Parse Result",
       "clip": true,
       "width": 402,
@@ -8817,8 +8797,8 @@
     {
       "type": "frame",
       "id": "Bgcea",
-      "x": 1606,
-      "y": 2846,
+      "x": 1599,
+      "y": 3260,
       "name": "Recap",
       "clip": true,
       "width": 402,
@@ -9472,8 +9452,8 @@
     {
       "type": "frame",
       "id": "M6mTC",
-      "x": 2158,
-      "y": 2846,
+      "x": 2150,
+      "y": 3260,
       "name": "Settings",
       "clip": true,
       "width": 402,
