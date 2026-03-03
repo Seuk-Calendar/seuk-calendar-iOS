@@ -1,15 +1,16 @@
 @testable import CalendarFeature
 import CalendarDomain
-import DesignSystem
+import CalendarDomainTestSupport
+import Foundation
 import Testing
 
 struct CalendarFeatureTests {
-  @Test
+  @Test("onAppear_권한_허용시_가시_일정을_로드합니다")
   @MainActor
   func onAppear_loadsVisibleEvents_whenPermissionGranted() async {
     let mockRepository = MockScheduleRepository()
     mockRepository.authorizationStatusValue = .fullAccess
-    mockRepository.schedulesToReturn = [fixtureSchedule()]
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule()]
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
@@ -18,14 +19,14 @@ struct CalendarFeatureTests {
       repository: mockRepository
     )
 
-    await viewModel.send(.onAppear)
+    await viewModel.send(.onAppear).value
 
     #expect(viewModel.visibleEvents.count == 1)
     #expect(viewModel.permissionState == .granted)
     #expect(mockRepository.fetchedRanges.count == 1)
   }
 
-  @Test
+  @Test("movePeriod_월_모드에서_한달_이동합니다")
   @MainActor
   func movePeriod_shiftsMonthByOne_whenModeIsMonth() async {
     let mockRepository = MockScheduleRepository()
@@ -38,13 +39,13 @@ struct CalendarFeatureTests {
       repository: mockRepository
     )
 
-    await viewModel.send(.onAppear)
-    await viewModel.send(.movePeriod(1))
+    await viewModel.send(.onAppear).value
+    await viewModel.send(.movePeriod(1)).value
 
     #expect(Self.fixedCalendar.component(.month, from: viewModel.selectedDate) == 4)
   }
 
-  @Test
+  @Test("onAppear_권한_거부시_denied_상태를_설정합니다")
   @MainActor
   func onAppear_setsDeniedState_whenPermissionDenied() async {
     let mockRepository = MockScheduleRepository()
@@ -57,10 +58,59 @@ struct CalendarFeatureTests {
       repository: mockRepository
     )
 
-    await viewModel.send(.onAppear)
+    await viewModel.send(.onAppear).value
 
     #expect(viewModel.permissionState.isDenied)
     #expect(mockRepository.fetchedRanges.isEmpty)
+  }
+
+  @Test("onAppear_권한_변경후_재진입시_권한을_재확인합니다")
+  @MainActor
+  func onAppear_retriesPermissionCheck_whenPermissionChangesToGranted() async {
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .denied
+
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      viewMode: .month,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository
+    )
+
+    await viewModel.send(.onAppear).value
+    #expect(viewModel.permissionState.isDenied)
+
+    mockRepository.authorizationStatusValue = .fullAccess
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule()]
+
+    await viewModel.send(.onAppear).value
+
+    #expect(viewModel.permissionState == .granted)
+    #expect(viewModel.visibleEvents.count == 1)
+    #expect(mockRepository.fetchedRanges.count == 1)
+  }
+
+  @Test("eventsByDay_다일_일정을_각_일자에_포함합니다")
+  @MainActor
+  func eventsByDay_containsMultiDayEventForEachSpannedDay() async {
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureTwoDayAllDaySchedule()]
+
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      viewMode: .month,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository
+    )
+
+    await viewModel.send(.onAppear).value
+
+    let firstDay = Self.fixedDate
+    let secondDay = Self.fixedCalendar.date(byAdding: .day, value: 1, to: Self.fixedDate) ?? Self.fixedDate
+
+    #expect(viewModel.eventsByDay[firstDay]?.count == 1)
+    #expect(viewModel.eventsByDay[secondDay]?.count == 1)
   }
 }
 
@@ -106,46 +156,22 @@ private extension CalendarFeatureTests {
       isAllDay: false
     )
   }
-}
 
-@MainActor
-final class MockScheduleRepository: ScheduleRepository {
-  var authorizationStatusValue: ScheduleAuthorizationStatus = .notDetermined
-  var requestAccessResult: Result<Bool, Error> = .success(true)
-  var schedulesToReturn: [Schedule] = []
+  static func fixtureTwoDayAllDaySchedule() -> Schedule {
+    let dayComponents = DateComponents(
+      calendar: fixedCalendar,
+      timeZone: fixedCalendar.timeZone,
+      year: 2026,
+      month: 3,
+      day: 3
+    )
 
-  private(set) var requestAccessCallCount = 0
-  private(set) var fetchedRanges: [DateInterval] = []
-
-  func requestAccess() async throws -> Bool {
-    requestAccessCallCount += 1
-    return try requestAccessResult.get()
-  }
-
-  func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus {
-    authorizationStatusValue
-  }
-
-  func create(schedule: Schedule) async throws -> Schedule {
-    schedule
-  }
-
-  func fetchSchedule(id: String) async throws -> Schedule? {
-    schedulesToReturn.first(where: { $0.id == id })
-  }
-
-  func fetchSchedules(in range: DateInterval) async throws -> [Schedule] {
-    fetchedRanges.append(range)
-    return schedulesToReturn
-  }
-
-  func update(schedule: Schedule) async throws -> Schedule {
-    schedule
-  }
-
-  func deleteSchedule(id: String) async throws {}
-
-  func hasICloudCalendar() -> Bool {
-    false
+    return Schedule(
+      id: "event-2",
+      title: "이틀 일정",
+      date: dayComponents,
+      duration: 172_800,
+      isAllDay: true
+    )
   }
 }

@@ -13,7 +13,9 @@ public struct ScheduleCard: View {
   }
 
   public var body: some View {
-    Button(action: { action?() }) {
+    Button(
+      action: { action?() },
+      label: {
       HStack(alignment: .top, spacing: 12) {
         RoundedRectangle(cornerRadius: 2, style: .continuous)
           .fill(.blue)
@@ -47,7 +49,8 @@ public struct ScheduleCard: View {
         RoundedRectangle(cornerRadius: 12, style: .continuous)
           .fill(Color(uiColor: .secondarySystemGroupedBackground))
       )
-    }
+      }
+    )
     .buttonStyle(.plain)
   }
 }

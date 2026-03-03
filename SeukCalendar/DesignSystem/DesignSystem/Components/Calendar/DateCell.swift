@@ -25,7 +25,9 @@ public struct DateCell: View {
   }
 
   public var body: some View {
-    Button(action: { action?() }) {
+    Button(
+      action: { action?() },
+      label: {
       VStack(spacing: 6) {
         Text(dayText)
           .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
@@ -47,7 +49,8 @@ public struct DateCell: View {
       .frame(height: 48)
       .background(backgroundColor)
       .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-    }
+      }
+    )
     .buttonStyle(.plain)
   }
 }

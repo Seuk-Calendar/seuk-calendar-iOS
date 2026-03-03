@@ -2,6 +2,9 @@ import CalendarDomain
 import Foundation
 
 public final class MockScheduleRepository: ScheduleRepository {
+  public var requestAccessResult: Result<Bool, Error> = .success(true)
+  public var authorizationStatusValue: ScheduleAuthorizationStatus = .fullAccess
+  public var schedulesToReturn: [Schedule] = []
   public var createdSchedules: [Schedule] = [
     Schedule(
       id: "event-1",
@@ -20,14 +23,20 @@ public final class MockScheduleRepository: ScheduleRepository {
   public var fetchedScheduleIDs: [String] = []
   public var fetchedRanges: [DateInterval] = []
 
+  public private(set) var requestAccessCallCount = 0
+  public private(set) var fetchAuthorizationStatusCallCount = 0
+  public private(set) var hasICloudCalendarCallCount = 0
+
   public init() {}
 
   public func requestAccess() async throws -> Bool {
-    true
+    requestAccessCallCount += 1
+    return try requestAccessResult.get()
   }
 
   public func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus {
-    .fullAccess
+    fetchAuthorizationStatusCallCount += 1
+    return authorizationStatusValue
   }
 
   public func create(schedule: Schedule) async throws -> Schedule {
@@ -41,11 +50,17 @@ public final class MockScheduleRepository: ScheduleRepository {
 
   public func fetchSchedule(id: String) async throws -> Schedule? {
     fetchedScheduleIDs.append(id)
-    return createdSchedules.first { $0.id == id }
+    if let fetched = schedulesToReturn.first(where: { $0.id == id }) {
+      return fetched
+    }
+    return createdSchedules.first(where: { $0.id == id })
   }
 
   public func fetchSchedules(in range: DateInterval) async throws -> [Schedule] {
     fetchedRanges.append(range)
+    if !schedulesToReturn.isEmpty {
+      return schedulesToReturn
+    }
     return createdSchedules
   }
 
@@ -59,6 +74,7 @@ public final class MockScheduleRepository: ScheduleRepository {
   }
 
   public func hasICloudCalendar() -> Bool {
-    true
+    hasICloudCalendarCallCount += 1
+    return true
   }
 }

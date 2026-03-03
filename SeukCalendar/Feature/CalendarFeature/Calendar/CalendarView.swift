@@ -42,7 +42,7 @@ public struct CalendarView: View {
         }
       }
       .task {
-        await viewModel.send(.onAppear)
+        viewModel.send(.onAppear)
       }
       .navigationDestination(for: CalendarEvent.self) { event in
         ScheduleDetailView(event: event)
@@ -65,9 +65,7 @@ private extension CalendarView {
   var dateHeader: some View {
     HStack(spacing: 12) {
       Button {
-        Task {
-          await viewModel.send(.movePeriod(-1))
-        }
+        viewModel.send(.movePeriod(-1))
       } label: {
         Image(systemName: "chevron.left")
           .font(.system(size: 14, weight: .semibold))
@@ -78,18 +76,14 @@ private extension CalendarView {
         .frame(maxWidth: .infinity)
 
       Button {
-        Task {
-          await viewModel.send(.movePeriod(1))
-        }
+        viewModel.send(.movePeriod(1))
       } label: {
         Image(systemName: "chevron.right")
           .font(.system(size: 14, weight: .semibold))
       }
 
       Button("오늘") {
-        Task {
-          await viewModel.send(.moveToToday)
-        }
+        viewModel.send(.moveToToday)
       }
       .font(.system(size: 14, weight: .medium))
     }
@@ -118,9 +112,7 @@ private extension CalendarView {
           selectedDate: viewModel.selectedDate,
           eventsByDay: viewModel.eventsByDay,
           onSelectDate: { date in
-            Task {
-              await viewModel.send(.selectDate(date))
-            }
+            viewModel.send(.selectDate(date))
           }
         )
 
@@ -138,9 +130,7 @@ private extension CalendarView {
       selectedDate: viewModel.selectedDate,
       eventsByDay: viewModel.eventsByDay,
       onSelectDate: { date in
-        Task {
-          await viewModel.send(.selectDate(date))
-        }
+        viewModel.send(.selectDate(date))
       },
       onSelectEvent: openScheduleDetail
     )
@@ -182,9 +172,7 @@ private extension CalendarView {
     Binding(
       get: { viewModel.viewMode },
       set: { mode in
-        Task {
-          await viewModel.send(.changeMode(mode))
-        }
+        viewModel.send(.changeMode(mode))
       }
     )
   }
@@ -200,10 +188,8 @@ private extension CalendarView {
           return
         }
 
-        Task {
-          let offset = value.translation.width < 0 ? 1 : -1
-          await viewModel.send(.movePeriod(offset))
-        }
+        let offset = value.translation.width < 0 ? 1 : -1
+        viewModel.send(.movePeriod(offset))
       }
   }
 }

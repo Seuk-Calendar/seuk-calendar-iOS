@@ -15,6 +15,7 @@ public final class CalendarViewModel {
   private let repository: any ScheduleRepository
   private let calendar: Calendar
   private var hasLoaded = false
+  private var pendingActionTask: Task<Void, Never>?
 
   public init(
     selectedDate: Date = Date(),
@@ -28,39 +29,17 @@ public final class CalendarViewModel {
     self.repository = repository
   }
 
-  public func send(_ action: Action) async {
-    switch action {
-    case .onAppear:
-      await loadIfNeeded()
-    case let .changeMode(mode):
-      guard viewMode != mode else { return }
-      viewMode = mode
-      await reloadVisibleEvents()
-    case let .selectDate(date):
-      let previousDate = selectedDate
-      selectedDate = calendar.startOfDay(for: date)
-
-      switch viewMode {
-      case .day:
-        await reloadVisibleEvents()
-      case .week:
-        let isSameWeek = calendar.isDate(previousDate, equalTo: selectedDate, toGranularity: .weekOfYear)
-        if !isSameWeek {
-          await reloadVisibleEvents()
-        }
-      case .month:
-        let isSameMonth = calendar.isDate(previousDate, equalTo: selectedDate, toGranularity: .month)
-        if !isSameMonth {
-          await reloadVisibleEvents()
-        }
-      }
-    case let .movePeriod(offset):
-      moveReferenceDate(by: offset)
-      await reloadVisibleEvents()
-    case .moveToToday:
-      selectedDate = calendar.startOfDay(for: Date())
-      await reloadVisibleEvents()
+  @discardableResult
+  public func send(_ action: Action) -> Task<Void, Never> {
+    let previousTask = pendingActionTask
+    let task = Task { @MainActor [weak self] in
+      _ = await previousTask?.result
+      guard let self else { return }
+      await self.handle(action)
     }
+
+    pendingActionTask = task
+    return task
   }
 
   public var titleText: String {
@@ -79,7 +58,8 @@ public final class CalendarViewModel {
 
       formatter.dateFormat = "M월 d일"
       let startText = formatter.string(from: weekInterval.start)
-      let endText = formatter.string(from: calendar.date(byAdding: .day, value: 6, to: weekInterval.start) ?? weekInterval.end)
+      let endDate = calendar.date(byAdding: .day, value: 6, to: weekInterval.start) ?? weekInterval.end
+      let endText = formatter.string(from: endDate)
       return "\(startText) - \(endText)"
     case .day:
       formatter.dateFormat = "yyyy년 M월 d일 EEEE"
@@ -88,9 +68,13 @@ public final class CalendarViewModel {
   }
 
   public var eventsByDay: [Date: [CalendarEvent]] {
-    Dictionary(grouping: visibleEvents) { event in
-      calendar.startOfDay(for: event.startDate)
+    var grouped: [Date: [CalendarEvent]] = [:]
+
+    for event in visibleEvents {
+      appendEvent(event, to: &grouped)
     }
+
+    return grouped
   }
 
   public func events(on date: Date) -> [CalendarEvent] {
@@ -108,18 +92,73 @@ public final class CalendarViewModel {
 }
 
 private extension CalendarViewModel {
+  func handle(_ action: Action) async {
+    switch action {
+    case .onAppear:
+      await loadIfNeeded()
+    case let .changeMode(mode):
+      await handleChangeMode(mode)
+    case let .selectDate(date):
+      await handleSelectDate(date)
+    case let .movePeriod(offset):
+      await handleMovePeriod(offset)
+    case .moveToToday:
+      await handleMoveToToday()
+    }
+  }
+
+  func handleChangeMode(_ mode: ViewMode) async {
+    guard viewMode != mode else { return }
+
+    viewMode = mode
+    await reloadVisibleEvents()
+  }
+
+  func handleSelectDate(_ date: Date) async {
+    let previousDate = selectedDate
+    selectedDate = calendar.startOfDay(for: date)
+
+    guard shouldReloadAfterSelectingDate(from: previousDate, to: selectedDate) else {
+      return
+    }
+
+    await reloadVisibleEvents()
+  }
+
+  func handleMovePeriod(_ offset: Int) async {
+    moveReferenceDate(by: offset)
+    await reloadVisibleEvents()
+  }
+
+  func handleMoveToToday() async {
+    selectedDate = calendar.startOfDay(for: Date())
+    await reloadVisibleEvents()
+  }
+
+  func shouldReloadAfterSelectingDate(from previousDate: Date, to currentDate: Date) -> Bool {
+    switch viewMode {
+    case .day:
+      return true
+    case .week:
+      return !calendar.isDate(previousDate, equalTo: currentDate, toGranularity: .weekOfYear)
+    case .month:
+      return !calendar.isDate(previousDate, equalTo: currentDate, toGranularity: .month)
+    }
+  }
+
   func loadIfNeeded() async {
+    let isAuthorized = await ensureCalendarPermission()
+    guard isAuthorized else {
+      hasLoaded = false
+      visibleEvents = []
+      return
+    }
+
     guard !hasLoaded else {
       return
     }
 
     hasLoaded = true
-
-    let isAuthorized = await ensureCalendarPermission()
-    guard isAuthorized else {
-      return
-    }
-
     await reloadVisibleEvents()
   }
 
@@ -199,11 +238,28 @@ private extension CalendarViewModel {
 
     switch viewMode {
     case .month:
-      selectedDate = calendar.date(byAdding: .month, value: offset, to: selectedDate).map(calendar.startOfDay(for:)) ?? selectedDate
+      selectedDate = calendar.date(byAdding: .month, value: offset, to: selectedDate)
+        .map(calendar.startOfDay(for:)) ?? selectedDate
     case .week:
-      selectedDate = calendar.date(byAdding: .day, value: offset * 7, to: selectedDate).map(calendar.startOfDay(for:)) ?? selectedDate
+      selectedDate = calendar.date(byAdding: .day, value: offset * 7, to: selectedDate)
+        .map(calendar.startOfDay(for:)) ?? selectedDate
     case .day:
-      selectedDate = calendar.date(byAdding: .day, value: offset, to: selectedDate).map(calendar.startOfDay(for:)) ?? selectedDate
+      selectedDate = calendar.date(byAdding: .day, value: offset, to: selectedDate)
+        .map(calendar.startOfDay(for:)) ?? selectedDate
+    }
+  }
+
+  func appendEvent(_ event: CalendarEvent, to grouped: inout [Date: [CalendarEvent]]) {
+    var cursor = calendar.startOfDay(for: event.startDate)
+    let effectiveEndDate = max(event.endDate, event.startDate.addingTimeInterval(1))
+
+    while cursor < effectiveEndDate {
+      grouped[cursor, default: []].append(event)
+
+      guard let nextDay = calendar.date(byAdding: .day, value: 1, to: cursor) else {
+        break
+      }
+      cursor = nextDay
     }
   }
 

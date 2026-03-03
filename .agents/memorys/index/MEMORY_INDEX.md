@@ -11,3 +11,5 @@
 | 2026-03-03 | `entries/2026-03-03-viewmodel-action-model-separation.md` | ViewModel 내 Action/보조 enum을 분리 파일 규칙으로 관리하지 않아 사용자 교정을 받은 사례 | workflow:feature, action:split-file, failure:convention-miss |
 | 2026-03-03 | `entries/2026-03-03-calendar-viewmodel-mandatory-injection.md` | CalendarView에서 ViewModel 기본값/옵셔널 주입을 허용해 DI 구조가 흐려진 사례 | workflow:di, action:inject, failure:optional-injection |
 | 2026-03-03 | `entries/2026-03-03-factory-inline-viewmodel-before-dicontainer.md` | DIContainer 도입 전 단계에서 Factory를 과도하게 추상화한 사례 | workflow:factory, action:simplify, failure:premature-abstraction |
+| 2026-03-03 | `entries/2026-03-03-test-annotation-korean-and-compile-safety.md` | 테스트 코드 컴파일 안정성과 `@Test` 한글 설명 규칙을 누락해 사용자 교정을 받은 사례 | workflow:test, failure:compile-errors, action:test-annotation |
+| 2026-03-03 | `entries/2026-03-03-reuse-testsupport-mock-before-inline.md` | 기존 TestSupport Mock 존재 여부를 확인하지 않고 Feature 테스트 파일에 중복 Mock를 선언한 사례 | workflow:test, failure:duplicate-mock, action:reuse |
