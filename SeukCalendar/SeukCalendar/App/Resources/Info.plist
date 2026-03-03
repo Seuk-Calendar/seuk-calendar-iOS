@@ -46,6 +46,12 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>일정을 생성하고 수정하려면 캘린더 접근 권한이 필요합니다.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>일정을 조회하고 동기화하려면 캘린더 접근 권한이 필요합니다.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>일정을 저장하려면 캘린더 접근 권한이 필요합니다.</string>
 	<key>Secrets</key>
 	<dict>
 		<key>BASE_URL</key>

@@ -19,8 +19,7 @@ Data/
 │   └── Network/
 ├── CalendarData/
 │   ├── Repository/
-│   │   └── CalendarRepositoryImpl.swift
-│   └── Mapper/
+│   │   └── EventKitScheduleRepository.swift
 ├── UserData/
 │   └── Repository/
 ├── KeyChainData/
@@ -46,14 +45,12 @@ Data/
 CalendarDomain의 Repository 구현.
 
 **Repository**: `CalendarData/Repository/`
-- CalendarRepositoryImpl.swift: 실제 구현
-
-**Mapper**: `CalendarData/Mapper/`
-- DTO → Domain Model 변환 로직
+- `EventKitScheduleRepository.swift`: EventKit 권한 요청, 일정 CRUD, EKEvent ↔ Schedule 변환
 
 **구현 참고**:
-- Repository 구현: `CalendarData/Repository/CalendarRepositoryImpl.swift`
-- DTO 변환: `toDomain()` 메서드
+- Repository 구현: `CalendarData/Repository/EventKitScheduleRepository.swift`
+- EventKit 권한 요청: `requestAccess()`
+- iCloud 캘린더 확인: `hasICloudCalendar()`
 
 ### 3. UserData
 
@@ -85,6 +82,7 @@ UserDomain의 Repository 구현.
 - **Common**: CalendarData, UserData가 Common에 의존
 - **외부 라이브러리**:
   - Alamofire: HTTP 통신 (Common)
+  - EventKit: 시스템 캘린더 접근 및 동기화
 
 ## Xcode 프로젝트 설정
 

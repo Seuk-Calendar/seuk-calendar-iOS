@@ -36,11 +36,16 @@ Domain/
 캘린더 관련 비즈니스 로직.
 
 **Entity**: `CalendarDomain/Entity/`
+- `Schedule.swift`: 일정 도메인 모델 (title, date/time, duration, recurrence)
 
 **UseCase**: `CalendarDomain/UseCase/`
+- `CreateScheduleUseCase.swift`: 일정 생성
+- `FetchSchedulesUseCase.swift`: 일정 단건/기간 조회
+- `UpdateScheduleUseCase.swift`: 일정 수정
+- `DeleteScheduleUseCase.swift`: 일정 삭제
 
 **Repository**: `CalendarDomain/Repository/`
-- CalendarRepository.swift: Repository Interface (Protocol)
+- `ScheduleRepository.swift`: EventKit 기반 저장소와의 계약 인터페이스
 
 **Service**: `CalendarDomain/Service/`
 
