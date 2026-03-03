@@ -4,6 +4,25 @@ import Testing
 internal import CalendarDomain
 
 struct AITests {
+  @Test("다음주_금요일_저녁_입력을_파싱합니다")
+  func parseNextWeekFridayEvening() async throws {
+    let parser = FoundationModelsParser(
+      calendar: Self.fixedCalendar,
+      locale: Locale(identifier: "ko_KR"),
+      preferFoundationModels: true
+    )
+
+    let parsed = try await parser.parse(
+      text: "다음주 금요일 저녁 7시 홍대에서 친구들이랑 저녁",
+      referenceDate: Self.fixedDate
+    )
+
+    #expect(parsed.dateString == "2026-03-13")
+    #expect(parsed.startTime == "19:00")
+    #expect(parsed.location == "홍대")
+    #expect(parsed.isAllDay == false)
+  }
+
   @Test("휴리스틱_내일_오후시간을_절대날짜와_24시간으로_파싱합니다")
   func parseTomorrowWithTimeByHeuristic() async throws {
     let parser = FoundationModelsParser(
@@ -34,6 +53,25 @@ struct AITests {
 
     let parsed = try await parser.parse(
       text: "다음주 금요일 저녁 7시 홍대에서 친구들이랑 저녁",
+      referenceDate: Self.fixedDate
+    )
+
+    #expect(parsed.dateString == "2026-03-13")
+    #expect(parsed.startTime == "19:00")
+    #expect(parsed.location == "홍대")
+    #expect(parsed.isAllDay == false)
+  }
+
+  @Test("휴리스틱_담주_금욜_표현을_파싱합니다")
+  func parseNextWeekFridayAbbreviationByHeuristic() async throws {
+    let parser = FoundationModelsParser(
+      calendar: Self.fixedCalendar,
+      locale: Locale(identifier: "ko_KR"),
+      preferFoundationModels: false
+    )
+
+    let parsed = try await parser.parse(
+      text: "담주 금욜 저녁 7시 홍대에서 친구들이랑 저녁",
       referenceDate: Self.fixedDate
     )
 

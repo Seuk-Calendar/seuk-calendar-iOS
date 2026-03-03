@@ -56,7 +56,11 @@ public final class FoundationModelsParser: ScheduleNaturalLanguageParser {
            text: trimmedText,
            referenceDate: referenceDate
          ) {
-        return foundationModelsResult
+        return normalizedFoundationModelsResult(
+          foundationModelsResult,
+          text: trimmedText,
+          referenceDate: referenceDate
+        )
       }
     #endif
 
@@ -120,6 +124,55 @@ private extension FoundationModelsParser {
     }
   #endif
 
+  func normalizedFoundationModelsResult(
+    _ foundationModelsResult: ParsedEvent,
+    text: String,
+    referenceDate: Date
+  ) -> ParsedEvent {
+    var normalized = foundationModelsResult
+    let heuristicResult = parseWithHeuristic(text: text, referenceDate: referenceDate)
+
+    if containsDateSignal(in: text), let heuristicDate = heuristicResult?.dateString {
+      normalized.dateString = heuristicDate
+    }
+
+    if containsTimeSignal(in: text) {
+      if let heuristicStartTime = heuristicResult?.startTime {
+        normalized.startTime = heuristicStartTime
+        normalized.isAllDay = false
+      }
+    }
+
+    if containsLocationSignal(in: text),
+       let heuristicLocation = heuristicResult?.location {
+      normalized.location = heuristicLocation
+    }
+
+    if normalized.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+       let heuristicTitle = heuristicResult?.title {
+      normalized.title = heuristicTitle
+    }
+
+    if !isValidDateString(normalized.dateString), let heuristicDate = heuristicResult?.dateString {
+      normalized.dateString = heuristicDate
+    }
+
+    if let startTime = normalized.startTime,
+       !startTime.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+       !isValidTimeString(startTime) {
+      normalized.startTime = heuristicResult?.startTime
+    }
+
+    if normalized.startTime?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+      normalized.startTime = nil
+      if containsTimeSignal(in: text) {
+        normalized.isAllDay = false
+      }
+    }
+
+    return normalized
+  }
+
   func parseWithHeuristic(text: String, referenceDate: Date) -> ParsedEvent? {
     guard let resolvedDate = resolveDate(from: text, referenceDate: referenceDate) else {
       return nil
@@ -155,6 +208,7 @@ private extension FoundationModelsParser {
     }
 
     let normalizedReferenceDate = calendar.startOfDay(for: referenceDate)
+    let hasNextWeekKeyword = text.range(of: "다음\\s*주|담주", options: .regularExpression) != nil
 
     if text.contains("오늘") {
       return normalizedReferenceDate
@@ -167,6 +221,10 @@ private extension FoundationModelsParser {
     }
 
     guard let targetWeekday = parseWeekday(from: text) else {
+      // "다음주/담주" 신호는 있는데 요일을 해석하지 못하면 오답(기준일) 보정을 피하기 위해 실패로 처리한다.
+      if hasNextWeekKeyword {
+        return nil
+      }
       return normalizedReferenceDate
     }
 
@@ -176,7 +234,6 @@ private extension FoundationModelsParser {
       daysToAdd = 7
     }
 
-    let hasNextWeekKeyword = text.range(of: "다음\\s*주|담주", options: .regularExpression) != nil
     if hasNextWeekKeyword {
       daysToAdd += 7
     }
@@ -213,10 +270,13 @@ private extension FoundationModelsParser {
       "토": 7,
     ]
 
-    if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)요일") {
+    if let match = text.firstRegexMatch(pattern: "(?:다음\\s*주|담주)\\s*(일|월|화|수|목|금|토)(?:요일|요|욜)?") {
       return mapping[match[safe: 1] ?? ""]
     }
-    if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)요") {
+    if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)(?:요일|요|욜)") {
+      return mapping[match[safe: 1] ?? ""]
+    }
+    if let match = text.firstRegexMatch(pattern: "(일|월|화|수|목|금|토)\\b") {
       return mapping[match[safe: 1] ?? ""]
     }
 
@@ -308,6 +368,31 @@ private extension FoundationModelsParser {
     }
 
     return title
+  }
+
+  func isValidDateString(_ value: String) -> Bool {
+    value.range(of: "^\\d{4}-\\d{2}-\\d{2}$", options: .regularExpression) != nil
+  }
+
+  func isValidTimeString(_ value: String) -> Bool {
+    value.range(of: "^([01]\\d|2[0-3]):[0-5]\\d$", options: .regularExpression) != nil
+  }
+
+  func containsDateSignal(in text: String) -> Bool {
+    text.firstRegexMatch(pattern: "(\\d{4})[./-](\\d{1,2})[./-](\\d{1,2})") != nil ||
+      text.range(
+        of: "오늘|내일|모레|다음\\s*주|담주|(일|월|화|수|목|금|토)(요일|요|욜)",
+        options: .regularExpression
+      ) != nil
+  }
+
+  func containsTimeSignal(in text: String) -> Bool {
+    text.firstRegexMatch(pattern: "(오전|오후|아침|점심|저녁|밤)?\\s*(\\d{1,2})\\s*시(?:\\s*(\\d{1,2})\\s*분?)?") != nil ||
+      text.firstRegexMatch(pattern: "\\b(\\d{1,2}):(\\d{2})\\b") != nil
+  }
+
+  func containsLocationSignal(in text: String) -> Bool {
+    text.firstRegexMatch(pattern: "([가-힣A-Za-z0-9]+)에서") != nil
   }
 }
 
