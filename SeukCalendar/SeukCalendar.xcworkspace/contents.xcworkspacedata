@@ -2,7 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Navigation/Navigation.xcodeproj">
+      location = "group:SeukCalendar.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:DesignSystem/DesignSystem.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Feature/Feature.xcodeproj">
@@ -11,7 +14,10 @@
       location = "group:Domain/Domain.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:DesignSystem/DesignSystem.xcodeproj">
+      location = "group:Data/Data.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:AI/AI.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Core/Core.xcodeproj">
@@ -20,12 +26,6 @@
       location = "group:Coordinator/Coordinator.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:AI/AI.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:Data/Data.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:SeukCalendar.xcodeproj">
+      location = "group:Navigation/Navigation.xcodeproj">
    </FileRef>
 </Workspace>
