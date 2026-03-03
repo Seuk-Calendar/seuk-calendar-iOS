@@ -6,6 +6,7 @@
 
 | 날짜(Date) | 파일(File) | 제목(Title) | 핵심 키워드(Keywords) |
 |---|---|---|---|
+| 2026-03-03 | `entries/2026-03-03-relative-date-assertion-in-tests.md` | 자연어 파싱 테스트에서 절대 날짜 하드코딩 기대값을 사용한 사례 | workflow:test, action:relative-date-assertion, failure:hardcoded-date, verify:dynamic-reference-date |
 | 2026-03-03 | `entries/2026-03-03-foundation-models-flaky-date-location.md` | Foundation Models 출력 변동을 그대로 신뢰해 날짜/장소 테스트가 플레이키해진 사례 | workflow:test, action:normalize-fm-result, failure:flaky-output, verify:repeated-only-testing |
 | 2026-03-03 | `entries/2026-03-03-core-safe-index-regex-capture.md` | 정규식 캡처 배열 인덱스를 직접 접근해 테스트 크래시가 발생한 사례 | workflow:test, action:safe-index, failure:index-out-of-range, verify:ai-test |
 | 2026-03-03 | `entries/2026-03-03-skill-sync-claude-agents.md` | 스킬 추가 시 `.claude`와 `.agents` 동시 반영을 누락한 사례 | workflow:skill, failure:location-miss, verify:dual-path-check |
