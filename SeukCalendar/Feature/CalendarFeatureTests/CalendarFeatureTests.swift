@@ -1,6 +1,6 @@
-@testable import CalendarFeature
 import CalendarDomain
 import CalendarDomainTestSupport
+@testable import CalendarFeature
 import Foundation
 import Testing
 
@@ -111,6 +111,76 @@ struct CalendarFeatureTests {
 
     #expect(viewModel.eventsByDay[firstDay]?.count == 1)
     #expect(viewModel.eventsByDay[secondDay]?.count == 1)
+  }
+
+  @Test("parseNaturalLanguage_성공시_편집용_초안을_설정합니다")
+  @MainActor
+  func parseNaturalLanguageSetsDraftWhenSucceeded() async {
+    let mockRepository = MockScheduleRepository()
+    let mockParser = MockScheduleNaturalLanguageParser()
+    mockParser.parseResult = .success(
+      ParsedEvent(
+        title: "팀 미팅",
+        dateString: "2026-03-04",
+        startTime: "15:00",
+        durationMinutes: 60,
+        location: "강남역",
+        notes: "자료 준비",
+        isAllDay: false
+      )
+    )
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      viewMode: .month,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository,
+      parser: mockParser
+    )
+
+    await viewModel.send(.updateNaturalLanguageInput("내일 오후 3시 강남역에서 팀 미팅")).value
+    await viewModel.send(.parseNaturalLanguage).value
+
+    #expect(mockParser.parseCallCount == 1)
+    #expect(viewModel.parsedEventDraft?.title == "팀 미팅")
+    #expect(viewModel.parsedEventDraft?.dateString == "2026-03-04")
+    #expect(viewModel.parseErrorMessage == nil)
+  }
+
+  @Test("saveParsedEvent_저장시_일정을_생성하고_목록을_갱신합니다")
+  @MainActor
+  func saveParsedEventCreatesScheduleAndReloadsEvents() async {
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
+    let mockParser = MockScheduleNaturalLanguageParser()
+    mockParser.parseResult = .success(
+      ParsedEvent(
+        title: "팀 미팅",
+        dateString: "2026-03-04",
+        startTime: "15:00",
+        durationMinutes: 60,
+        location: "강남역",
+        notes: nil,
+        isAllDay: false
+      )
+    )
+
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      viewMode: .month,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository,
+      parser: mockParser
+    )
+
+    await viewModel.send(.updateNaturalLanguageInput("내일 오후 3시 강남역에서 팀 미팅")).value
+    await viewModel.send(.parseNaturalLanguage).value
+    await viewModel.send(.saveParsedEvent).value
+
+    #expect(mockRepository.createdSchedules.count == 2)
+    #expect(mockRepository.createdSchedules.last?.title == "팀 미팅")
+    #expect(viewModel.parsedEventDraft == nil)
+    #expect(viewModel.naturalLanguageInput.isEmpty)
+    #expect(viewModel.visibleEvents.isEmpty == false)
   }
 }
 

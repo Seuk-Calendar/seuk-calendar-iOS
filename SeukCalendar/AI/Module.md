@@ -4,10 +4,9 @@ AI 관련 기능을 제공하는 모듈입니다.
 
 ## 역할
 
-- Foundation Models Framework 통합 (온디바이스 AI)
-- 외부 AI API 연동 (Claude, OpenAI 폴백)
-- Vision Framework OCR 처리
-- Speech Framework 음성 인식
+- Foundation Models 기반 자연어 일정 파싱
+- `CalendarDomain`의 `ScheduleNaturalLanguageParser` 구현 제공
+- Foundation Models 실패/미지원 시 휴리스틱 파싱 폴백 제공
 
 ## 디렉토리 구조
 
@@ -16,137 +15,60 @@ AI/
 ├── AI.xcodeproj
 ├── Module.md
 ├── AI/
-│   ├── FoundationModels/
-│   │   ├── FoundationModelsParser.swift
-│   │   ├── LanguageModelManager.swift
-│   │   └── ParsedEventGenerable.swift
-│   ├── ExternalAPI/
-│   │   ├── ClaudeAPIClient.swift
-│   │   ├── OpenAIAPIClient.swift
-│   │   └── ImagenAPIClient.swift
-│   ├── OCR/
-│   │   ├── VisionOCRProcessor.swift
-│   │   └── OCRResult.swift
-│   └── Speech/
-│       ├── SpeechRecognizer.swift
-│       └── SpeechResult.swift
+│   └── FoundationModels/
+│       ├── FoundationModelsParser.swift
+│       └── ParsedEventGenerable.swift
 └── AITests/
+    └── AITests.swift
 ```
 
 ## 주요 구성요소
 
-### FoundationModels
+### FoundationModelsParser
 
-**역할**: iOS 26+ Foundation Models Framework를 활용한 온디바이스 AI 파싱
+**위치**: `AI/FoundationModels/FoundationModelsParser.swift`
 
-**위치**: `AI/FoundationModels/`
-
-**파일**:
-- FoundationModelsParser.swift: 자연어 → ParsedEvent 파싱
-- LanguageModelManager.swift: LanguageModel 세션 관리
-- ParsedEventGenerable.swift: @Generable 구조체 정의
+**역할**:
+- 사용자 자연어 입력을 `ParsedEvent`로 변환
+- Foundation Models 사용 가능 시 모델 파싱 우선 시도
+- 모델 응답 실패 시 휴리스틱 파싱으로 안전하게 폴백
 
 **주요 기능**:
-- 텍스트 자연어 파싱
-- 날짜/시간 정규화
-- 반복 패턴 인식
-- 프라이버시 보호 (온디바이스 처리)
+- 상대 날짜(`오늘`, `내일`, `다음주 금요일`)를 절대 날짜로 정규화
+- `오전/오후/저녁` 시간을 24시간 형식(`HH:mm`)으로 변환
+- 시간 누락 시 `isAllDay=true` 처리
 
-### ExternalAPI
+### ParsedEventGenerable
 
-**역할**: 외부 AI API 연동 (구형 기기 폴백)
+**위치**: `AI/FoundationModels/ParsedEventGenerable.swift`
 
-**위치**: `AI/ExternalAPI/`
-
-**파일**:
-- ClaudeAPIClient.swift: Anthropic Claude API 클라이언트
-- OpenAIAPIClient.swift: OpenAI GPT API 클라이언트
-- ImagenAPIClient.swift: Google Imagen API 클라이언트 (리캡 이미지 생성)
-
-**주요 기능**:
-- Foundation Models 미지원 기기용 파싱
-- AI 이미지 생성 (데일리 프리뷰, 리캡)
-- API 키 관리 및 에러 핸들링
-
-### OCR
-
-**역할**: Vision Framework를 활용한 이미지 텍스트 인식
-
-**위치**: `AI/OCR/`
-
-**파일**:
-- VisionOCRProcessor.swift: VNRecognizeTextRequest 처리
-- OCRResult.swift: OCR 결과 모델
-
-**주요 기능**:
-- 이미지에서 텍스트 추출
-- 공연 포스터, 스크린샷 파싱
-- 한글/영문 동시 인식
-
-### Speech
-
-**역할**: Speech Framework를 활용한 음성 인식
-
-**위치**: `AI/Speech/`
-
-**파일**:
-- SpeechRecognizer.swift: SFSpeechRecognizer 래퍼
-- SpeechResult.swift: 음성 인식 결과 모델
-
-**주요 기능**:
-- 실시간 음성 → 텍스트 변환
-- 권한 요청 및 처리
-- 에러 핸들링
+**역할**:
+- Foundation Models의 구조화 출력용 `@Generable` 모델 정의
 
 ## 의존성
 
-- **Core**: 공통 유틸리티
-- **Domain**: ParsingDomain (ParsedEvent 모델 사용)
+- **Core**: 공통 에러 프로토콜(`SCError`)
+- **Domain**: `ParsedEvent`, `ScheduleNaturalLanguageParser`
 
 ## Xcode 프로젝트 설정
 
 **위치**: `AI.xcodeproj`
 
 **주요 설정**:
-- 플랫폼: iOS 18+
+- 플랫폼: iOS 26+
 - 프레임워크 타입: Dynamic Framework
-- 의존성: Core.framework, ParsingDomain.framework
+- 의존성: Core.framework, CalendarDomain.framework, UserDomain.framework
 - 타겟: AI (Framework), AITests (Unit Test)
 
 ## 사용 가이드
 
-### Foundation Models 파싱
-
-**참고**: `AI/FoundationModels/FoundationModelsParser.swift`
-
 ```swift
-let parser = FoundationModelsParser()
-let parsedEvent = try await parser.parse(text: "내일 오후 3시 강남역 미팅")
-```
+import AI
+import CalendarDomain
 
-### 외부 API 파싱 (폴백)
-
-**참고**: `AI/ExternalAPI/ClaudeAPIClient.swift`
-
-```swift
-let client = ClaudeAPIClient()
-let parsedEvent = try await client.parseEvent(text: "내일 오후 3시 강남역 미팅")
-```
-
-### OCR 처리
-
-**참고**: `AI/OCR/VisionOCRProcessor.swift`
-
-```swift
-let processor = VisionOCRProcessor()
-let ocrResult = try await processor.recognizeText(from: image)
-```
-
-### 음성 인식
-
-**참고**: `AI/Speech/SpeechRecognizer.swift`
-
-```swift
-let recognizer = SpeechRecognizer()
-try await recognizer.startRecording()
+let parser: any ScheduleNaturalLanguageParser = FoundationModelsParser()
+let parsed = try await parser.parse(
+  text: "다음주 화요일 오후 2시에 강남역에서 팀 미팅",
+  referenceDate: Date()
+)
 ```

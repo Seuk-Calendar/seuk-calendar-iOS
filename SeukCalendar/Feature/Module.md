@@ -47,13 +47,13 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - CalendarView.swift: Calendar View
 - CalendarViewModel.swift: Calendar ViewModel (@Observable)
 - CalendarViewModel+Action.swift: ViewModel Action enum 분리
-- CalendarViewModel+Model.swift: ViewModel 보조 enum(ViewMode/PermissionState) 분리
+- CalendarViewModel+Model.swift: ViewModel 보조 enum/모델(ViewMode/PermissionState/ParsedEventDraft) 분리
 - Components/ScheduleDetailView.swift: 일정 상세 화면
 
 **ViewFactory**: `CalendarFeature/CalendarViewFactory.swift`
 - 화면 생성 팩토리
 - `CalendarViewModel` 생성/주입 책임 보유 (`CalendarView`는 필수 주입만 허용)
-- DIContainer 도입 전까지 `makeCalendarView()` 내부에서 전달받은 `ScheduleRepository`로 `CalendarViewModel`을 생성
+- DIContainer 도입 전까지 `makeCalendarView()` 내부에서 전달받은 `ScheduleRepository`와 `ScheduleNaturalLanguageParser`로 `CalendarViewModel`을 생성
 
 **구현 참고**:
 - ViewModel: `CalendarFeature/Calendar/CalendarViewModel.swift`
@@ -102,7 +102,7 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 
 **주요 구성**:
 - Properties: 의존성, 공개 상태, 비공개 상태
-- Action: Lifecycle, ViewAction으로 구분
+- Action: 캘린더 탐색 액션 + 자연어 파싱/저장 액션
 - send(_:): Action 처리
 
 **ViewModel 파일 구조 표준**:
@@ -120,6 +120,7 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - @State로 ViewModel 보유
 - .send()로 Action 전달
 - ViewModel의 공개 상태 구독
+- 자연어 입력 필드 + 파싱 결과 편집 카드 + 저장 버튼 UI 포함
 
 ### ViewFactory
 

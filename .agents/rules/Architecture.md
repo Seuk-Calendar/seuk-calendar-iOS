@@ -85,10 +85,13 @@ SeukCalendar는 **Clean Architecture 기반의 3계층 구조**를 따릅니다.
 ### AI Layer
 
 **역할**:
-- AI 관련 기능 제공
+- 자연어 입력을 구조화된 일정 데이터(`ParsedEvent`)로 파싱
+- Domain의 `ScheduleNaturalLanguageParser` 인터페이스 구현 제공
 
 **주요 구성**:
-- 작성 필요
+- `FoundationModelsParser` (AI): Foundation Models 기반 파서
+- `ParsedEventGenerable` (AI): `@Generable` 구조체
+- `ParseEventUseCase` (Domain): 파싱 실행 + `ParsedEvent -> Schedule` 변환
 
 ---
 
@@ -250,6 +253,26 @@ View (자동 리렌더링)
 6. **Repository → ViewModel**: Domain Model 반환
 7. **ViewModel → View**: 상태 변경, 자동 리렌더링
 
+### AI 자연어 파싱 흐름
+
+```
+User Input (자연어)
+    ↓
+CalendarViewModel.send(.parseNaturalLanguage)
+    ↓
+ParseEventUseCase (Domain)
+    ↓
+ScheduleNaturalLanguageParser (Domain Interface)
+    ↑ implements
+FoundationModelsParser (AI)
+    ↓
+ParsedEvent
+    ↓ (수정 가능)
+ParseEventUseCase.toSchedule()
+    ↓
+CreateScheduleUseCase → ScheduleRepository (EventKit)
+```
+
 ---
 
 ## 네트워킹
@@ -345,6 +368,12 @@ Pool iOS 프로젝트에서 사용하는 주요 기술 및 라이브러리입니
 | **SwiftLint** | 코드 스타일 검사 |
 | **Fastlane** | 빌드 및 배포 자동화 |
 
+### AI / ML
+
+| 기술 | 용도 |
+|------|------|
+| **Foundation Models** (iOS 26+) | 자연어 일정 파싱 |
+
 ### 기술 스택 요약
 
 | 카테고리 | 주요 기술 |
@@ -352,6 +381,7 @@ Pool iOS 프로젝트에서 사용하는 주요 기술 및 라이브러리입니
 | **UI** | SwiftUI, @Observable |
 | **아키텍처** | Clean Architecture, MVVM |
 | **DI** | Swinject |
+| **AI** | Foundation Models |
 | **네트워킹** | 작성 필요 |
 | **보안** | Keychain Services |
 | **모듈 관리** | Xcode Projects (xcodeproj) |

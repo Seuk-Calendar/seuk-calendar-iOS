@@ -13,6 +13,7 @@ public struct CalendarView: View {
   public var body: some View {
     NavigationStack(path: $path) {
       VStack(spacing: 16) {
+        aiParsingSection
         modePicker
         dateHeader
         permissionDescription
@@ -34,7 +35,7 @@ public struct CalendarView: View {
       .navigationTitle("캘린더")
       .navigationBarTitleDisplayMode(.inline)
       .overlay {
-        if viewModel.isLoading {
+        if viewModel.isLoading || viewModel.isParsingNaturalLanguage || viewModel.isSavingParsedEvent {
           ProgressView()
             .padding(20)
             .background(.ultraThinMaterial)
@@ -52,6 +53,99 @@ public struct CalendarView: View {
 }
 
 private extension CalendarView {
+  var aiParsingSection: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Text("AI 일정 파싱")
+        .font(.system(size: 15, weight: .semibold))
+
+      TextField(
+        "예: 다음주 화요일 오후 2시에 강남역에서 팀장님 미팅",
+        text: naturalLanguageInputBinding,
+        axis: .vertical
+      )
+      .textFieldStyle(.roundedBorder)
+      .lineLimit(2 ... 4)
+
+      HStack(spacing: 8) {
+        Button("파싱") {
+          viewModel.send(.parseNaturalLanguage)
+        }
+        .buttonStyle(.borderedProminent)
+        .disabled(viewModel.naturalLanguageInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+        if viewModel.parsedEventDraft != nil {
+          Button("초기화") {
+            viewModel.send(.clearParsedEvent)
+          }
+          .buttonStyle(.bordered)
+        }
+      }
+
+      if let parseErrorMessage = viewModel.parseErrorMessage {
+        Text(parseErrorMessage)
+          .font(.system(size: 12, weight: .regular))
+          .foregroundStyle(.red)
+      }
+
+      if let parserStatusMessage = viewModel.parserStatusMessage {
+        Text(parserStatusMessage)
+          .font(.system(size: 12, weight: .regular))
+          .foregroundStyle(.green)
+      }
+
+      if viewModel.parsedEventDraft != nil {
+        parsedEventEditorCard
+      }
+    }
+    .padding(12)
+    .background(Color(.secondarySystemBackground))
+    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+  }
+
+  var parsedEventEditorCard: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      Text("파싱 결과 확인/수정")
+        .font(.system(size: 14, weight: .semibold))
+
+      TextField("제목", text: parsedTitleBinding)
+        .textFieldStyle(.roundedBorder)
+
+      TextField("날짜 (yyyy-MM-dd)", text: parsedDateStringBinding)
+        .textFieldStyle(.roundedBorder)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+
+      Toggle("종일 일정", isOn: parsedIsAllDayBinding)
+
+      if !(viewModel.parsedEventDraft?.isAllDay ?? true) {
+        TextField("시작 시간 (HH:mm)", text: parsedStartTimeBinding)
+          .textFieldStyle(.roundedBorder)
+          .textInputAutocapitalization(.never)
+          .autocorrectionDisabled()
+      }
+
+      TextField("소요 시간(분)", text: parsedDurationMinutesBinding)
+        .textFieldStyle(.roundedBorder)
+        .keyboardType(.numberPad)
+
+      TextField("장소", text: parsedLocationBinding)
+        .textFieldStyle(.roundedBorder)
+
+      TextField("메모", text: parsedNotesBinding, axis: .vertical)
+        .textFieldStyle(.roundedBorder)
+        .lineLimit(2 ... 4)
+
+      Button("일정 저장") {
+        viewModel.send(.saveParsedEvent)
+      }
+      .buttonStyle(.borderedProminent)
+      .disabled(viewModel.parsedEventDraft == nil)
+    }
+    .padding(12)
+    .background(Color(.systemBackground))
+    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+  }
+
   var modePicker: some View {
     Picker("뷰 모드", selection: modeBinding) {
       ForEach(CalendarViewModel.ViewMode.allCases) { mode in
@@ -174,6 +268,62 @@ private extension CalendarView {
       set: { mode in
         viewModel.send(.changeMode(mode))
       }
+    )
+  }
+
+  var naturalLanguageInputBinding: Binding<String> {
+    Binding(
+      get: { viewModel.naturalLanguageInput },
+      set: { viewModel.send(.updateNaturalLanguageInput($0)) }
+    )
+  }
+
+  var parsedTitleBinding: Binding<String> {
+    Binding(
+      get: { viewModel.parsedEventDraft?.title ?? "" },
+      set: { viewModel.send(.updateParsedTitle($0)) }
+    )
+  }
+
+  var parsedDateStringBinding: Binding<String> {
+    Binding(
+      get: { viewModel.parsedEventDraft?.dateString ?? "" },
+      set: { viewModel.send(.updateParsedDateString($0)) }
+    )
+  }
+
+  var parsedStartTimeBinding: Binding<String> {
+    Binding(
+      get: { viewModel.parsedEventDraft?.startTime ?? "" },
+      set: { viewModel.send(.updateParsedStartTime($0)) }
+    )
+  }
+
+  var parsedDurationMinutesBinding: Binding<String> {
+    Binding(
+      get: { viewModel.parsedEventDraft?.durationMinutesText ?? "" },
+      set: { viewModel.send(.updateParsedDurationMinutes($0)) }
+    )
+  }
+
+  var parsedLocationBinding: Binding<String> {
+    Binding(
+      get: { viewModel.parsedEventDraft?.location ?? "" },
+      set: { viewModel.send(.updateParsedLocation($0)) }
+    )
+  }
+
+  var parsedNotesBinding: Binding<String> {
+    Binding(
+      get: { viewModel.parsedEventDraft?.notes ?? "" },
+      set: { viewModel.send(.updateParsedNotes($0)) }
+    )
+  }
+
+  var parsedIsAllDayBinding: Binding<Bool> {
+    Binding(
+      get: { viewModel.parsedEventDraft?.isAllDay ?? true },
+      set: { viewModel.send(.updateParsedIsAllDay($0)) }
     )
   }
 
