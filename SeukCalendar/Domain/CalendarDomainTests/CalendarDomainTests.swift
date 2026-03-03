@@ -1,4 +1,5 @@
 @testable import CalendarDomain
+import CalendarDomainTestSupport
 import Foundation
 import Testing
 
@@ -73,65 +74,5 @@ struct CalendarDomainTests {
     try await useCase.execute(id: id)
 
     #expect(repository.deletedScheduleIDs == [id])
-  }
-}
-
-private final class MockScheduleRepository: ScheduleRepository {
-  var createdSchedules: [Schedule] = [
-    Schedule(
-      id: "event-1",
-      title: "기본 일정",
-      date: DateComponents(year: 2026, month: 3, day: 3),
-      time: DateComponents(hour: 10, minute: 0),
-      duration: 3_600,
-      location: nil,
-      notes: nil,
-      isAllDay: false,
-      recurrence: nil
-    )
-  ]
-  var updatedSchedules: [Schedule] = []
-  var deletedScheduleIDs: [String] = []
-  var fetchedScheduleIDs: [String] = []
-  var fetchedRanges: [DateInterval] = []
-
-  func requestAccess() async throws -> Bool {
-    true
-  }
-
-  func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus {
-    .fullAccess
-  }
-
-  func create(schedule: Schedule) async throws -> Schedule {
-    var schedule = schedule
-    if schedule.id == nil {
-      schedule.id = "created-\(createdSchedules.count + 1)"
-    }
-    createdSchedules.append(schedule)
-    return schedule
-  }
-
-  func fetchSchedule(id: String) async throws -> Schedule? {
-    fetchedScheduleIDs.append(id)
-    return createdSchedules.first { $0.id == id }
-  }
-
-  func fetchSchedules(in range: DateInterval) async throws -> [Schedule] {
-    fetchedRanges.append(range)
-    return createdSchedules
-  }
-
-  func update(schedule: Schedule) async throws -> Schedule {
-    updatedSchedules.append(schedule)
-    return schedule
-  }
-
-  func deleteSchedule(id: String) async throws {
-    deletedScheduleIDs.append(id)
-  }
-
-  func hasICloudCalendar() -> Bool {
-    true
   }
 }

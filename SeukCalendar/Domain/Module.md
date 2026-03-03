@@ -110,4 +110,5 @@ Domain/
 
 ### Mock 사용
 
-**참고**: `UserDomainTestSupport/MockUserRepository.swift`
+- **CalendarDomain 참고**: `CalendarDomainTestSupport/MockScheduleRepository.swift`
+- **UserDomain 참고**: `UserDomainTestSupport/` (현재 Mock 없음)
