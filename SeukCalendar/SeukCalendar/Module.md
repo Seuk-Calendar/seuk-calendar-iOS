@@ -1,0 +1,77 @@
+# SeukCalendar App Module
+
+앱 실행 진입점과 Widget Extension 연동을 담당하는 모듈입니다.
+
+## 역할
+
+- 앱 진입점(App life cycle) 관리
+- CalendarFeature 화면 생성 및 의존성 조립
+- Widget 딥링크 처리(`seukcalendar://schedule?...`)
+- App Groups 기반 위젯 데이터 동기화
+
+## 디렉토리 구조
+
+```
+SeukCalendar/
+├── SeukCalendar.xcodeproj
+├── SeukCalendar/
+│   ├── SeukCalendarApp.swift
+│   ├── ContentView.swift
+│   └── App/
+│       ├── Resources/
+│       │   ├── Info.plist
+│       │   └── SeukCalendar.entitlements
+│       └── Widget/
+│           ├── WidgetSharedConstants.swift
+│           ├── WidgetScheduleSnapshotStore.swift
+│           └── WidgetSyncingScheduleRepository.swift
+└── TodayScheduleWidget/
+    ├── TodayScheduleWidgetBundle.swift
+    ├── TodayScheduleWidget.swift
+    ├── Info.plist
+    └── TodayScheduleWidget.entitlements
+```
+
+## 타겟 구성
+
+### 1. SeukCalendar (Application)
+
+앱 본체 타겟.
+
+- `ContentView.swift`
+  - `WidgetSyncingScheduleRepository`를 사용해 일정 변경 시 위젯 스냅샷 동기화
+  - `.onOpenURL`로 위젯 딥링크를 받아 초기 날짜/일정으로 진입
+- `App/Widget/WidgetScheduleSnapshotStore.swift`
+  - App Group UserDefaults(`group.com.youngkyu.SeukCalendar`)에 위젯 스냅샷 저장
+  - 저장 직후 `WidgetCenter.reloadTimelines` 호출
+
+### 2. TodayScheduleWidget (Widget Extension)
+
+WidgetKit extension 타겟.
+
+- 지원 패밀리
+  - `systemSmall`, `systemMedium`, `systemLarge`
+  - `accessoryCircular`, `accessoryRectangular`, `accessoryInline`
+- TimelineProvider
+  - App Group UserDefaults에서 스냅샷 로드
+  - 일정 변경 시 앱에서 트리거된 reloadTimelines 반영
+- 딥링크
+  - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈
+
+## 의존성
+
+- App 타겟: AI, CalendarData, CalendarDomain, CalendarFeature
+- Widget 타겟: WidgetKit, SwiftUI, Foundation
+- 공유 저장소: App Groups (`group.com.youngkyu.SeukCalendar`)
+
+## Xcode 프로젝트 설정
+
+**위치**: `SeukCalendar/SeukCalendar.xcodeproj`
+
+**주요 설정**:
+- 타겟
+  - `SeukCalendar` (Application)
+  - `TodayScheduleWidget` (App Extension)
+- App Group Entitlements
+  - `SeukCalendar/App/Resources/SeukCalendar.entitlements`
+  - `TodayScheduleWidget/TodayScheduleWidget.entitlements`

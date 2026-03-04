@@ -32,6 +32,7 @@
 | **Data** | Repository 구현, API Client 작업 | `SeukCalendar/Data/Module.md` |
 | **AI** | AI 작업 | `SeukCalendar/AI/Module.md` |
 | **Feature** | View, ViewModel, ViewFactory 작업 | `SeukCalendar/Feature/Module.md` |
+| **SeukCalendar App** | 앱 진입점/위젯 Extension 작업 | `SeukCalendar/SeukCalendar/Module.md` |
 
 ---
 

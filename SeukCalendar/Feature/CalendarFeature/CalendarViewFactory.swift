@@ -15,7 +15,17 @@ public struct CalendarViewFactory {
   }
 
   @ViewBuilder
-  public func makeCalendarView() -> some View {
-    CalendarView(viewModel: CalendarViewModel(repository: repository, parser: parser))
+  public func makeCalendarView(
+    initialSelectedDate: Date = Date(),
+    initialScheduleID: String? = nil
+  ) -> some View {
+    CalendarView(
+      viewModel: CalendarViewModel(
+        selectedDate: initialSelectedDate,
+        repository: repository,
+        parser: parser
+      ),
+      initialScheduleID: initialScheduleID
+    )
   }
 }

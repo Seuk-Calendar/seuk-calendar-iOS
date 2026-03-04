@@ -4,10 +4,15 @@ import SwiftUI
 public struct CalendarView: View {
   @State private var viewModel: CalendarViewModel
   @State private var path: [CalendarEvent] = []
+  @State private var pendingScheduleID: String?
 
   @MainActor
-  public init(viewModel: CalendarViewModel) {
+  public init(
+    viewModel: CalendarViewModel,
+    initialScheduleID: String? = nil
+  ) {
     _viewModel = State(initialValue: viewModel)
+    _pendingScheduleID = State(initialValue: initialScheduleID)
   }
 
   public var body: some View {
@@ -44,7 +49,11 @@ public struct CalendarView: View {
         }
       }
       .task {
-        viewModel.send(.onAppear)
+        await viewModel.send(.onAppear).value
+        openPendingScheduleIfNeeded()
+      }
+      .onChange(of: viewModel.visibleEvents.map(\.id)) { _, _ in
+        openPendingScheduleIfNeeded()
       }
       .navigationDestination(for: CalendarEvent.self) { event in
         ScheduleDetailView(event: event)
@@ -54,6 +63,22 @@ public struct CalendarView: View {
 }
 
 private extension CalendarView {
+  func openPendingScheduleIfNeeded() {
+    guard let pendingScheduleID else {
+      return
+    }
+
+    let targetDate = viewModel.selectedDate
+    let events = viewModel.events(on: targetDate)
+
+    guard let event = events.first(where: { $0.id == pendingScheduleID }) else {
+      return
+    }
+
+    path = [event]
+    self.pendingScheduleID = nil
+  }
+
   var aiParsingSection: some View {
     VStack(alignment: .leading, spacing: 10) {
       Text("AI 일정 파싱")
