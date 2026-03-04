@@ -6,6 +6,7 @@
 
 | 날짜(Date) | 파일(File) | 제목(Title) | 핵심 키워드(Keywords) |
 |---|---|---|---|
+| 2026-03-04 | `entries/2026-03-04-pencil-mcp-unsaved-design-file.md` | Pencil MCP 편집 후 Design.pen 파일 저장 반영을 확인하지 않아 Git 변경 누락 위험이 발생한 사례 | workflow:design, workflow:issue-to-pr, action:pencil-mcp-edit, failure:unsaved-design-file, verify:git-status-after-mcp |
 | 2026-03-04 | `entries/2026-03-04-design-spec-user-intent-first.md` | Design-Spec 작업에서 현재 구현 기준으로 선수정해 사용자 의도 반영 순서를 어긴 사례 | workflow:docs, workflow:issue-to-pr, action:intent-first-edit, failure:premature-spec-rewrite, verify:requirement-check-before-edit |
 | 2026-03-04 | `entries/2026-03-04-notification-permission-over-gating.md` | 알림 권한 부재를 캘린더 접근 실패로 과도하게 게이팅한 사례 | workflow:feature, failure:overstrict-permission-gate, action:permission-decoupling, verify:permission-flow |
 | 2026-03-03 | `entries/2026-03-03-mainactor-task-capture-cycle.md` | @MainActor ViewModel에서 deinit 격리 오류와 Task 강한 캡처 순환 참조가 발생한 사례 | workflow:review, failure:actor-isolation-error, failure:retain-cycle, action:weak-capture |
