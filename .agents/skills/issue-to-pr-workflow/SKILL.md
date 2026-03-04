@@ -107,6 +107,33 @@ gh api repos/<owner>/<repo>/pulls/comments/<comment-id>/replies \
 2. `MEMORY_INDEX.md`에 인덱스를 추가합니다.
 3. 어떤 예방 규칙을 추가했는지 결과에 명시합니다.
 
+### 11. 이슈 완료 코멘트 등록
+
+작업/리뷰 반영이 끝나면 대상 이슈에 완료 코멘트를 반드시 등록합니다.
+
+1. 이슈 코멘트에는 최소한 다음을 포함합니다.
+   - 변경 요약(무엇을 반영했는지)
+   - 남은 TODO(후속 구현/결정 필요 항목)
+   - 관련 PR 번호/URL
+2. 백틱(`\``), `+N` 같은 문구가 포함될 수 있으므로 `--body-file` 방식으로 코멘트를 등록합니다.
+3. 등록 후 코멘트 URL을 결과 보고에 포함합니다.
+
+예시(권장):
+
+```bash
+cat > /tmp/issue-<number>-comment.md <<'EOF'
+## 변경 요약
+- ...
+
+## 남은 TODO
+- ...
+
+관련 PR: <url>
+EOF
+
+gh issue comment <number> --body-file /tmp/issue-<number>-comment.md
+```
+
 ## 결과 보고 형식
 
 작업 종료 시 아래 항목을 순서대로 보고합니다.
@@ -118,6 +145,7 @@ gh api repos/<owner>/<repo>/pulls/comments/<comment-id>/replies \
 5. 리뷰 Finding 목록 및 PR 코멘트 URL
 6. Finding 반영 결과(수정 커밋 SHA + 코멘트 응답 URL)
 7. memory 기록 여부(기록 파일명)
+8. 이슈 완료 코멘트 URL
 
 ## 예외 처리
 
