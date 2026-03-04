@@ -393,11 +393,6 @@ private extension CalendarViewModel {
   func ensureCalendarPermission() async -> Bool {
     switch repository.fetchAuthorizationStatus() {
     case .fullAccess:
-      let hasNotificationPermission = await repository.hasNotificationPermission()
-      guard hasNotificationPermission else {
-        permissionState = .denied("알림 권한이 없어 리마인더를 표시할 수 없습니다.")
-        return false
-      }
       permissionState = .granted
       applyICloudAvailabilityMessageIfNeeded()
       return true
@@ -408,7 +403,7 @@ private extension CalendarViewModel {
           permissionState = .granted
           applyICloudAvailabilityMessageIfNeeded()
         } else {
-          permissionState = .denied("캘린더와 알림 접근 권한이 필요합니다.")
+          permissionState = .denied("캘린더 접근 권한이 필요합니다.")
         }
         return granted
       } catch {

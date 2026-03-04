@@ -24,7 +24,8 @@ public final class EventKitScheduleRepository: ScheduleRepository {
       return false
     }
 
-    return try await requestNotificationAccessIfNeeded()
+    _ = try await requestNotificationAccessIfNeeded()
+    return true
   }
 
   public func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus {

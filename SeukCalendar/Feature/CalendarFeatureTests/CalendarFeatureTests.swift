@@ -89,12 +89,13 @@ struct CalendarFeatureTests {
     #expect(mockRepository.fetchedRanges.isEmpty)
   }
 
-  @Test("onAppear_알림_권한이_없으면_denied_상태를_설정합니다")
+  @Test("onAppear_알림_권한이_없어도_캘린더_로딩은_유지합니다")
   @MainActor
-  func onAppear_setsDeniedState_whenNotificationPermissionDenied() async {
+  func onAppear_keepsCalendarFlow_whenNotificationPermissionDenied() async {
     let mockRepository = MockScheduleRepository()
     mockRepository.authorizationStatusValue = .fullAccess
     mockRepository.hasNotificationPermissionValue = false
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule()]
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
@@ -105,8 +106,9 @@ struct CalendarFeatureTests {
 
     await viewModel.send(.onAppear).value
 
-    #expect(viewModel.permissionState.isDenied)
-    #expect(mockRepository.fetchedRanges.isEmpty)
+    #expect(viewModel.permissionState == .granted)
+    #expect(viewModel.visibleEvents.count == 1)
+    #expect(mockRepository.fetchedRanges.count == 1)
   }
 
   @Test("onAppear_권한_변경후_재진입시_권한을_재확인합니다")
