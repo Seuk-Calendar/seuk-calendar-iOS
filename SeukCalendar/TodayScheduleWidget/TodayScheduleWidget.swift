@@ -93,6 +93,10 @@ private extension TodayScheduleWidgetEntryView {
     entry.snapshot.nextEvent(after: entry.date)
   }
 
+  var upcomingTodayEvents: [WidgetScheduleSnapshot.Item] {
+    todayEvents.filter { $0.endDate > entry.date }
+  }
+
   var remainingTodayCount: Int {
     entry.snapshot.remainingEventCount(after: entry.date, on: entry.date, calendar: calendar)
   }
@@ -215,6 +219,9 @@ private extension TodayScheduleWidgetEntryView {
           .font(.system(size: 14, weight: .bold))
       }
     }
+    .containerBackground(for: .widget) {
+      Color.clear
+    }
     .widgetLabel {
       Text("남은 일정 \(remainingTodayCount)개")
     }
@@ -222,23 +229,28 @@ private extension TodayScheduleWidgetEntryView {
 
   var rectangularView: some View {
     VStack(alignment: .leading, spacing: 2) {
-      if let nextEvent {
-        Text("다음 일정")
-          .font(.caption2)
-          .foregroundStyle(.secondary)
-        Text(nextEvent.title)
+      if upcomingTodayEvents.isEmpty {
+        Text("- 일정 없음")
           .font(.system(size: 12, weight: .semibold))
           .lineLimit(1)
-        Text(timeText(for: nextEvent))
-          .font(.system(size: 11, weight: .medium))
-          .foregroundStyle(.secondary)
       } else {
-        Text("오늘 일정 없음")
-          .font(.system(size: 12, weight: .semibold))
-        Text("앱에서 일정을 추가해보세요")
-          .font(.system(size: 11, weight: .regular))
-          .foregroundStyle(.secondary)
+        ForEach(upcomingTodayEvents.prefix(2)) { event in
+          Text("- \(event.title) \(timeText(for: event))")
+            .font(.system(size: 12, weight: .semibold))
+            .lineLimit(1)
+            .multilineTextAlignment(.leading)
+        }
+
+        if upcomingTodayEvents.count > 2 {
+          Text("- ...")
+            .font(.system(size: 12, weight: .semibold))
+            .lineLimit(1)
+        }
       }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .containerBackground(for: .widget) {
+      Color.clear
     }
   }
 
@@ -249,6 +261,9 @@ private extension TodayScheduleWidgetEntryView {
       } else {
         Text("오늘 일정 없음")
       }
+    }
+    .containerBackground(for: .widget) {
+      Color.clear
     }
   }
 
