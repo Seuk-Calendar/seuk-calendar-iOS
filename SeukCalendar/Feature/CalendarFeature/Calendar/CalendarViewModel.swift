@@ -109,29 +109,77 @@ public final class CalendarViewModel {
 
 private extension CalendarViewModel {
   func handle(_ action: Action) async {
+    if await handleCalendarFlowAction(action) {
+      return
+    }
+
+    if await handleParserFlowAction(action) {
+      return
+    }
+
+    handleDraftMutationAction(action)
+  }
+
+  func handleCalendarFlowAction(_ action: Action) async -> Bool {
     switch action {
     case .onAppear:
       await loadIfNeeded()
+      return true
     case .refreshSchedules:
       await handleRefreshSchedules()
+      return true
     case let .changeMode(mode):
       await handleChangeMode(mode)
+      return true
     case let .selectDate(date):
       await handleSelectDate(date)
+      return true
     case let .movePeriod(offset):
       await handleMovePeriod(offset)
+      return true
     case .moveToToday:
       await handleMoveToToday()
+      return true
+    default:
+      return false
+    }
+  }
+
+  func handleParserFlowAction(_ action: Action) async -> Bool {
+    switch action {
     case let .updateNaturalLanguageInput(text):
       handleUpdateNaturalLanguageInput(text)
+      return true
     case .parseNaturalLanguage:
       await handleParseNaturalLanguage()
+      return true
     case .clearParsedEvent:
       handleClearParsedEvent()
+      return true
+    case .saveParsedEvent:
+      await handleSaveParsedEvent()
+      return true
+    default:
+      return false
+    }
+  }
+
+  func handleDraftMutationAction(_ action: Action) {
+    if handleDraftTextFieldMutation(action) {
+      return
+    }
+
+    handleDraftAlarmAndFlagMutation(action)
+  }
+
+  func handleDraftTextFieldMutation(_ action: Action) -> Bool {
+    switch action {
     case let .updateParsedTitle(title):
       updateParsedDraft { $0.title = title }
+      return true
     case let .updateParsedDateString(dateString):
       updateParsedDraft { $0.dateString = dateString }
+      return true
     case let .updateParsedStartTime(startTime):
       updateParsedDraft {
         $0.startTime = startTime
@@ -139,12 +187,29 @@ private extension CalendarViewModel {
           $0.isAllDay = false
         }
       }
+      return true
     case let .updateParsedDurationMinutes(durationMinutes):
       updateParsedDraft { $0.durationMinutesText = durationMinutes }
+      return true
     case let .updateParsedLocation(location):
       updateParsedDraft { $0.location = location }
+      return true
     case let .updateParsedNotes(notes):
       updateParsedDraft { $0.notes = notes }
+      return true
+    default:
+      return false
+    }
+  }
+
+  func handleDraftAlarmAndFlagMutation(_ action: Action) {
+    switch action {
+    case let .addParsedAlarm(preset):
+      handleAddParsedAlarm(preset)
+    case let .removeParsedAlarm(index):
+      handleRemoveParsedAlarm(at: index)
+    case .clearParsedAlarms:
+      updateParsedDraft { $0.alarms = [] }
     case let .updateParsedIsAllDay(isAllDay):
       updateParsedDraft {
         $0.isAllDay = isAllDay
@@ -152,8 +217,8 @@ private extension CalendarViewModel {
           $0.startTime = ""
         }
       }
-    case .saveParsedEvent:
-      await handleSaveParsedEvent()
+    default:
+      return
     }
   }
 
@@ -267,9 +332,31 @@ private extension CalendarViewModel {
     }
 
     transform(&draft)
+    draft.alarms = ParsedEventDraft.normalizedAlarms(draft.alarms)
     parsedEventDraft = draft
     parseErrorMessage = nil
     parserStatusMessage = nil
+  }
+
+  func handleAddParsedAlarm(_ preset: AlarmPreset) {
+    updateParsedDraft { draft in
+      guard let alarm = preset.alarm else {
+        draft.alarms = []
+        return
+      }
+
+      draft.alarms.append(alarm)
+    }
+  }
+
+  func handleRemoveParsedAlarm(at index: Int) {
+    updateParsedDraft { draft in
+      guard draft.alarms.indices.contains(index) else {
+        return
+      }
+
+      draft.alarms.remove(at: index)
+    }
   }
 
   func shouldReloadAfterSelectingDate(from previousDate: Date, to currentDate: Date) -> Bool {

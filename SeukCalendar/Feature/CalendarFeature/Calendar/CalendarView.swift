@@ -129,6 +129,48 @@ private extension CalendarView {
         .textFieldStyle(.roundedBorder)
         .keyboardType(.numberPad)
 
+      VStack(alignment: .leading, spacing: 8) {
+        HStack(spacing: 8) {
+          Text("알림")
+            .font(.system(size: 13, weight: .semibold))
+          Spacer()
+          Menu {
+            ForEach(CalendarViewModel.AlarmPreset.allCases) { preset in
+              Button(preset.title) {
+                viewModel.send(.addParsedAlarm(preset))
+              }
+            }
+          } label: {
+            Label("추가", systemImage: "plus.circle")
+              .font(.system(size: 13, weight: .medium))
+          }
+        }
+
+        if let alarms = viewModel.parsedEventDraft?.alarms,
+           !alarms.isEmpty {
+          ForEach(Array(alarms.enumerated()), id: \.offset) { index, alarm in
+            HStack(spacing: 8) {
+              Text(CalendarViewModel.AlarmPreset.title(for: alarm))
+                .font(.system(size: 13, weight: .regular))
+              Spacer()
+              Button(role: .destructive) {
+                viewModel.send(.removeParsedAlarm(index))
+              } label: {
+                Image(systemName: "minus.circle")
+              }
+              .buttonStyle(.plain)
+            }
+          }
+        } else {
+          Text("설정된 알림이 없습니다.")
+            .font(.system(size: 12, weight: .regular))
+            .foregroundStyle(.secondary)
+        }
+      }
+      .padding(10)
+      .background(Color(.secondarySystemBackground))
+      .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+
       TextField("장소", text: parsedLocationBinding)
         .textFieldStyle(.roundedBorder)
 

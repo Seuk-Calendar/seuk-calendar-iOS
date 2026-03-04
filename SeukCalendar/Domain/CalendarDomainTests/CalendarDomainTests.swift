@@ -109,6 +109,7 @@ struct CalendarDomainTests {
     #expect(schedule.time?.minute == 30)
     #expect(schedule.duration == 5400)
     #expect(schedule.location == "강남역")
+    #expect(schedule.alarms.isEmpty)
   }
 
   @Test("ParseEventUseCase_toSchedule_시간이_없으면_종일로_처리합니다")
@@ -130,6 +131,29 @@ struct CalendarDomainTests {
     #expect(schedule.isAllDay == true)
     #expect(schedule.time == nil)
     #expect(schedule.duration == 86400)
+  }
+
+  @Test("ParseEventUseCase_toSchedule_알림_오프셋을_보존합니다")
+  func parseEventUseCasePreservesAlarmOffsets() throws {
+    let parser = MockScheduleNaturalLanguageParser()
+    let useCase = ParseEventUseCase(parser: parser, calendar: Self.fixedCalendar)
+    let parsedEvent = ParsedEvent(
+      title: "점검 회의",
+      dateString: "2026-03-12",
+      startTime: "09:00",
+      durationMinutes: 30,
+      location: nil,
+      notes: nil,
+      isAllDay: false,
+      alarms: [
+        ScheduleAlarm(offset: -3600),
+        ScheduleAlarm(offset: -1800)
+      ]
+    )
+
+    let schedule = try useCase.toSchedule(from: parsedEvent)
+
+    #expect(schedule.alarms == parsedEvent.alarms)
   }
 }
 

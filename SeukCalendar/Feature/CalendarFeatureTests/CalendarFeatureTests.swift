@@ -89,6 +89,28 @@ struct CalendarFeatureTests {
     #expect(mockRepository.fetchedRanges.isEmpty)
   }
 
+  @Test("onAppear_알림_권한이_없어도_캘린더_로딩은_유지합니다")
+  @MainActor
+  func onAppear_keepsCalendarFlow_whenNotificationPermissionDenied() async {
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
+    mockRepository.hasNotificationPermissionValue = false
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule()]
+
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      viewMode: .month,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository
+    )
+
+    await viewModel.send(.onAppear).value
+
+    #expect(viewModel.permissionState == .granted)
+    #expect(viewModel.visibleEvents.count == 1)
+    #expect(mockRepository.fetchedRanges.count == 1)
+  }
+
   @Test("onAppear_권한_변경후_재진입시_권한을_재확인합니다")
   @MainActor
   func onAppear_retriesPermissionCheck_whenPermissionChangesToGranted() async {
@@ -176,7 +198,8 @@ struct CalendarFeatureTests {
         durationMinutes: 60,
         location: "강남역",
         notes: "자료 준비",
-        isAllDay: false
+        isAllDay: false,
+        alarms: [ScheduleAlarm(offset: -1800)]
       )
     )
     let viewModel = CalendarViewModel(
@@ -193,7 +216,44 @@ struct CalendarFeatureTests {
     #expect(mockParser.parseCallCount == 1)
     #expect(viewModel.parsedEventDraft?.title == "팀 미팅")
     #expect(viewModel.parsedEventDraft?.dateString == "2026-03-04")
+    #expect(viewModel.parsedEventDraft?.alarms == [ScheduleAlarm(offset: -1800)])
     #expect(viewModel.parseErrorMessage == nil)
+  }
+
+  @Test("parsedEventDraft_알림_추가와_삭제를_지원합니다")
+  @MainActor
+  func parsedEventDraftSupportsAddingAndRemovingAlarms() async {
+    let mockRepository = MockScheduleRepository()
+    let mockParser = MockScheduleNaturalLanguageParser()
+    mockParser.parseResult = .success(
+      ParsedEvent(
+        title: "회의",
+        dateString: "2026-03-04",
+        startTime: "15:00",
+        durationMinutes: 60,
+        location: nil,
+        notes: nil,
+        isAllDay: false
+      )
+    )
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      viewMode: .month,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository,
+      parser: mockParser
+    )
+
+    await viewModel.send(.updateNaturalLanguageInput("내일 오후 3시 회의")).value
+    await viewModel.send(.parseNaturalLanguage).value
+    await viewModel.send(.addParsedAlarm(.thirtyMinutesBefore)).value
+    await viewModel.send(.addParsedAlarm(.oneHourBefore)).value
+    await viewModel.send(.removeParsedAlarm(1)).value
+
+    #expect(viewModel.parsedEventDraft?.alarms == [ScheduleAlarm(offset: -3600)])
+
+    await viewModel.send(.addParsedAlarm(.none)).value
+    #expect(viewModel.parsedEventDraft?.alarms.isEmpty == true)
   }
 
   @Test("saveParsedEvent_저장시_일정을_생성하고_목록을_갱신합니다")
@@ -210,7 +270,8 @@ struct CalendarFeatureTests {
         durationMinutes: 60,
         location: "강남역",
         notes: nil,
-        isAllDay: false
+        isAllDay: false,
+        alarms: [ScheduleAlarm(offset: -1800)]
       )
     )
 
@@ -228,6 +289,7 @@ struct CalendarFeatureTests {
 
     #expect(mockRepository.createdSchedules.count == 2)
     #expect(mockRepository.createdSchedules.last?.title == "팀 미팅")
+    #expect(mockRepository.createdSchedules.last?.alarms == [ScheduleAlarm(offset: -1800)])
     #expect(viewModel.parsedEventDraft == nil)
     #expect(viewModel.naturalLanguageInput.isEmpty)
     #expect(viewModel.visibleEvents.isEmpty == false)

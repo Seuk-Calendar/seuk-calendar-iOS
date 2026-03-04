@@ -90,7 +90,8 @@ public struct ParseEventUseCase {
       duration: durationSeconds,
       location: location?.isEmpty == true ? nil : location,
       notes: notes?.isEmpty == true ? nil : notes,
-      isAllDay: isAllDay
+      isAllDay: isAllDay,
+      alarms: parsedEvent.alarms
     )
   }
 }

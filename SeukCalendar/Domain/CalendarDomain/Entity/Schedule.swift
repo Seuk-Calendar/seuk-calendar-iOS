@@ -1,5 +1,22 @@
 import Foundation
 
+public enum ScheduleAlarmType: String, Sendable {
+  case relativeToStart
+}
+
+public struct ScheduleAlarm: Equatable, Hashable, Sendable {
+  public var offset: TimeInterval
+  public var type: ScheduleAlarmType
+
+  public init(
+    offset: TimeInterval,
+    type: ScheduleAlarmType = .relativeToStart
+  ) {
+    self.offset = offset
+    self.type = type
+  }
+}
+
 public struct Schedule: Equatable {
   public struct Recurrence: Equatable {
     public enum Frequency: String {
@@ -34,6 +51,7 @@ public struct Schedule: Equatable {
   public var notes: String?
   public var isAllDay: Bool
   public var recurrence: Recurrence?
+  public var alarms: [ScheduleAlarm]
 
   public init(
     id: String? = nil,
@@ -45,7 +63,8 @@ public struct Schedule: Equatable {
     location: String? = nil,
     notes: String? = nil,
     isAllDay: Bool,
-    recurrence: Recurrence? = nil
+    recurrence: Recurrence? = nil,
+    alarms: [ScheduleAlarm] = []
   ) {
     self.id = id
     self.calendarIdentifier = calendarIdentifier
@@ -57,6 +76,7 @@ public struct Schedule: Equatable {
     self.notes = notes
     self.isAllDay = isAllDay
     self.recurrence = recurrence
+    self.alarms = alarms
   }
 
   public func startDate(using calendar: Calendar = .current) -> Date? {
@@ -84,7 +104,7 @@ public struct Schedule: Equatable {
     }
 
     if isAllDay {
-      let dayCount = max(Int((duration / 86_400).rounded(.up)), 1)
+      let dayCount = max(Int((duration / 86400).rounded(.up)), 1)
       return calendar.date(byAdding: .day, value: dayCount, to: startDate)
     }
 
