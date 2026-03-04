@@ -48,6 +48,7 @@ public enum ScheduleRepositoryError: SCError, Equatable {
 public protocol ScheduleRepository {
   func requestAccess() async throws -> Bool
   func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus
+  func hasNotificationPermission() async -> Bool
   func observeScheduleChanges() -> AsyncStream<Void>
 
   func create(schedule: Schedule) async throws -> Schedule
@@ -60,6 +61,10 @@ public protocol ScheduleRepository {
 }
 
 public extension ScheduleRepository {
+  func hasNotificationPermission() async -> Bool {
+    true
+  }
+
   func observeScheduleChanges() -> AsyncStream<Void> {
     AsyncStream { continuation in
       continuation.finish()

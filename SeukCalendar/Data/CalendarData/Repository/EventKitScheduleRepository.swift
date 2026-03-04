@@ -1,21 +1,30 @@
 import CalendarDomain
 import EventKit
 import Foundation
+import UserNotifications
 
 public final class EventKitScheduleRepository: ScheduleRepository {
   private let eventStore: EKEventStore
   private let calendar: Calendar
+  private let notificationCenter: UNUserNotificationCenter
 
   public init(
     eventStore: EKEventStore = EKEventStore(),
-    calendar: Calendar = .current
+    calendar: Calendar = .current,
+    notificationCenter: UNUserNotificationCenter = .current()
   ) {
     self.eventStore = eventStore
     self.calendar = calendar
+    self.notificationCenter = notificationCenter
   }
 
   public func requestAccess() async throws -> Bool {
-    try await eventStore.requestFullAccessToEvents()
+    let calendarGranted = try await eventStore.requestFullAccessToEvents()
+    guard calendarGranted else {
+      return false
+    }
+
+    return try await requestNotificationAccessIfNeeded()
   }
 
   public func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus {
@@ -36,6 +45,19 @@ public final class EventKitScheduleRepository: ScheduleRepository {
       return .writeOnly
     @unknown default:
       return .denied
+    }
+  }
+
+  public func hasNotificationPermission() async -> Bool {
+    let settings = await notificationCenter.notificationSettings()
+
+    switch settings.authorizationStatus {
+    case .authorized, .provisional, .ephemeral:
+      return true
+    case .notDetermined, .denied:
+      return false
+    @unknown default:
+      return false
     }
   }
 
@@ -182,6 +204,9 @@ private extension EventKitScheduleRepository {
     } else {
       event.recurrenceRules = nil
     }
+
+    let mappedAlarms = schedule.alarms.compactMap(toEKAlarm)
+    event.alarms = mappedAlarms.isEmpty ? nil : mappedAlarms
   }
 
   func toSchedule(event: EKEvent) -> Schedule {
@@ -201,7 +226,8 @@ private extension EventKitScheduleRepository {
       location: event.location,
       notes: event.notes,
       isAllDay: event.isAllDay,
-      recurrence: toRecurrence(event.recurrenceRules?.first)
+      recurrence: toRecurrence(event.recurrenceRules?.first),
+      alarms: toScheduleAlarms(event.alarms, startDate: event.startDate)
     )
   }
 
@@ -255,5 +281,40 @@ private extension EventKitScheduleRepository {
       interval: max(recurrenceRule.interval, 1),
       endDate: recurrenceRule.recurrenceEnd?.endDate
     )
+  }
+
+  func requestNotificationAccessIfNeeded() async throws -> Bool {
+    let settings = await notificationCenter.notificationSettings()
+
+    switch settings.authorizationStatus {
+    case .authorized, .provisional, .ephemeral:
+      return true
+    case .notDetermined:
+      return try await notificationCenter.requestAuthorization(options: [.alert, .badge, .sound])
+    case .denied:
+      return false
+    @unknown default:
+      return false
+    }
+  }
+
+  func toEKAlarm(_ alarm: ScheduleAlarm) -> EKAlarm? {
+    switch alarm.type {
+    case .relativeToStart:
+      return EKAlarm(relativeOffset: alarm.offset)
+    }
+  }
+
+  func toScheduleAlarms(_ alarms: [EKAlarm]?, startDate: Date) -> [ScheduleAlarm] {
+    guard let alarms else {
+      return []
+    }
+
+    let mapped = alarms.map { alarm in
+      let offset = alarm.absoluteDate?.timeIntervalSince(startDate) ?? alarm.relativeOffset
+      return ScheduleAlarm(offset: offset)
+    }
+
+    return Array(Set(mapped)).sorted(by: { $0.offset < $1.offset })
   }
 }

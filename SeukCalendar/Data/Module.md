@@ -46,6 +46,8 @@ CalendarDomain의 Repository 구현.
 
 **Repository**: `CalendarData/Repository/`
 - `EventKitScheduleRepository.swift`: EventKit 권한 요청, 일정 CRUD, EKEvent ↔ Schedule 변환
+  - `EKAlarm` ↔ `ScheduleAlarm` 매핑으로 알림 생성/조회 지원
+  - `requestAccess()`에서 캘린더/알림 권한을 함께 처리
   - `observeScheduleChanges()`로 `EKEventStoreChanged` 알림을 AsyncStream으로 전달
 
 **구현 참고**:

@@ -15,6 +15,9 @@ public extension CalendarViewModel {
     case updateParsedDateString(String)
     case updateParsedStartTime(String)
     case updateParsedDurationMinutes(String)
+    case addParsedAlarm(AlarmPreset)
+    case removeParsedAlarm(Int)
+    case clearParsedAlarms
     case updateParsedLocation(String)
     case updateParsedNotes(String)
     case updateParsedIsAllDay(Bool)

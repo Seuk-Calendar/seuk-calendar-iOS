@@ -98,6 +98,8 @@ private extension FoundationModelsParser {
         - 시간이 없으면 isAllDay=true, startTime=null 입니다.
         - startTime은 24시간 형식(HH:mm)입니다.
         - durationMinutes가 불분명하면 null로 둡니다.
+        - alarms는 시작 시각 기준 초 단위 offset 배열입니다. 예: 30분 전 -> -1800, 1시간 전 -> -3600, 시작 시간 -> 0
+        - 알림 정보가 없으면 alarms는 빈 배열로 둡니다.
         - 확실하지 않은 정보는 추측하지 말고 null로 둡니다.
         - title은 간결한 일정 제목으로 정리합니다.
         """
@@ -183,6 +185,12 @@ private extension FoundationModelsParser {
       }
     }
 
+    if containsAlarmSignal(in: text) {
+      normalized.alarms = normalizeAlarms(heuristicResult?.alarms ?? resolveAlarms(from: text))
+    } else {
+      normalized.alarms = normalizeAlarms(normalized.alarms)
+    }
+
     return normalized
   }
 
@@ -203,6 +211,7 @@ private extension FoundationModelsParser {
     let durationMinutes = resolveDurationMinutes(from: text) ?? (isAllDay ? 1440 : 60)
     let location = resolveLocation(from: text)
     let title = resolveTitle(from: text, location: location)
+    let alarms = resolveAlarms(from: text)
 
     return ParsedEvent(
       title: title,
@@ -211,7 +220,8 @@ private extension FoundationModelsParser {
       durationMinutes: durationMinutes,
       location: location,
       notes: nil,
-      isAllDay: isAllDay
+      isAllDay: isAllDay,
+      alarms: alarms
     )
   }
 
@@ -280,7 +290,7 @@ private extension FoundationModelsParser {
       "수": 4,
       "목": 5,
       "금": 6,
-      "토": 7,
+      "토": 7
     ]
 
     if let match = text.firstRegexMatch(pattern: "(?:다음\\s*주|담주)\\s*(일|월|화|수|목|금|토)(?:요일|요|욜)?") {
@@ -332,14 +342,43 @@ private extension FoundationModelsParser {
   }
 
   func resolveDurationMinutes(from text: String) -> Int? {
-    let hourMatch = text.firstRegexMatch(pattern: "(\\d+)\\s*시간")
-    let minuteMatch = text.firstRegexMatch(pattern: "(\\d+)\\s*분")
+    let hourMatch = text.firstRegexMatch(pattern: "(\\d+)\\s*시간(?!\\s*전)")
+    let minuteMatch = text.firstRegexMatch(pattern: "(\\d+)\\s*분(?!\\s*전)")
 
     let hours = hourMatch.flatMap { Int($0[safe: 1] ?? "") } ?? 0
     let minutes = minuteMatch.flatMap { Int($0[safe: 1] ?? "") } ?? 0
     let total = (hours * 60) + minutes
 
     return total > 0 ? total : nil
+  }
+
+  func resolveAlarms(from text: String) -> [ScheduleAlarm] {
+    var offsets: Set<Int> = []
+
+    for match in text.allRegexMatches(pattern: "(\\d+)\\s*분\\s*전(?:에)?") {
+      if let minutes = Int(match[safe: 1] ?? ""), minutes > 0 {
+        offsets.insert(-(minutes * 60))
+      }
+    }
+
+    for match in text.allRegexMatches(pattern: "(\\d+)\\s*시간\\s*전(?:에)?") {
+      if let hours = Int(match[safe: 1] ?? ""), hours > 0 {
+        offsets.insert(-(hours * 3600))
+      }
+    }
+
+    if text.range(of: "(?:하루|1\\s*일)\\s*전(?:에)?", options: .regularExpression) != nil {
+      offsets.insert(-86400)
+    }
+
+    if text.range(of: "(?:시작\\s*시간|정각|시간\\s*맞춰)\\s*(?:에|으로)?\\s*(?:알림|알려줘)?", options: .regularExpression) != nil {
+      offsets.insert(0)
+    }
+
+    return normalizeAlarms(
+      offsets
+        .map { ScheduleAlarm(offset: TimeInterval($0)) }
+    )
   }
 
   func resolveLocation(from text: String) -> String? {
@@ -361,8 +400,15 @@ private extension FoundationModelsParser {
       "(일|월|화|수|목|금|토)요일",
       "(오전|오후|아침|점심|저녁|밤)?\\s*\\d{1,2}\\s*시(?:\\s*\\d{1,2}\\s*분?)?",
       "\\b\\d{1,2}:\\d{2}\\b",
+      "\\d+\\s*분\\s*전(?:에)?",
+      "\\d+\\s*시간\\s*전(?:에)?",
+      "(?:하루|\\d+\\s*일)\\s*전(?:에)?",
+      "(?:시작\\s*시간|정각|시간\\s*맞춰)(?:에|으로)?",
+      "알림(?:을|은|이|도)?",
+      "알려\\s*줘",
+      "리마인드(?:해\\s*줘)?",
       "\\d+\\s*시간",
-      "\\d+\\s*분",
+      "\\d+\\s*분"
     ]
 
     for pattern in removalPatterns {
@@ -407,9 +453,42 @@ private extension FoundationModelsParser {
   func containsLocationSignal(in text: String) -> Bool {
     text.firstRegexMatch(pattern: "([가-힣A-Za-z0-9]+)에서") != nil
   }
+
+  func containsAlarmSignal(in text: String) -> Bool {
+    text.range(
+      of: "\\d+\\s*(?:분|시간|일)\\s*전(?:에)?|하루\\s*전|시작\\s*시간|정각|알림|알려\\s*줘|리마인드",
+      options: .regularExpression
+    ) != nil
+  }
+
+  func normalizeAlarms(_ alarms: [ScheduleAlarm]) -> [ScheduleAlarm] {
+    Array(Set(alarms)).sorted(by: { $0.offset < $1.offset })
+  }
 }
 
 private extension String {
+  func allRegexMatches(pattern: String) -> [[String]] {
+    guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
+      return []
+    }
+
+    let range = NSRange(startIndex ..< endIndex, in: self)
+    return regex
+      .matches(in: self, options: [], range: range)
+      .map { match in
+        // Preserve capture indices even when optional groups are not matched.
+        (0 ..< match.numberOfRanges).map { index in
+          let nsRange = match.range(at: index)
+          guard nsRange.location != NSNotFound,
+                let range = Range(nsRange, in: self)
+          else {
+            return ""
+          }
+          return String(self[range])
+        }
+      }
+  }
+
   func firstRegexMatch(pattern: String) -> [String]? {
     guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else {
       return nil

@@ -46,7 +46,7 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 **Calendar**: `CalendarFeature/Calendar/`
 - CalendarView.swift: Calendar View
 - CalendarViewModel.swift: Calendar ViewModel (@Observable)
-  - 캘린더 로드/권한/자연어 파싱 + iCloud 변경 감지 기반 자동 새로고침 처리
+  - 캘린더 로드/권한/자연어 파싱 + 알림 프리셋 편집 + iCloud 변경 감지 기반 자동 새로고침 처리
 - CalendarViewModel+Action.swift: ViewModel Action enum 분리 (`refreshSchedules` 포함)
 - CalendarViewModel+Model.swift: ViewModel 보조 enum/모델(ViewMode/PermissionState/ParsedEventDraft/SyncStatusTone) 분리
 - Components/ScheduleDetailView.swift: 일정 상세 화면
@@ -122,6 +122,7 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - .send()로 Action 전달
 - ViewModel의 공개 상태 구독
 - 자연어 입력 필드 + 파싱 결과 편집 카드 + 저장 버튼 UI 포함
+- 파싱 결과 편집 카드에서 기본 알림 옵션(없음/시작 시간/5·15·30·60분/1일 전) 추가·삭제 지원
 
 ### ViewFactory
 

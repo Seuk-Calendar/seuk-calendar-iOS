@@ -37,8 +37,9 @@ Domain/
 캘린더 관련 비즈니스 로직.
 
 **Entity**: `CalendarDomain/Entity/`
-- `Schedule.swift`: 일정 도메인 모델 (title, date/time, duration, recurrence)
-- `ParsedEvent.swift`: AI 자연어 파싱 결과 모델 (dateString/startTime/isAllDay 등)
+- `Schedule.swift`: 일정 도메인 모델 (title, date/time, duration, recurrence, alarms)
+- `ScheduleAlarm`: 일정 알림 모델 (offset, type)
+- `ParsedEvent.swift`: AI 자연어 파싱 결과 모델 (dateString/startTime/isAllDay/alarms 등)
 
 **UseCase**: `CalendarDomain/UseCase/`
 - `CreateScheduleUseCase.swift`: 일정 생성

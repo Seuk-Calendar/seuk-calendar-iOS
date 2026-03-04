@@ -105,6 +105,24 @@ struct AITests {
     #expect(parsed.isAllDay == true)
     #expect(parsed.durationMinutes == 1440)
   }
+
+  @Test("휴리스틱_알림_표현을_오프셋으로_파싱합니다")
+  func parseAlarmOffsetsByHeuristic() async throws {
+    let referenceDate = Self.referenceDate
+    let parser = FoundationModelsParser(
+      calendar: Self.fixedCalendar,
+      locale: Locale(identifier: "ko_KR"),
+      preferFoundationModels: false
+    )
+
+    let parsed = try await parser.parse(
+      text: "내일 오후 3시 회의 1시간 전이랑 30분 전에 알려줘",
+      referenceDate: referenceDate
+    )
+
+    #expect(parsed.startTime == "15:00")
+    #expect(parsed.alarms == [ScheduleAlarm(offset: -3600), ScheduleAlarm(offset: -1800)])
+  }
 }
 
 private extension AITests {

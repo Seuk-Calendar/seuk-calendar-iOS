@@ -8,6 +8,7 @@ public struct ParsedEvent: Equatable, Sendable {
   public var location: String?
   public var notes: String?
   public var isAllDay: Bool
+  public var alarms: [ScheduleAlarm]
 
   public init(
     title: String,
@@ -16,7 +17,8 @@ public struct ParsedEvent: Equatable, Sendable {
     durationMinutes: Int?,
     location: String?,
     notes: String?,
-    isAllDay: Bool
+    isAllDay: Bool,
+    alarms: [ScheduleAlarm] = []
   ) {
     self.title = title
     self.dateString = dateString
@@ -25,5 +27,6 @@ public struct ParsedEvent: Equatable, Sendable {
     self.location = location
     self.notes = notes
     self.isAllDay = isAllDay
+    self.alarms = alarms
   }
 }

@@ -4,6 +4,7 @@ import Foundation
 public final class MockScheduleRepository: ScheduleRepository {
   public var requestAccessResult: Result<Bool, Error> = .success(true)
   public var authorizationStatusValue: ScheduleAuthorizationStatus = .fullAccess
+  public var hasNotificationPermissionValue = true
   public var schedulesToReturn: [Schedule] = []
   public var createdSchedules: [Schedule] = [
     Schedule(
@@ -26,6 +27,7 @@ public final class MockScheduleRepository: ScheduleRepository {
 
   public private(set) var requestAccessCallCount = 0
   public private(set) var fetchAuthorizationStatusCallCount = 0
+  public private(set) var hasNotificationPermissionCallCount = 0
   public private(set) var hasICloudCalendarCallCount = 0
   public private(set) var observeScheduleChangesCallCount = 0
 
@@ -39,6 +41,11 @@ public final class MockScheduleRepository: ScheduleRepository {
   public func fetchAuthorizationStatus() -> ScheduleAuthorizationStatus {
     fetchAuthorizationStatusCallCount += 1
     return authorizationStatusValue
+  }
+
+  public func hasNotificationPermission() async -> Bool {
+    hasNotificationPermissionCallCount += 1
+    return hasNotificationPermissionValue
   }
 
   public func observeScheduleChanges() -> AsyncStream<Void> {
