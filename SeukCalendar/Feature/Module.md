@@ -54,7 +54,8 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 **ViewFactory**: `CalendarFeature/CalendarViewFactory.swift`
 - 화면 생성 팩토리
 - `CalendarViewModel` 생성/주입 책임 보유 (`CalendarView`는 필수 주입만 허용)
-- DIContainer 도입 전까지 `makeCalendarView()` 내부에서 전달받은 `ScheduleRepository`와 `ScheduleNaturalLanguageParser`로 `CalendarViewModel`을 생성
+- DIContainer 도입 전까지 `makeCalendarView(initialSelectedDate:initialScheduleID:)` 내부에서 전달받은 `ScheduleRepository`와 `ScheduleNaturalLanguageParser`로 `CalendarViewModel`을 생성
+- 위젯 딥링크 진입 시 초기 날짜/일정 ID를 전달받아 상세 화면까지 연결
 
 **구현 참고**:
 - ViewModel: `CalendarFeature/Calendar/CalendarViewModel.swift`
@@ -123,6 +124,7 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - ViewModel의 공개 상태 구독
 - 자연어 입력 필드 + 파싱 결과 편집 카드 + 저장 버튼 UI 포함
 - 파싱 결과 편집 카드에서 기본 알림 옵션(없음/시작 시간/5·15·30·60분/1일 전) 추가·삭제 지원
+- `initialScheduleID`가 전달된 경우 해당 일정 상세 화면을 자동 오픈
 
 ### ViewFactory
 

@@ -119,8 +119,11 @@ SeukCalendar/
 │   └── AI.xcodeproj
 ├── Feature/                # UI 레이어 (다중 타겟)
 │   └── Feature.xcodeproj
-└── SeukCalendar/           # App Target
-    └── SeukCalendar.xcodeproj
+├── SeukCalendar/           # App + Widget Extension 타겟
+│   └── SeukCalendar.xcodeproj
+└── TodayScheduleWidget/    # Widget Extension 소스
+    ├── TodayScheduleWidget.swift
+    └── TodayScheduleWidgetBundle.swift
 ```
 
 **핵심 설계 원칙**:
@@ -140,6 +143,8 @@ SeukCalendar/
 | **Data** | Repository 구현, API Client, KeyChain | Core, Domain | [Module.md](SeukCalendar/Data/Module.md) |
 | **AI** | Foundation Models, External API, OCR, Speech | Core, Domain | [Module.md](SeukCalendar/AI/Module.md) |
 | **Feature** | View, ViewModel, ViewFactory | Core, DesignSystem, Domain, Navigation | [Module.md](SeukCalendar/Feature/Module.md) |
+| **SeukCalendar(App)** | 앱 진입점, DI 조립, 위젯 딥링크 처리 | Feature, Data, Domain, AI | [Module.md](SeukCalendar/SeukCalendar/Module.md) |
+| **TodayScheduleWidget** | 홈/잠금화면 일정 위젯, TimelineProvider | App Groups(UserDefaults), WidgetKit | [Module.md](SeukCalendar/SeukCalendar/Module.md) |
 
 **의존성 방향**:
 1. **Core**: 최하위 레이어, 의존성 없음
@@ -149,7 +154,8 @@ SeukCalendar/
 5. **AI**: 해당 Domain + Core에 의존
 6. **Feature**: 필요한 Domain + DesignSystem + Core에 의존
 7. **Coordinator**: Feature + Domain + Navigation에 의존
-8. **App**: 모든 Framework 통합
+8. **App**: 모든 Framework 통합 + Widget 데이터 동기화
+9. **Widget Extension**: App Groups를 통해 공유 스냅샷을 읽고 UI 렌더링
 
 ---
 
@@ -271,6 +277,24 @@ ParsedEvent
 ParseEventUseCase.toSchedule()
     ↓
 CreateScheduleUseCase → ScheduleRepository (EventKit)
+```
+
+### Widget 데이터 공유 흐름
+
+```
+CalendarViewModel
+    ↓ fetch/create/update/delete
+WidgetSyncingScheduleRepository (App)
+    ↓
+EventKitScheduleRepository (Data)
+    ↓
+WidgetScheduleSnapshotStore (App Groups UserDefaults)
+    ↓
+WidgetCenter.reloadTimelines()
+    ↓
+TodayScheduleWidget TimelineProvider
+    ↓
+Small / Medium / Large / Lock Screen 위젯 렌더링
 ```
 
 ---

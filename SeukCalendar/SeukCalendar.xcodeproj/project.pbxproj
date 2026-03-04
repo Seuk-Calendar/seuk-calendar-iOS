@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		599D701F67B68D6A2979ED76 /* TodayScheduleWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 9F9767B9AE1050BD52AA356E /* TodayScheduleWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6CB44CFBAD0D77BE1D2EC84A /* TodayScheduleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA8277D61385A797079499 /* TodayScheduleWidget.swift */; };
 		7B0E0D622F51513B008707E9 /* AI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D552F51513B008707E9 /* AI.framework */; };
 		7B0E0D632F51513B008707E9 /* AI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D552F51513B008707E9 /* AI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7B0E0D642F51513B008707E9 /* Coordinator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D562F51513B008707E9 /* Coordinator.framework */; };
@@ -33,9 +35,32 @@
 		7B0E0D792F51513B008707E9 /* CalendarFeature.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D602F51513B008707E9 /* CalendarFeature.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7B0E0D7A2F51513B008707E9 /* Navigation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D612F51513B008707E9 /* Navigation.framework */; };
 		7B0E0D7B2F51513B008707E9 /* Navigation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D612F51513B008707E9 /* Navigation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7C8F85C05BB6B452C90AB01D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4EFCE6C6A52CF38C214B3AFF /* Assets.xcassets */; };
+		C32511CB4770232E34F6B6B8 /* TodayScheduleWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7E67370CE6319E4CBBD641 /* TodayScheduleWidgetBundle.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5A684DACF1BD503E4031D83B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7B58BF392DF6800700FF47AB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A9B51C4E55549EAEC040D740;
+			remoteInfo = TodayScheduleWidget;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
+		3CB8A9FB2AB0AF457EF44442 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				599D701F67B68D6A2979ED76 /* TodayScheduleWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7B0E0D7C2F51513B008707E9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -62,6 +87,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		16BA8277D61385A797079499 /* TodayScheduleWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TodayScheduleWidget.swift; sourceTree = "<group>"; };
+		1C7E67370CE6319E4CBBD641 /* TodayScheduleWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TodayScheduleWidgetBundle.swift; sourceTree = "<group>"; };
+		1DB52B69F41757AFC19878F9 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4EFCE6C6A52CF38C214B3AFF /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B09AD9A2E268FE500327B42 /* DesignSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DesignSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0D552F51513B008707E9 /* AI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0D562F51513B008707E9 /* Coordinator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Coordinator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,6 +107,8 @@
 		7B0E0D612F51513B008707E9 /* Navigation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Navigation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B2BA8502EB84AD70089B130 /* CoreModule.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CoreModule.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BD09ABD2F51374F0035BF41 /* SeukCalendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeukCalendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F9767B9AE1050BD52AA356E /* TodayScheduleWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TodayScheduleWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5313880E952C74761D382B3 /* TodayScheduleWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = TodayScheduleWidget.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -102,6 +133,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0BF9EE7FEB1BF8D0547FA1F0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7BD09ABA2F51374F0035BF41 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -131,6 +169,7 @@
 				7BD09ABE2F51374F0035BF41 /* SeukCalendar */,
 				B0CA1EEA2E228EB500E355E6 /* Frameworks */,
 				B0B31AF72EBF498F00C1F532 /* Recovered References */,
+				952FDDD702E194E9D1A81EBC /* TodayScheduleWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -138,8 +177,21 @@
 			isa = PBXGroup;
 			children = (
 				7BD09ABD2F51374F0035BF41 /* SeukCalendar.app */,
+				9F9767B9AE1050BD52AA356E /* TodayScheduleWidget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		952FDDD702E194E9D1A81EBC /* TodayScheduleWidget */ = {
+			isa = PBXGroup;
+			children = (
+				C2FF06A454074F664E2A6630 /* Resources */,
+				1C7E67370CE6319E4CBBD641 /* TodayScheduleWidgetBundle.swift */,
+				16BA8277D61385A797079499 /* TodayScheduleWidget.swift */,
+				1DB52B69F41757AFC19878F9 /* Info.plist */,
+				A5313880E952C74761D382B3 /* TodayScheduleWidget.entitlements */,
+			);
+			path = TodayScheduleWidget;
 			sourceTree = "<group>";
 		};
 		B0B31AF72EBF498F00C1F532 /* Recovered References */ = {
@@ -172,6 +224,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C2FF06A454074F664E2A6630 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4EFCE6C6A52CF38C214B3AFF /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -183,20 +243,37 @@
 				7BD09ABA2F51374F0035BF41 /* Frameworks */,
 				7BD09ABB2F51374F0035BF41 /* Resources */,
 				7B0E0D7C2F51513B008707E9 /* Embed Frameworks */,
+				3CB8A9FB2AB0AF457EF44442 /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				69296AB80459E48FB46DF773 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				7BD09ABE2F51374F0035BF41 /* SeukCalendar */,
 			);
 			name = SeukCalendar;
-			packageProductDependencies = (
-			);
 			productName = SeukCalendar;
 			productReference = 7BD09ABD2F51374F0035BF41 /* SeukCalendar.app */;
 			productType = "com.apple.product-type.application";
+		};
+		A9B51C4E55549EAEC040D740 /* TodayScheduleWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1445D6BE058B74C28EA8A05D /* Build configuration list for PBXNativeTarget "TodayScheduleWidget" */;
+			buildPhases = (
+				76E8590E7649AF11359CDBC3 /* Sources */,
+				0BF9EE7FEB1BF8D0547FA1F0 /* Frameworks */,
+				54B19CAA6315BAAE7872CA5C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TodayScheduleWidget;
+			productName = TodayScheduleWidget;
+			productReference = 9F9767B9AE1050BD52AA356E /* TodayScheduleWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -222,19 +299,26 @@
 			);
 			mainGroup = 7B58BF382DF6800700FF47AB;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7B58BF422DF6800700FF47AB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				7BD09ABC2F51374F0035BF41 /* SeukCalendar */,
+				A9B51C4E55549EAEC040D740 /* TodayScheduleWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		54B19CAA6315BAAE7872CA5C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7C8F85C05BB6B452C90AB01D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7BD09ABB2F51374F0035BF41 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -245,6 +329,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		76E8590E7649AF11359CDBC3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C32511CB4770232E34F6B6B8 /* TodayScheduleWidgetBundle.swift in Sources */,
+				6CB44CFBAD0D77BE1D2EC84A /* TodayScheduleWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7BD09AB92F51374F0035BF41 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -254,7 +347,45 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		69296AB80459E48FB46DF773 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = TodayScheduleWidget;
+			target = A9B51C4E55549EAEC040D740 /* TodayScheduleWidget */;
+			targetProxy = 5A684DACF1BD503E4031D83B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		69C23AB7522E234EDC410293 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				APP_GROUPS = group.com.youngkyu.SeukCalendar;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = TodayScheduleWidget/TodayScheduleWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MPMHNJMTGA;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TodayScheduleWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "슥캘린더";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.youngkyu.SeukCalendar.TodayScheduleWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		7B58BF4D2DF6800900FF47AB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -377,8 +508,10 @@
 		7BD09AC62F5137500035BF41 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APP_GROUPS = group.com.youngkyu.SeukCalendar;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SeukCalendar/App/Resources/SeukCalendar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MPMHNJMTGA;
@@ -425,8 +558,10 @@
 		7BD09AC72F5137500035BF41 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APP_GROUPS = group.com.youngkyu.SeukCalendar;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = SeukCalendar/App/Resources/SeukCalendar.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MPMHNJMTGA;
@@ -470,9 +605,48 @@
 			};
 			name = Release;
 		};
+		F0B3916010427C6F04EBCC25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				APP_GROUPS = group.com.youngkyu.SeukCalendar;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = TodayScheduleWidget/TodayScheduleWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = MPMHNJMTGA;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TodayScheduleWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "슥캘린더";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.youngkyu.SeukCalendar.TodayScheduleWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1445D6BE058B74C28EA8A05D /* Build configuration list for PBXNativeTarget "TodayScheduleWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F0B3916010427C6F04EBCC25 /* Release */,
+				69C23AB7522E234EDC410293 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		7B58BF3C2DF6800700FF47AB /* Build configuration list for PBXProject "SeukCalendar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
