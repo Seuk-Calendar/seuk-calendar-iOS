@@ -6,7 +6,6 @@ public enum PoolColor {
     case core = "Core"
     case semantic = "Semantic"
     case semanticExtensions = "SemanticExtensions"
-    case calendar = "Calendar"
   }
 
   public enum Primitives {
@@ -287,13 +286,13 @@ public enum PoolColor {
   }
 
   public enum Calendar {
-    public static let blue = Color(PoolColor.ColorFamily.calendar, name: "calendar-blue")
-    public static let green = Color(PoolColor.ColorFamily.calendar, name: "calendar-green")
-    public static let orange = Color(PoolColor.ColorFamily.calendar, name: "calendar-orange")
-    public static let pink = Color(PoolColor.ColorFamily.calendar, name: "calendar-pink")
-    public static let purple = Color(PoolColor.ColorFamily.calendar, name: "calendar-purple")
-    public static let red = Color(PoolColor.ColorFamily.calendar, name: "calendar-red")
-    public static let yellow = Color(PoolColor.ColorFamily.calendar, name: "calendar-yellow")
+    public static let blue = Primitives.blue200
+    public static let green = Primitives.green200
+    public static let orange = Primitives.orange200
+    public static let pink = Primitives.magenta200
+    public static let purple = Primitives.purple200
+    public static let red = Primitives.red200
+    public static let yellow = Primitives.yellow200
   }
 }
 
