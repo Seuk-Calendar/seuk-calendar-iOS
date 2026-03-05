@@ -124,12 +124,12 @@ public enum PoolColor {
   }
 
   public enum Core {
-    public static let accent = Color(PoolColor.ColorFamily.core, name: "accent")
-    public static let negative = Color(PoolColor.ColorFamily.core, name: "negative")
-    public static let positive = Color(PoolColor.ColorFamily.core, name: "positive")
-    public static let primaryA = Color(PoolColor.ColorFamily.core, name: "primaryA")
-    public static let primaryB = Color(PoolColor.ColorFamily.core, name: "primaryB")
-    public static let warning = Color(PoolColor.ColorFamily.core, name: "warning")
+    public static let accent = Primitives.blue600
+    public static let negative = Primitives.red600
+    public static let positive = Primitives.green600
+    public static let primaryA = Primitives.black
+    public static let primaryB = Primitives.white
+    public static let warning = Primitives.yellow300
   }
 
   public enum Semantic {
