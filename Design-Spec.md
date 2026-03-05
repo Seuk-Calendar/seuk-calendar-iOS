@@ -40,6 +40,8 @@
 
 ### 1-2. 컬러 토큰 (Color Tokens)
 
+> 관리 원칙: `Pencil/Design.pen` 변수는 `Color+DesignSystem.swift`의 계층(`Primitives/Core/Semantic/SemanticExtensions/Calendar`)과 1:1로 등록/유지합니다.
+
 #### 그레이스케일 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
@@ -91,10 +93,25 @@
 | `calendar-purple` | #8B5CF6 | #A78BFA | 학습 |
 | `calendar-pink` | #EC4899 | #F472B6 | 기념일 |
 
+#### 캘린더 일정 바/칩 토큰
+
+| 토큰명 | Light Mode | Dark Mode | 용도 |
+|--------|-----------|-----------|------|
+| `calendar-chip-green-bg` | #DFF3E8 | #DFF3E8 | 일정 바(운동/건강) 배경 |
+| `calendar-chip-green-fg` | #2F6A55 | #2F6A55 | 일정 바(운동/건강) 텍스트/스트립 |
+| `calendar-chip-blue-bg` | #DCEEFF | #DCEEFF | 일정 바(업무) 배경 |
+| `calendar-chip-blue-bg-soft` | #E9F5FF | #E9F5FF | 일정 바(업무) 보조 배경 |
+| `calendar-chip-blue-fg` | #2E5F9E | #2E5F9E | 일정 바(업무) 텍스트/스트립 |
+| `calendar-chip-orange-bg` | #FFEED5 | #FFEED5 | 일정 바(약속) 배경 |
+| `calendar-chip-orange-fg` | #9A6228 | #9A6228 | 일정 바(약속) 텍스트/스트립 |
+| `calendar-chip-pink-bg` | #FFE0E4 | #FFE0E4 | 일정 바(기념일/휴일) 배경 |
+| `calendar-chip-pink-fg` | #A33A4B | #A33A4B | 일정 바(기념일/휴일) 텍스트/스트립 |
+
 ### 1-3. 타이포그래피 (Typography)
 
 #### 폰트 패밀리
-- Pretendard
+- 기본 폰트 변수: `font-family-primary`, `font-family-secondary`
+- 현재 기본값: `Pretendard`
 
 #### 폰트 토큰 예시
 
