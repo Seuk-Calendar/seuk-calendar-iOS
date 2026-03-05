@@ -134,154 +134,67 @@ public enum SCColor {
 
   public enum Semantic {
     public enum Background {
-      public static let backgroundInversePrimary = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Background/backgroundInversePrimary"
-      )
-      public static let backgroundInverseSecondary = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Background/backgroundInverseSecondary"
-      )
-      public static let backgroundPrimary = Color(SCColor.ColorFamily.semantic, name: "Background/backgroundPrimary")
-      public static let backgroundSecondary = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Background/backgroundSecondary"
-      )
-      public static let backgroundTertiary = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Background/backgroundTertiary"
-      )
+      public static let backgroundInversePrimary = Primitives.black
+      public static let backgroundInverseSecondary = Primitives.gray800
+      public static let backgroundPrimary = Primitives.white
+      public static let backgroundSecondary = Primitives.gray50
+      public static let backgroundTertiary = Primitives.gray100
     }
 
     public enum Border {
-      public static let borderInverseOpaque = Color(SCColor.ColorFamily.semantic, name: "Border/borderInverseOpaque")
-      public static let borderInverseSelected = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Border/borderInverseSelected"
-      )
-      public static let borderInverseTransparent = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Border/borderInverseTransparent"
-      )
-      public static let borderOpaque = Color(SCColor.ColorFamily.semantic, name: "Border/borderOpaque")
-      public static let borderSelected = Color(SCColor.ColorFamily.semantic, name: "Border/borderSelected")
-      public static let borderTransparent = Color(SCColor.ColorFamily.semantic, name: "Border/borderTransparent")
+      public static let borderInverseOpaque = Primitives.gray800
+      public static let borderInverseSelected = Primitives.white
+      public static let borderInverseTransparent = Primitives.white.opacity(0.2)
+      public static let borderOpaque = Primitives.gray100
+      public static let borderSelected = Primitives.black
+      public static let borderTransparent = Primitives.black.opacity(0.08)
     }
 
     public enum Content {
-      public static let contentInversePrimary = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Content/contentInversePrimary"
-      )
-      public static let contentInverseSecondary = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Content/contentInverseSecondary"
-      )
-      public static let contentInverseTertiary = Color(
-        SCColor.ColorFamily.semantic,
-        name: "Content/contentInverseTertiary"
-      )
-      public static let contentPrimary = Color(SCColor.ColorFamily.semantic, name: "Content/contentPrimary")
-      public static let contentSecondary = Color(SCColor.ColorFamily.semantic, name: "Content/contentSecondary")
-      public static let contentTertiary = Color(SCColor.ColorFamily.semantic, name: "Content/contentTertiary")
+      public static let contentInversePrimary = Primitives.white
+      public static let contentInverseSecondary = Primitives.gray200
+      public static let contentInverseTertiary = Primitives.gray400
+      public static let contentPrimary = Primitives.black
+      public static let contentSecondary = Primitives.gray800
+      public static let contentTertiary = Primitives.gray700
     }
   }
 
   public enum SemanticExtensions {
     public enum Background {
-      public static let backgroundAccent = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundAccent"
-      )
-      public static let backgroundAlwaysDark = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundAlwaysDark"
-      )
-      public static let backgroundAlwaysLight = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundAlwaysLight"
-      )
-      public static let backgroundLightAccent = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundLightAccent"
-      )
-      public static let backgroundLightNegative = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundLightNegative"
-      )
-      public static let backgroundLightPositive = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundLightPositive"
-      )
-      public static let backgroundLightWarning = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundLightWarning"
-      )
-      public static let backgroundNegative = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundNegative"
-      )
-      public static let backgroundOverlayArt = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundOverlayArt"
-      )
-      public static let backgroundOverlayDark = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundOverlayDark"
-      )
-      public static let backgroundOverlayElevation = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundOverlayElevation"
-      )
-      public static let backgroundPositive = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundPositive"
-      )
-      public static let backgroundStateDisabled = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundStateDisabled"
-      )
-      public static let backgroundWarning = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Background/backgroundWarning"
-      )
+      public static let backgroundAccent = Primitives.blue600
+      public static let backgroundAlwaysDark = Primitives.black
+      public static let backgroundAlwaysLight = Primitives.white
+      public static let backgroundLightAccent = Primitives.blue50
+      public static let backgroundLightNegative = Primitives.red50
+      public static let backgroundLightPositive = Primitives.green50
+      public static let backgroundLightWarning = Primitives.yellow50
+      public static let backgroundNegative = Primitives.red600
+      public static let backgroundOverlayArt = Primitives.black.opacity(0)
+      public static let backgroundOverlayDark = Primitives.black.opacity(0.5)
+      public static let backgroundOverlayElevation = Primitives.black.opacity(0)
+      public static let backgroundPositive = Primitives.green600
+      public static let backgroundStateDisabled = Primitives.gray50
+      public static let backgroundWarning = Primitives.yellow300
     }
 
     public enum Border {
-      public static let borderAccent = Color(SCColor.ColorFamily.semanticExtensions, name: "Border/borderAccent")
-      public static let borderAccentLight = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Border/borderAccentLight"
-      )
-      public static let borderNegative = Color(SCColor.ColorFamily.semanticExtensions, name: "Border/borderNegative")
-      public static let borderPositive = Color(SCColor.ColorFamily.semanticExtensions, name: "Border/borderPositive")
-      public static let borderStateDisabled = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Border/borderStateDisabled"
-      )
-      public static let borderWarning = Color(SCColor.ColorFamily.semanticExtensions, name: "Border/borderWarning")
+      public static let borderAccent = Primitives.blue600
+      public static let borderAccentLight = Primitives.blue200
+      public static let borderNegative = Primitives.red600
+      public static let borderPositive = Primitives.green600
+      public static let borderStateDisabled = Primitives.gray50
+      public static let borderWarning = Primitives.yellow600
     }
 
     public enum Content {
-      public static let contentAccent = Color(SCColor.ColorFamily.semanticExtensions, name: "Content/contentAccent")
-      public static let contentNegative = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Content/contentNegative"
-      )
-      public static let contentOnColor = Color(SCColor.ColorFamily.semanticExtensions, name: "Content/contentOnColor")
-      public static let contentOnColorInverse = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Content/contentOnColorInverse"
-      )
-      public static let contentPositive = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Content/contentPositive"
-      )
-      public static let contentStateDisabled = Color(
-        SCColor.ColorFamily.semanticExtensions,
-        name: "Content/contentStateDisabled"
-      )
-      public static let contentWarning = Color(SCColor.ColorFamily.semanticExtensions, name: "Content/contentWarning")
+      public static let contentAccent = Primitives.blue600
+      public static let contentNegative = Primitives.red600
+      public static let contentOnColor = Primitives.white
+      public static let contentOnColorInverse = Primitives.black
+      public static let contentPositive = Primitives.green600
+      public static let contentStateDisabled = Primitives.gray400
+      public static let contentWarning = Primitives.yellow600
     }
   }
 
