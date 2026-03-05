@@ -19201,7 +19201,7 @@
                     {
                       "type": "frame",
                       "id": "6BXgZ",
-                      "name": "greyscale",
+                      "name": "grayscale",
                       "clip": true,
                       "height": 82,
                       "stroke": {
@@ -19350,7 +19350,7 @@
                         {
                           "type": "frame",
                           "id": "hBOyL",
-                          "name": "_ final primitive / grey900",
+                          "name": "_ final primitive / gray900",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -19364,7 +19364,7 @@
                               "id": "3tP3W",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey900)❖",
+                              "name": "Signed by Base (_ final primitive / gray900)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -19488,7 +19488,7 @@
                         {
                           "type": "frame",
                           "id": "YRVFL",
-                          "name": "_ final primitive / grey800",
+                          "name": "_ final primitive / gray800",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -19502,7 +19502,7 @@
                               "id": "zKXto",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey800)❖",
+                              "name": "Signed by Base (_ final primitive / gray800)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -19626,7 +19626,7 @@
                         {
                           "type": "frame",
                           "id": "BBd8X",
-                          "name": "_ final primitive / grey700",
+                          "name": "_ final primitive / gray700",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -19640,7 +19640,7 @@
                               "id": "3srWD",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey700)❖",
+                              "name": "Signed by Base (_ final primitive / gray700)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -19764,7 +19764,7 @@
                         {
                           "type": "frame",
                           "id": "LAJCf",
-                          "name": "_ final primitive / grey600",
+                          "name": "_ final primitive / gray600",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -19778,7 +19778,7 @@
                               "id": "0YRSd",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey600)❖",
+                              "name": "Signed by Base (_ final primitive / gray600)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -19902,7 +19902,7 @@
                         {
                           "type": "frame",
                           "id": "xf9qk",
-                          "name": "_ final primitive / grey500",
+                          "name": "_ final primitive / gray500",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -19916,7 +19916,7 @@
                               "id": "Tz9YU",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey500)❖",
+                              "name": "Signed by Base (_ final primitive / gray500)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -20040,7 +20040,7 @@
                         {
                           "type": "frame",
                           "id": "yJYb0",
-                          "name": "_ final primitive / grey400",
+                          "name": "_ final primitive / gray400",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -20054,7 +20054,7 @@
                               "id": "Iei5Z",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey400)❖",
+                              "name": "Signed by Base (_ final primitive / gray400)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -20178,7 +20178,7 @@
                         {
                           "type": "frame",
                           "id": "MqimP",
-                          "name": "_ final primitive / grey300",
+                          "name": "_ final primitive / gray300",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -20192,7 +20192,7 @@
                               "id": "jXE1Z",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey300)❖",
+                              "name": "Signed by Base (_ final primitive / gray300)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -20316,7 +20316,7 @@
                         {
                           "type": "frame",
                           "id": "MJLXk",
-                          "name": "_ final primitive / grey200",
+                          "name": "_ final primitive / gray200",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -20330,7 +20330,7 @@
                               "id": "yOhay",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey200)❖",
+                              "name": "Signed by Base (_ final primitive / gray200)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -20454,7 +20454,7 @@
                         {
                           "type": "frame",
                           "id": "Bfgb5",
-                          "name": "_ final primitive / grey100",
+                          "name": "_ final primitive / gray100",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -20468,7 +20468,7 @@
                               "id": "BZW64",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey100)❖",
+                              "name": "Signed by Base (_ final primitive / gray100)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
@@ -20592,7 +20592,7 @@
                         {
                           "type": "frame",
                           "id": "jJlRO",
-                          "name": "_ final primitive / grey50",
+                          "name": "_ final primitive / gray50",
                           "width": 82,
                           "height": 82,
                           "stroke": {
@@ -20606,7 +20606,7 @@
                               "id": "3uvJ9",
                               "x": 0,
                               "y": 0,
-                              "name": "Signed by Base (_ final primitive / grey50)❖",
+                              "name": "Signed by Base (_ final primitive / gray50)❖",
                               "enabled": false,
                               "width": 1,
                               "height": 1,
