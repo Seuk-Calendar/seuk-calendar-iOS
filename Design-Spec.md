@@ -44,40 +44,40 @@
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `gray1` | #F6F7F8 | #0A0A0A | 앱 기본 배경 |
-| `gray2` | #FFFFFFCC | #171717CC | 글래스 카드 배경 |
-| `gray3` | #D9DCE1 | #2A2D33 | 구분선, 보더 |
-| `gray9` | #111111 | #F5F5F5 | 주요 텍스트 |
+| `gray1` | #FAFAFA | #1A1A1A | 앱 기본 배경 |
+| `gray2` | #F5F5F5 | #242424 | 보조 배경 |
+| `gray3` | #E5E5E5 | #2E2E2E | 구분선, 보더 |
+| `gray9` | #1A1A1A | #FAFAFA | 주요 텍스트 |
 
 #### 글래스 토큰 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `glass-bg` | #FFFFFF99 | #11111199 | 기본 글래스 패널 |
-| `glass-bg-strong` | #FFFFFFCC | #111111CC | 강조 글래스 패널/카드 |
-| `glass-border` | #FFFFFFA6 | #FFFFFF33 | 글래스 보더 하이라이트 |
+| `glass-bg` | #FFFFFF99 | #FFFFFF99 | 기본 글래스 패널 |
+| `glass-bg-strong` | #FFFFFFCC | #FFFFFFCC | 강조 글래스 패널/카드 |
+| `glass-border` | #FFFFFF66 | #FFFFFF66 | 글래스 보더 하이라이트 |
 | `glass-shadow` | rgba(15,23,42,0.12) | rgba(0,0,0,0.45) | 글래스 표면 그림자 |
 
 #### 브랜드 컬러 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `primary1` | #111111 | #F4F4F5 | 주요 액션 버튼 |
-| `primary2` | #2A2A2A | #E4E4E7 | 버튼 Pressed 상태 |
-| `primary3` | #F3F4F6 | #27272A | Secondary 배경 |
+| `primary1` | #3B82F6 | #60A5FA | 주요 액션 버튼 |
+| `primary2` | #2563EB | #3B82F6 | 버튼 Pressed 상태 |
+| `primary3` | #DBEAFE | #1E3A8A | Secondary 배경 |
 
 #### 시맨틱 컬러 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `success1` | #00A86B | #34D399 | 성공 메시지, 완료 상태 |
-| `success2` | #DDF8EE | #063D31 | 성공 배경 |
-| `warning1` | #D97706 | #F59E0B | 경고 메시지 |
-| `warning2` | #FFF4E5 | #4A2C05 | 경고 배경 |
-| `error1` | #DC2626 | #F87171 | 에러 메시지, 삭제 |
-| `error2` | #FEE2E2 | #571313 | 에러 배경 |
-| `info1` | #2563EB | #60A5FA | 정보 메시지 |
-| `info2` | #E6EEFF | #1E3A8A | 정보 배경 |
+| `success1` | #10B981 | #34D399 | 성공 메시지, 완료 상태 |
+| `success2` | #D1FAE5 | #064E3B | 성공 배경 |
+| `warning1` | #F59E0B | #FBBF24 | 경고 메시지 |
+| `warning2` | #FEF3C7 | #78350F | 경고 배경 |
+| `error1` | #EF4444 | #F87171 | 에러 메시지, 삭제 |
+| `error2` | #FEE2E2 | #7F1D1D | 에러 배경 |
+| `info1` | #3B82F6 | #60A5FA | 정보 메시지 |
+| `info2` | #DBEAFE | #1E3A8A | 정보 배경 |
 
 #### 일정 카테고리 컬러 예시
 
@@ -100,20 +100,24 @@
 
 | 토큰명 | Font Size | Line Height | Weight | Letter Spacing | 용도 |
 |--------|-----------|-------------|--------|----------------|------|
-| `heading1-bold` | 32pt | 40pt | Bold (700) | -0.5pt | 화면 제목 |
-| `heading2-bold` | 24pt | 32pt | Bold (700) | -0.3pt | 섹션 제목 |
-| `heading3-bold` | 20pt | 28pt | Bold (700) | -0.2pt | 카드 제목 |
-| `heading3-semibold` | 20pt | 28pt | Semibold (600) | -0.2pt | 서브 섹션 제목 |
-| `body1-regular` | 16pt | 24pt | Regular (400) | 0pt | 본문 (기본) |
-| `body1-medium` | 16pt | 24pt | Medium (500) | 0pt | 본문 (강조) |
-| `body2-regular` | 14pt | 20pt | Regular (400) | 0pt | 보조 본문 |
-| `body2-medium` | 14pt | 20pt | Medium (500) | 0pt | 보조 본문 (강조) |
-| `caption1-regular` | 12pt | 16pt | Regular (400) | 0pt | 캡션, 라벨 |
-| `caption1-medium` | 12pt | 16pt | Medium (500) | 0pt | 캡션 (강조) |
-| `caption2-regular` | 10pt | 14pt | Regular (400) | 0pt | 작은 캡션 |
-| `label-medium` | 14pt | 20pt | Medium (500) | 0.3pt | 버튼 텍스트 |
-| `numeric-bold` | 28pt | 36pt | Bold (700) | -0.5pt | 큰 숫자 (날짜) |
-| `numeric-medium` | 16pt | 24pt | Medium (500) | 0pt | 일반 숫자 (시간) |
+| `Display/Large` | 96pt | 112pt | Bold (700) | 0pt | 히어로/브랜딩 타이틀 |
+| `Display/Medium` | 52pt | 64pt | Bold (700) | 0pt | 대형 강조 타이틀 |
+| `Display/Small` | 44pt | 52pt | Bold (700) | 0pt | 큰 화면 제목 |
+| `Display/XSmall` | 36pt | 44pt | Bold (700) | 0pt | 중대형 제목 |
+| `Heading/XXLarge` | 40pt | 52pt | Bold (700) | 0pt | 최상위 제목 |
+| `Heading/XLarge` | 36pt | 44pt | Bold (700) | 0pt | 상위 제목 |
+| `Heading/Large` | 32pt | 40pt | Bold (700) | 0pt | 화면 제목 |
+| `Heading/Medium` | 28pt | 36pt | Bold (700) | 0pt | 섹션 제목 |
+| `Heading/Small` | 24pt | 32pt | Bold (700) | 0pt | 카드 제목 |
+| `Heading/XSmall` | 20pt | 28pt | Bold (700) | +0.25pt | 서브 섹션 제목 |
+| `Paragraph/Large` | 18pt | 28pt | Regular (400) | 0pt | 긴 본문(강조) |
+| `Paragraph/Medium` | 16pt | 24pt | Regular (400) | 0pt | 본문(기본) |
+| `Paragraph/Small` | 14pt | 20pt | Regular (400) | 0pt | 보조 본문 |
+| `Paragraph/XSmall` | 12pt | 20pt | Regular (400) | 0pt | 작은 본문 |
+| `Label/Large` | 18pt | 24pt | Medium (500) | 0pt | 버튼/상태 라벨(대) |
+| `Label/Medium` | 16pt | 20pt | Medium (500) | 0pt | 버튼/탭 라벨 |
+| `Label/Small` | 14pt | 16pt | Medium (500) | 0pt | 보조 라벨 |
+| `Label/XSmall` | 12pt | 16pt | Medium (500) | 0pt | 캡션 라벨 |
 
 ### 1-4. 코너 라운드 (Border Radius) 예시
 

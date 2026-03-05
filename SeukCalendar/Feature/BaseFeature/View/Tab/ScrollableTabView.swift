@@ -54,7 +54,7 @@ extension ScrollableTabView {
           }) {
             Text(tab.id)
               .padding(.vertical, Spacing.sp250)
-              .font(activatedTab == tab.id ? Heading5.bold : Heading5.bold)
+              .font(activatedTab == tab.id ? Label.medium : Label.medium)
               .foregroundStyle(activatedTab == tab.id
                 ? activatedColor
                 : defaultColor
