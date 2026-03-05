@@ -1,7 +1,7 @@
 # 슥캘린더 화면 기획서 (디자인 에이전트용)
 
-> **문서 버전**: v1.0
-> **작성일**: 2026년 2월
+> **문서 버전**: v1.1
+> **작성일**: 2026년 3월 5일
 > **플랫폼**: iOS / iPadOS / macOS
 
 ---
@@ -17,6 +17,15 @@
 ---
 
 ## 1. 디자인 시스템
+
+### 1-0. 디자인 방향 (Uber + iOS 26 Liquid Glass)
+
+- **Uber 디자인 시스템 기반**: 높은 대비의 모노톤, 굵고 명확한 정보 위계, 간결한 인터랙션
+- **iOS 26 리퀴드글래스 적용**: 반투명 레이어, 상단 하이라이트 보더, 큰 코너 라운드, 소프트 섀도우
+- **핵심 원칙**
+  - Primary 액션은 강한 대비(거의 Black/White)로 명확히 구분
+  - 카드/시트/패널은 `glass-bg*` 토큰 중심으로 레이어 깊이 표현
+  - 텍스트 가독성을 최우선으로 하며 과도한 채도 사용을 제한
 
 ### 1-1. 간격 시스템 (Spacing) 예시
 
@@ -35,30 +44,40 @@
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `gray1` | #FAFAFA | #1A1A1A | 배경 (최상위) |
-| `gray2` | #F5F5F5 | #242424 | 카드 배경 |
-| `gray3` | #E5E5E5 | #2E2E2E | 구분선, 비활성 배경 |
+| `gray1` | #F6F7F8 | #0A0A0A | 앱 기본 배경 |
+| `gray2` | #FFFFFFCC | #171717CC | 글래스 카드 배경 |
+| `gray3` | #D9DCE1 | #2A2D33 | 구분선, 보더 |
+| `gray9` | #111111 | #F5F5F5 | 주요 텍스트 |
+
+#### 글래스 토큰 예시
+
+| 토큰명 | Light Mode | Dark Mode | 용도 |
+|--------|-----------|-----------|------|
+| `glass-bg` | #FFFFFF99 | #11111199 | 기본 글래스 패널 |
+| `glass-bg-strong` | #FFFFFFCC | #111111CC | 강조 글래스 패널/카드 |
+| `glass-border` | #FFFFFFA6 | #FFFFFF33 | 글래스 보더 하이라이트 |
+| `glass-shadow` | rgba(15,23,42,0.12) | rgba(0,0,0,0.45) | 글래스 표면 그림자 |
 
 #### 브랜드 컬러 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `primary1` | #3B82F6 | #60A5FA | 주요 액션 버튼, 강조 |
-| `primary2` | #2563EB | #3B82F6 | 버튼 Pressed 상태 |
-| `primary3` | #DBEAFE | #1E3A8A | 버튼 배경 (Secondary) |
+| `primary1` | #111111 | #F4F4F5 | 주요 액션 버튼 |
+| `primary2` | #2A2A2A | #E4E4E7 | 버튼 Pressed 상태 |
+| `primary3` | #F3F4F6 | #27272A | Secondary 배경 |
 
 #### 시맨틱 컬러 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `success1` | #10B981 | #34D399 | 성공 메시지, 완료 상태 |
-| `success2` | #D1FAE5 | #064E3B | 성공 배경 |
-| `warning1` | #F59E0B | #FBBF24 | 경고 메시지 |
-| `warning2` | #FEF3C7 | #78350F | 경고 배경 |
-| `error1` | #EF4444 | #F87171 | 에러 메시지, 삭제 |
-| `error2` | #FEE2E2 | #7F1D1D | 에러 배경 |
-| `info1` | #3B82F6 | #60A5FA | 정보 메시지 |
-| `info2` | #DBEAFE | #1E3A8A | 정보 배경 |
+| `success1` | #00A86B | #34D399 | 성공 메시지, 완료 상태 |
+| `success2` | #DDF8EE | #063D31 | 성공 배경 |
+| `warning1` | #D97706 | #F59E0B | 경고 메시지 |
+| `warning2` | #FFF4E5 | #4A2C05 | 경고 배경 |
+| `error1` | #DC2626 | #F87171 | 에러 메시지, 삭제 |
+| `error2` | #FEE2E2 | #571313 | 에러 배경 |
+| `info1` | #2563EB | #60A5FA | 정보 메시지 |
+| `info2` | #E6EEFF | #1E3A8A | 정보 배경 |
 
 #### 일정 카테고리 컬러 예시
 
@@ -103,15 +122,19 @@
 | `rds004` | 4 | 작은 버튼, 뱃지 |
 | `rds008` | 8 | 일반 버튼, 입력 필드 |
 | `rds012` | 12 | 카드, 모달 |
+| `rds016` | 16 | 글래스 카드 기본 |
+| `rds020` | 20 | 바텀시트 내부 패널 |
+| `rds024` | 24 | 세그먼트/상위 패널 |
+| `rds-full` | 999 | 원형/FAB/핸들 |
 
 ### 1-5. 그림자 (Shadow) 예시
 
 | 토큰명 | Shadow | 용도 |
 |--------|--------|------|
-| `shadow-sm` | 0 1px 2px rgba(0,0,0,0.05) | 작은 카드 |
-| `shadow-md` | 0 4px 6px rgba(0,0,0,0.1) | 일반 카드, 버튼 |
-| `shadow-lg` | 0 10px 15px rgba(0,0,0,0.1) | 모달, 시트 |
-| `shadow-xl` | 0 20px 25px rgba(0,0,0,0.15) | 드롭다운, 팝업 |
+| `shadow-sm` | 0 2px 6px rgba(15,23,42,0.08) | 작은 글래스 카드 |
+| `shadow-md` | 0 6px 14px rgba(15,23,42,0.12) | 일반 카드, 버튼 |
+| `shadow-lg` | 0 10px 22px rgba(15,23,42,0.18) | 모달, 시트 |
+| `shadow-xl` | 0 16px 32px rgba(15,23,42,0.24) | 오버레이, 플로팅 패널 |
 
 ---
 
@@ -225,14 +248,14 @@ Home Widget
 **헤더**
 - 높이: `sp048`
 - 패딩: `sp020` (좌우)
-- 배경: `gray1`
+- 배경: `glass-bg` + 상단 하이라이트 보더 (`glass-border`)
 - 텍스트: `heading2-bold`, `gray9`
-- 화살표 버튼: `body1-regular`, `primary1`, 탭 영역 44x44pt
+- 화살표 버튼: `body1-regular`, `gray7`, 탭 영역 44x44pt
 
 **요일 헤더**
 - 높이: `sp032`
 - 패딩: `sp008` (상하)
-- 배경: `gray2`
+- 배경: `glass-bg`
 - 텍스트: `caption1-medium`, `gray6`
 - 일요일: `error1`, 토요일: `primary1`
 
@@ -251,10 +274,11 @@ Home Widget
 
 **데일리 프리뷰 배너** (데일리 프리뷰가 있는 경우만 표시)
 - 패딩: `sp016`
-- 배경: `primary3`
-- 코너: `rds012`
+- 배경: `glass-bg-strong`
+- 코너: `rds020`
+- 보더: 1pt `glass-border`
 - 이미지 썸네일: 80pt x 80pt, 좌측, 코너 `rds008`
-- 텍스트: `body2-medium`, `primary1`
+- 텍스트: `body2-medium`, `gray9`
 - 화살표: `chevron.right`, 16pt, `primary1`
 - 탭 시 리캡 화면의 해당 데일리 프리뷰로 이동
 
@@ -265,8 +289,9 @@ Home Widget
 
 **일정 카드**
 - 패딩: `sp016`
-- 배경: `gray2`
-- 코너: `rds012`
+- 배경: `glass-bg-strong`
+- 코너: `rds020`
+- 보더: 1pt `glass-border`
 - 좌측 강조선: 4pt, `calendar-*` 컬러
 - 시간: `body2-medium`, `gray9`
 - 제목: `body1-regular`, `gray8`
@@ -276,9 +301,10 @@ Home Widget
 **Floating 일정 추가 버튼**
 - 크기: 56pt x 56pt
 - 위치: 우측 하단, 화면 가장자리에서 `sp020` 떨어짐
-- 배경: `primary1`
+- 배경: `#111111CC` (Light) / `#F4F4F5CC` (Dark)
 - 코너: `rds-full` (원형)
 - 아이콘: `plus`, 24pt, `white`
+- 보더: 1pt `glass-border`
 - 그림자: `shadow-lg`
 - 탭 시 일정 추가 시트 표시
 
@@ -347,7 +373,7 @@ Home Widget
 #### 컴포넌트 상세
 
 **시트 배경**
-- iOS 26 스타일 반투명/글래스 느낌
+- Uber 스타일의 단정한 레이아웃 위에 iOS 26 반투명 글래스 질감 적용
 - 코너: 상단 라운드(큰 반경)
 - 배경 블러 + 미세한 테두리 하이라이트
 - 기본 상태와 확장 상태 사이의 detent 전환 지원
@@ -415,7 +441,8 @@ Home Widget
 
 **시트 배경**
 - 코너: `rds016` (상단만)
-- 배경: `gray1`
+- 배경: `glass-bg-strong`
+- 보더: 1pt `glass-border`
 - 그림자: `shadow-lg`
 - 최소 높이: 화면 높이 60%
 
@@ -431,8 +458,9 @@ Home Widget
 
 **필드 카드**
 - 패딩: `sp016`
-- 배경: `gray2`
-- 코너: `rds012`
+- 배경: `glass-bg`
+- 코너: `rds016`
+- 보더: 1pt `glass-border`
 - 각 필드 패딩: `sp012`
 - 필드 구분선: 1pt, `gray3`
 - 라벨: `caption1-medium`, `gray6`
@@ -443,7 +471,7 @@ Home Widget
 - 높이: 52pt
 - 배경: `primary1`
 - 코너: `rds012`
-- 텍스트: `label-medium`, `white`
+- 텍스트: `label-medium`, `gray1`
 
 **수정 버튼**
 - 높이: 52pt
@@ -487,16 +515,17 @@ Home Widget
 
 **세그먼트 컨트롤**
 - 높이: 40pt
-- 배경: `gray2`
-- 코너: `rds008`
+- 배경: `glass-bg`
+- 코너: `rds016`
 - 선택 배경: `primary1`
-- 선택 텍스트: `label-medium`, `white`
+- 선택 텍스트: `label-medium`, `gray1`
 - 비선택 텍스트: `label-medium`, `gray6`
 
 **프리뷰 카드**
 - 패딩: `sp016`
-- 배경: `gray2`
-- 코너: `rds016`
+- 배경: `glass-bg-strong`
+- 코너: `rds020`
+- 보더: 1pt `glass-border`
 - 그림자: `shadow-md`
 - 이미지 비율: 16:9
 - 이미지 코너: `rds012`
@@ -557,8 +586,9 @@ Home Widget
 **프로필 카드**
 - 높이: 80pt
 - 패딩: `sp016`
-- 배경: `gray2`
-- 코너: `rds012`
+- 배경: `glass-bg-strong`
+- 코너: `rds020`
+- 보더: 1pt `glass-border`
 - 이미지: 56pt 원형, 좌측 정렬
 - 이름: `body1-medium`, `gray9`
 - 이메일: `caption1-regular`, `gray6`
@@ -570,7 +600,7 @@ Home Widget
 **설정 리스트 아이템**
 - 높이: 52pt
 - 패딩: `sp016` (좌우)
-- 배경: `gray2`
+- 배경: `glass-bg`
 - 구분선: 하단 1pt, `gray3` (마지막 항목 제외)
 - 라벨: `body1-regular`, `gray9`
 - 우측 화살표: `chevron.right`, 16pt, `gray4`
