@@ -6,6 +6,7 @@
 
 | 날짜(Date) | 파일(File) | 제목(Title) | 핵심 키워드(Keywords) |
 |---|---|---|---|
+| 2026-03-05 | `entries/2026-03-05-font-token-naming-from-pencil.md` | 폰트 토큰 작업에서 예시 네이밍(Heading1/Body1)을 유지해 펜슬 네이밍 기준을 놓친 사례 | workflow:issue-to-pr, workflow:design-token, action:font-token-rename, failure:example-font-naming, verify:line-height-ratio-rounding |
 | 2026-03-05 | `entries/2026-03-05-design-token-source-priority.md` | 디자인 토큰 작업에서 기존 예시 컬러를 기준으로 해석해 사용자 의도(펜슬 우선)를 놓칠 뻔한 사례 | workflow:issue-to-pr, workflow:design-token, action:token-source-priority, failure:example-token-assumption, verify:pencil-variable-first |
 | 2026-03-04 | `entries/2026-03-04-pencil-mcp-unsaved-design-file.md` | Pencil MCP 편집 후 Design.pen 파일 저장 반영을 확인하지 않아 Git 변경 누락 위험이 발생한 사례 | workflow:design, workflow:issue-to-pr, action:pencil-mcp-edit, failure:unsaved-design-file, verify:git-status-after-mcp |
 | 2026-03-04 | `entries/2026-03-04-design-spec-user-intent-first.md` | Design-Spec 작업에서 현재 구현 기준으로 선수정해 사용자 의도 반영 순서를 어긴 사례 | workflow:docs, workflow:issue-to-pr, action:intent-first-edit, failure:premature-spec-rewrite, verify:requirement-check-before-edit |
