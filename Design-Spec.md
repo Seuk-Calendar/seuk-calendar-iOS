@@ -44,40 +44,40 @@
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `gray1` | #F6F7F8 | #0A0A0A | 앱 기본 배경 |
-| `gray2` | #FFFFFFCC | #171717CC | 글래스 카드 배경 |
-| `gray3` | #D9DCE1 | #2A2D33 | 구분선, 보더 |
-| `gray9` | #111111 | #F5F5F5 | 주요 텍스트 |
+| `gray1` | #FAFAFA | #1A1A1A | 앱 기본 배경 |
+| `gray2` | #F5F5F5 | #242424 | 보조 배경 |
+| `gray3` | #E5E5E5 | #2E2E2E | 구분선, 보더 |
+| `gray9` | #1A1A1A | #FAFAFA | 주요 텍스트 |
 
 #### 글래스 토큰 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `glass-bg` | #FFFFFF99 | #11111199 | 기본 글래스 패널 |
-| `glass-bg-strong` | #FFFFFFCC | #111111CC | 강조 글래스 패널/카드 |
-| `glass-border` | #FFFFFFA6 | #FFFFFF33 | 글래스 보더 하이라이트 |
+| `glass-bg` | #FFFFFF99 | #FFFFFF99 | 기본 글래스 패널 |
+| `glass-bg-strong` | #FFFFFFCC | #FFFFFFCC | 강조 글래스 패널/카드 |
+| `glass-border` | #FFFFFF66 | #FFFFFF66 | 글래스 보더 하이라이트 |
 | `glass-shadow` | rgba(15,23,42,0.12) | rgba(0,0,0,0.45) | 글래스 표면 그림자 |
 
 #### 브랜드 컬러 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `primary1` | #111111 | #F4F4F5 | 주요 액션 버튼 |
-| `primary2` | #2A2A2A | #E4E4E7 | 버튼 Pressed 상태 |
-| `primary3` | #F3F4F6 | #27272A | Secondary 배경 |
+| `primary1` | #3B82F6 | #60A5FA | 주요 액션 버튼 |
+| `primary2` | #2563EB | #3B82F6 | 버튼 Pressed 상태 |
+| `primary3` | #DBEAFE | #1E3A8A | Secondary 배경 |
 
 #### 시맨틱 컬러 예시
 
 | 토큰명 | Light Mode | Dark Mode | 용도 |
 |--------|-----------|-----------|------|
-| `success1` | #00A86B | #34D399 | 성공 메시지, 완료 상태 |
-| `success2` | #DDF8EE | #063D31 | 성공 배경 |
-| `warning1` | #D97706 | #F59E0B | 경고 메시지 |
-| `warning2` | #FFF4E5 | #4A2C05 | 경고 배경 |
-| `error1` | #DC2626 | #F87171 | 에러 메시지, 삭제 |
-| `error2` | #FEE2E2 | #571313 | 에러 배경 |
-| `info1` | #2563EB | #60A5FA | 정보 메시지 |
-| `info2` | #E6EEFF | #1E3A8A | 정보 배경 |
+| `success1` | #10B981 | #34D399 | 성공 메시지, 완료 상태 |
+| `success2` | #D1FAE5 | #064E3B | 성공 배경 |
+| `warning1` | #F59E0B | #FBBF24 | 경고 메시지 |
+| `warning2` | #FEF3C7 | #78350F | 경고 배경 |
+| `error1` | #EF4444 | #F87171 | 에러 메시지, 삭제 |
+| `error2` | #FEE2E2 | #7F1D1D | 에러 배경 |
+| `info1` | #3B82F6 | #60A5FA | 정보 메시지 |
+| `info2` | #DBEAFE | #1E3A8A | 정보 배경 |
 
 #### 일정 카테고리 컬러 예시
 
