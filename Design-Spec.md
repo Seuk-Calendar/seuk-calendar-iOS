@@ -100,20 +100,24 @@
 
 | 토큰명 | Font Size | Line Height | Weight | Letter Spacing | 용도 |
 |--------|-----------|-------------|--------|----------------|------|
-| `heading1-bold` | 32pt | 40pt | Bold (700) | -0.5pt | 화면 제목 |
-| `heading2-bold` | 24pt | 32pt | Bold (700) | -0.3pt | 섹션 제목 |
-| `heading3-bold` | 20pt | 28pt | Bold (700) | -0.2pt | 카드 제목 |
-| `heading3-semibold` | 20pt | 28pt | Semibold (600) | -0.2pt | 서브 섹션 제목 |
-| `body1-regular` | 16pt | 24pt | Regular (400) | 0pt | 본문 (기본) |
-| `body1-medium` | 16pt | 24pt | Medium (500) | 0pt | 본문 (강조) |
-| `body2-regular` | 14pt | 20pt | Regular (400) | 0pt | 보조 본문 |
-| `body2-medium` | 14pt | 20pt | Medium (500) | 0pt | 보조 본문 (강조) |
-| `caption1-regular` | 12pt | 16pt | Regular (400) | 0pt | 캡션, 라벨 |
-| `caption1-medium` | 12pt | 16pt | Medium (500) | 0pt | 캡션 (강조) |
-| `caption2-regular` | 10pt | 14pt | Regular (400) | 0pt | 작은 캡션 |
-| `label-medium` | 14pt | 20pt | Medium (500) | 0.3pt | 버튼 텍스트 |
-| `numeric-bold` | 28pt | 36pt | Bold (700) | -0.5pt | 큰 숫자 (날짜) |
-| `numeric-medium` | 16pt | 24pt | Medium (500) | 0pt | 일반 숫자 (시간) |
+| `Display/Large` | 96pt | 112pt | Bold (700) | 0pt | 히어로/브랜딩 타이틀 |
+| `Display/Medium` | 52pt | 64pt | Bold (700) | 0pt | 대형 강조 타이틀 |
+| `Display/Small` | 44pt | 52pt | Bold (700) | 0pt | 큰 화면 제목 |
+| `Display/XSmall` | 36pt | 44pt | Bold (700) | 0pt | 중대형 제목 |
+| `Heading/XXLarge` | 40pt | 52pt | Bold (700) | 0pt | 최상위 제목 |
+| `Heading/XLarge` | 36pt | 44pt | Bold (700) | 0pt | 상위 제목 |
+| `Heading/Large` | 32pt | 40pt | Bold (700) | 0pt | 화면 제목 |
+| `Heading/Medium` | 28pt | 36pt | Bold (700) | 0pt | 섹션 제목 |
+| `Heading/Small` | 24pt | 32pt | Bold (700) | 0pt | 카드 제목 |
+| `Heading/XSmall` | 20pt | 28pt | Bold (700) | +0.25pt | 서브 섹션 제목 |
+| `Paragraph/Large` | 18pt | 28pt | Regular (400) | 0pt | 긴 본문(강조) |
+| `Paragraph/Medium` | 16pt | 24pt | Regular (400) | 0pt | 본문(기본) |
+| `Paragraph/Small` | 14pt | 20pt | Regular (400) | 0pt | 보조 본문 |
+| `Paragraph/XSmall` | 12pt | 20pt | Regular (400) | 0pt | 작은 본문 |
+| `Label/Large` | 18pt | 24pt | Medium (500) | 0pt | 버튼/상태 라벨(대) |
+| `Label/Medium` | 16pt | 20pt | Medium (500) | 0pt | 버튼/탭 라벨 |
+| `Label/Small` | 14pt | 16pt | Medium (500) | 0pt | 보조 라벨 |
+| `Label/XSmall` | 12pt | 16pt | Medium (500) | 0pt | 캡션 라벨 |
 
 ### 1-4. 코너 라운드 (Border Radius) 예시
 

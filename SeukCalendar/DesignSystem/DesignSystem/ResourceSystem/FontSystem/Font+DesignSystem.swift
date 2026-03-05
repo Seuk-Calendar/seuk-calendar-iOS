@@ -1,301 +1,130 @@
 import SwiftUI
 
-// MARK: - Heading1
+// MARK: - Display
 
-public enum Heading1: FontStyleType {
+public enum Display: FontStyleType {
   public typealias Family = Pretendard
 
-  case bold, regular
+  case large, medium, small, xSmall
 
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .bold: .bold
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 32 }
-
-  public var lineHeightRatio: CGFloat { 1.25 } // 40 / 32
-
-  public var letterSpacingRatio: CGFloat { -1.5625 } // -0.5 / 32 * 100
-}
-
-// MARK: - Heading2
-
-public enum Heading2: FontStyleType {
-  public typealias Family = Pretendard
-
-  case bold, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .bold: .bold
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 24 }
-
-  public var lineHeightRatio: CGFloat { 1.3333333333333333 } // 32 / 24
-
-  public var letterSpacingRatio: CGFloat { -1.25 } // -0.3 / 24 * 100
-}
-
-// MARK: - Heading3
-
-public enum Heading3: FontStyleType {
-  public typealias Family = Pretendard
-
-  case bold, semibold, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .bold: .bold
-    case .semibold: .semiBold
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 20 }
-
-  public var lineHeightRatio: CGFloat { 1.4 } // 28 / 20
-
-  public var letterSpacingRatio: CGFloat { -1 } // -0.2 / 20 * 100
-}
-
-// MARK: - Heading4
-
-public enum Heading4: FontStyleType {
-  public typealias Family = Pretendard
-
-  case bold, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .bold: .bold
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 18 }
-
-  public var lineHeightRatio: CGFloat { 1.3333333333333333 } // 24 / 18
-
-  public var letterSpacingRatio: CGFloat { -1 }
-}
-
-// MARK: - Heading5
-
-public enum Heading5: FontStyleType {
-  public typealias Family = Pretendard
-
-  case bold, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .bold: .bold
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 16 }
-
-  public var lineHeightRatio: CGFloat { 1.5 } // 24 / 16
-
-  public var letterSpacingRatio: CGFloat { 0 }
-}
-
-// MARK: - Body1
-
-public enum Body1: FontStyleType {
-  public typealias Family = Pretendard
-
-  case regular, medium, bold
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .regular: .regular
-    case .medium: .medium
-    case .bold: .bold
-    }
-  }
-
-  public var size: CGFloat { 16 }
-
-  public var lineHeightRatio: CGFloat { 1.5 } // 24 / 16
-
-  public var letterSpacingRatio: CGFloat { 0 }
-}
-
-// MARK: - Body2
-
-public enum Body2: FontStyleType {
-  public typealias Family = Pretendard
-
-  case regular, medium, bold
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .regular: .regular
-    case .medium: .medium
-    case .bold: .bold
-    }
-  }
-
-  public var size: CGFloat { 14 }
-
-  public var lineHeightRatio: CGFloat { 1.4285714285714286 } // 20 / 14
-
-  public var letterSpacingRatio: CGFloat { 0 }
-}
-
-// MARK: - Label1
-
-public enum Label1: FontStyleType {
-  public typealias Family = Pretendard
-
-  case bold, medium, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .bold: .bold
-    case .medium: .medium
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 16 }
-
-  public var lineHeightRatio: CGFloat { 1.5 } // 24 / 16
-
-  public var letterSpacingRatio: CGFloat { 0 }
-}
-
-// MARK: - Label2
-
-public enum Label2: FontStyleType {
-  public typealias Family = Pretendard
-
-  case bold, medium, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .bold: .bold
-    case .medium: .medium
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 14 }
-
-  public var lineHeightRatio: CGFloat { 1.4285714285714286 } // 20 / 14
-
-  public var letterSpacingRatio: CGFloat {
-    switch self {
-    case .medium: 2.142857142857143 // +0.3 / 14 * 100
-    case .bold, .regular: 0
-    }
-  }
-}
-
-// MARK: - Label3
-
-public enum Label3: FontStyleType {
-  public typealias Family = Pretendard
-
-  case semibold, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .semibold: .semiBold
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 12 }
-
-  public var lineHeightRatio: CGFloat { 1.3333333333333333 } // 16 / 12
-
-  public var letterSpacingRatio: CGFloat { 0 }
-}
-
-// MARK: - Caption1
-
-public enum Caption1: FontStyleType {
-  public typealias Family = Pretendard
-
-  case medium, semibold, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .medium: .medium
-    case .semibold: .semiBold
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 12 }
-
-  public var lineHeightRatio: CGFloat { 1.3333333333333333 } // 16 / 12
-
-  public var letterSpacingRatio: CGFloat { 0 }
-}
-
-// MARK: - Caption2
-
-public enum Caption2: FontStyleType {
-  public typealias Family = Pretendard
-
-  case medium, semibold, regular
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .medium: .medium
-    case .semibold: .semiBold
-    case .regular: .regular
-    }
-  }
-
-  public var size: CGFloat { 10 }
-
-  public var lineHeightRatio: CGFloat { 1.4 } // 14 / 10
-
-  public var letterSpacingRatio: CGFloat { 0 }
-}
-
-// MARK: - Numeric
-
-public enum Numeric: FontStyleType {
-  public typealias Family = Pretendard
-
-  case bold, medium
-
-  public var weight: Pretendard.Weight {
-    switch self {
-    case .bold: .bold
-    case .medium: .medium
-    }
-  }
+  public var weight: Pretendard.Weight { .bold }
 
   public var size: CGFloat {
     switch self {
-    case .bold: 28
-    case .medium: 16
+    case .large: 96
+    case .medium: 52
+    case .small: 44
+    case .xSmall: 36
     }
   }
 
   public var lineHeightRatio: CGFloat {
     switch self {
-    case .bold: 1.2857142857142858 // 36 / 28
-    case .medium: 1.5 // 24 / 16
+    case .large: 1.17
+    case .medium: 1.23
+    case .small: 1.18
+    case .xSmall: 1.22
+    }
+  }
+
+  public var letterSpacingRatio: CGFloat { 0 }
+}
+
+// MARK: - Heading
+
+public enum Heading: FontStyleType {
+  public typealias Family = Pretendard
+
+  case xxLarge, xLarge, large, medium, small, xSmall
+
+  public var weight: Pretendard.Weight { .bold }
+
+  public var size: CGFloat {
+    switch self {
+    case .xxLarge: 40
+    case .xLarge: 36
+    case .large: 32
+    case .medium: 28
+    case .small: 24
+    case .xSmall: 20
+    }
+  }
+
+  public var lineHeightRatio: CGFloat {
+    switch self {
+    case .xxLarge: 1.30
+    case .xLarge: 1.22
+    case .large: 1.25
+    case .medium: 1.29
+    case .small: 1.33
+    case .xSmall: 1.40
     }
   }
 
   public var letterSpacingRatio: CGFloat {
     switch self {
-    case .bold: -1.7857142857142858 // -0.5 / 28 * 100
-    case .medium: 0
+    case .xSmall: 1.25 // +0.25 / 20 * 100
+    case .xxLarge, .xLarge, .large, .medium, .small: 0
     }
   }
+}
+
+// MARK: - Label
+
+public enum Label: FontStyleType {
+  public typealias Family = Pretendard
+
+  case large, medium, small, xSmall
+
+  public var weight: Pretendard.Weight { .medium }
+
+  public var size: CGFloat {
+    switch self {
+    case .large: 18
+    case .medium: 16
+    case .small: 14
+    case .xSmall: 12
+    }
+  }
+
+  public var lineHeightRatio: CGFloat {
+    switch self {
+    case .large: 1.33
+    case .medium: 1.25
+    case .small: 1.14
+    case .xSmall: 1.33
+    }
+  }
+
+  public var letterSpacingRatio: CGFloat { 0 }
+}
+
+// MARK: - Paragraph
+
+public enum Paragraph: FontStyleType {
+  public typealias Family = Pretendard
+
+  case large, medium, small, xSmall
+
+  public var weight: Pretendard.Weight { .regular }
+
+  public var size: CGFloat {
+    switch self {
+    case .large: 18
+    case .medium: 16
+    case .small: 14
+    case .xSmall: 12
+    }
+  }
+
+  public var lineHeightRatio: CGFloat {
+    switch self {
+    case .large: 1.56
+    case .medium: 1.50
+    case .small: 1.43
+    case .xSmall: 1.67
+    }
+  }
+
+  public var letterSpacingRatio: CGFloat { 0 }
 }

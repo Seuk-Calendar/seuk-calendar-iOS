@@ -63,7 +63,7 @@ public enum ToolbarContent: Hashable {
 
     public init(
       title: String,
-      fontStyle: any FontStyleType = Label2.bold,
+      fontStyle: any FontStyleType = Label.small,
       color: Color = .primary
     ) {
       self.title = title
