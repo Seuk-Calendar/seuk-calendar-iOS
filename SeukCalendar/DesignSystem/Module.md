@@ -22,7 +22,6 @@ DesignSystem/
 │   │   │   └── ScheduleCard.swift
 │   │   ├── Tier1/
 │   │   │   └── HomeCalendarComponent/
-│   │   │       ├── CalendarMonthView.swift
 │   │   │       ├── HomeCalendarComponent.swift
 │   │   │       ├── HomeCalendarComponent+Configuration.swift
 │   │   │       ├── HomeCalendarComponent+Event.swift
@@ -61,8 +60,7 @@ DesignSystem/
 **위치**: `DesignSystem/Components/Tier1/`
 - Button, Text, Icon 등 기본 요소
 - HomeCalendarComponent: Pencil `Home Calendar Component` 디자인을 반영한 홈 카드형 월간 캘린더
-- CalendarMonthView: 기존 월간 캘린더 API를 유지하면서 `HomeCalendarComponent`를 감싸는 어댑터
-- HomeCalendarComponent+Calculate: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환
+- HomeCalendarComponent+Calculate: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환하며, `HomeCalendarComponent`의 월간 캘린더용 공개 초기화가 이를 사용
 
 **Tier2** (조합 컴포넌트, 복수 개의 Tier1 컴포넌트)
 **위치**: `DesignSystem/Components/Tier2/`

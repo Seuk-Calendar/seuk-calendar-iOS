@@ -12,6 +12,26 @@ public struct HomeCalendarComponent: View {
     self.eventListener = eventListener
   }
 
+  public init(
+    month: Date,
+    selectedDate: Date,
+    eventsByDay: [Date: [CalendarEvent]],
+    calendar: Calendar = .current,
+    showsMonthBar: Bool = true,
+    today: Date = Date(),
+    eventListener: EventListener? = nil
+  ) {
+    self.configuration = HomeCalendarConfigurationBuilder.makeConfiguration(
+      month: month,
+      selectedDate: selectedDate,
+      eventsByDay: eventsByDay,
+      calendar: calendar,
+      showsMonthBar: showsMonthBar,
+      today: today
+    )
+    self.eventListener = eventListener
+  }
+
   public var body: some View {
     VStack(spacing: Spacing.sp150) {
       if let monthBar = configuration.monthBar {

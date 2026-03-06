@@ -300,11 +300,16 @@ private extension CalendarView {
   var monthContent: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 14) {
-        CalendarMonthView(
+        HomeCalendarComponent(
           month: viewModel.selectedDate,
           selectedDate: viewModel.selectedDate,
           eventsByDay: viewModel.eventsByDay,
-          onSelectDate: { date in
+          showsMonthBar: false,
+          eventListener: { event in
+            guard case let .tapDate(date) = event else {
+              return
+            }
+
             viewModel.send(.selectDate(date))
           }
         )
