@@ -296,33 +296,6 @@ struct CalendarFeatureTests {
   }
 }
 
-extension CalendarFeatureTests {
-  @Test("onAppear_월_모드에서_페이징용_인접_달까지_로드합니다")
-  @MainActor
-  func onAppear_loadsAdjacentMonthRangesForPaging() async throws {
-    let mockRepository = MockScheduleRepository()
-    mockRepository.authorizationStatusValue = .fullAccess
-
-    let viewModel = CalendarViewModel(
-      selectedDate: Self.fixedDate,
-      viewMode: .month,
-      calendar: Self.fixedCalendar,
-      repository: mockRepository
-    )
-
-    await viewModel.send(.onAppear).value
-
-    let fetchedRange = try #require(mockRepository.fetchedRanges.first)
-    let previousMonth = Self.fixedCalendar.date(byAdding: .month, value: -1, to: Self.fixedDate) ?? Self.fixedDate
-    let nextMonth = Self.fixedCalendar.date(byAdding: .month, value: 1, to: Self.fixedDate) ?? Self.fixedDate
-    let previousMonthStart = Self.fixedCalendar.dateInterval(of: .month, for: previousMonth)?.start
-    let nextMonthEnd = Self.fixedCalendar.dateInterval(of: .month, for: nextMonth)?.end
-
-    #expect(previousMonthStart.map { fetchedRange.start <= $0 } == true)
-    #expect(nextMonthEnd.map { fetchedRange.end >= $0 } == true)
-  }
-}
-
 private extension CalendarFeatureTests {
   static var fixedCalendar: Calendar {
     var calendar = Calendar(identifier: .gregorian)

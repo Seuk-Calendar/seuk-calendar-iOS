@@ -303,15 +303,17 @@ private extension CalendarView {
 
   var monthContent: some View {
     VStack(alignment: .leading, spacing: 14) {
-      CalendarMonthPager(
-        baseDate: viewModel.selectedDate,
+      HomeCalendarComponent(
+        month: viewModel.selectedDate,
+        selectedDate: viewModel.selectedDate,
         eventsByDay: viewModel.eventsByDay,
-        calendar: viewModel.displayCalendar,
-        onSelectDate: { date in
+        showsMonthBar: false,
+        eventListener: { event in
+          guard case let .tapDate(date) = event else {
+            return
+          }
+
           viewModel.send(.selectDate(date))
-        },
-        onMovePeriod: { offset in
-          viewModel.send(.movePeriod(offset))
         }
       )
 
@@ -436,10 +438,6 @@ private extension CalendarView {
   var swipeGesture: some Gesture {
     DragGesture(minimumDistance: 20)
       .onEnded { value in
-        guard viewModel.viewMode != .month else {
-          return
-        }
-
         let horizontalMovement = abs(value.translation.width)
         let verticalMovement = abs(value.translation.height)
         guard horizontalMovement > verticalMovement,
