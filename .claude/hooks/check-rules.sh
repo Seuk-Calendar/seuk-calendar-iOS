@@ -44,6 +44,13 @@ if echo "$input_lower" | grep -qE "(아키텍처|architecture|모듈|module)"; t
     fi
 fi
 
+# 디자인시스템 관련 키워드 감지
+if echo "$input_lower" | grep -qE "(디자인시스템|디자인 시스템|design system|designsystem)"; then
+    if [ -f "$rules_dir/design-system-component-convention.md" ]; then
+        injected_rules="$injected_rules\n\n---\n📋 관련 규칙: 디자인시스템 컴포넌트 컨벤션\n\n$(cat "$rules_dir/design-system-component-convention.md")"
+    fi
+fi
+
 # 코드 리뷰 관련 키워드 감지
 if echo "$input_lower" | grep -qE "(리뷰|review|code review|코드 리뷰|코드리뷰)"; then
     if [ -f "$rules_dir/code-review-convention.md" ]; then

@@ -15,6 +15,7 @@ Claude `UserPromptSubmit` 훅(`check-rules.sh`)의 동작을 Codex 스킬로 포
 - PR/pull request/풀리퀘스트
 - 브랜치/branch
 - 아키텍처/architecture/모듈/module
+- 디자인시스템/design system/designsystem
 - 리뷰/review/code review/코드 리뷰
 
 ## 실행 단계
@@ -27,6 +28,7 @@ Claude `UserPromptSubmit` 훅(`check-rules.sh`)의 동작을 Codex 스킬로 포
 - `(pr|pull request|풀리퀘스트|풀 리퀘스트)` -> `.agents/rules/pr-convention.md`
 - `(브랜치|branch)` -> `.agents/rules/branch-convention.md`
 - `(아키텍처|architecture|모듈|module)` -> `.agents/rules/Architecture.md`
+- `(디자인시스템|디자인 시스템|design system|designsystem)` -> `.agents/rules/design-system-component-convention.md`
 - `(리뷰|review|code review|코드 리뷰)` -> `.agents/rules/code-review-convention.md`
 
 ### 2. 관련 규칙 문서 로드

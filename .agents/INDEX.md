@@ -46,6 +46,7 @@
 | **코드 리뷰 컨벤션** | 코드 리뷰 | `.agents/rules/code-review-convention.md` |
 | **ViewModel 컨벤션** | ViewModel 파일 구조/DI 규칙 확인 | `.agents/rules/viewmodel-convention.md` |
 | **디자인 가이드** | 디자인 수정/컴포넌트 계층(Tier) 규칙 확인 | `.agents/rules/design-guide.md` |
+| **디자인시스템 컴포넌트 컨벤션** | 디자인시스템 컴포넌트 생성/API 규칙 확인 | `.agents/rules/design-system-component-convention.md` |
 
 ---
 
