@@ -64,6 +64,7 @@ private extension HomeCalendarConfigurationBuilder {
     let startIndex: Int
     let endIndex: Int
     let eventStartDate: Date
+    let position: HomeCalendarComponent.Configuration.BadgeSegmentPosition
 
     var span: Int {
       endIndex - startIndex + 1
@@ -190,7 +191,8 @@ private extension HomeCalendarConfigurationBuilder {
             id: segment.id,
             badge: segment.badge,
             startIndex: segment.startIndex,
-            span: segment.span
+            span: segment.span,
+            position: segment.position
           )
         }
       )
@@ -221,25 +223,12 @@ private extension HomeCalendarConfigurationBuilder {
       }
     }
 
-    return eventsByIdentity.values.compactMap { value in
-      let indexes = value.indexes.sorted()
-      guard let startIndex = indexes.first,
-            let endIndex = indexes.last else {
-        return nil
-      }
-
-      let badge = HomeCalendarComponent.Configuration.Badge(
-        id: value.event.id,
-        title: badgeTitle(for: value.event),
-        style: badgeStyle(for: value.event)
-      )
-
-      return PositionedBadgeSegment(
-        id: segmentID(for: value.event, weekStart: normalizedDates[startIndex]),
-        badge: badge,
-        startIndex: startIndex,
-        endIndex: endIndex,
-        eventStartDate: context.calendar.startOfDay(for: value.event.startDate)
+    return eventsByIdentity.values.compactMap {
+      makePositionedBadgeSegment(
+        event: $0.event,
+        indexes: $0.indexes,
+        normalizedDates: normalizedDates,
+        calendar: context.calendar
       )
     }
     .sorted { lhs, rhs in
@@ -275,6 +264,64 @@ private extension HomeCalendarConfigurationBuilder {
     }
 
     return lanes
+  }
+
+  static func badgeSegmentPosition(
+    eventStartDate: Date,
+    eventEndDate: Date,
+    visibleStartDate: Date,
+    visibleEndDate: Date
+  ) -> HomeCalendarComponent.Configuration.BadgeSegmentPosition {
+    let startsInVisibleRange = eventStartDate == visibleStartDate
+    let endsInVisibleRange = eventEndDate == visibleEndDate
+
+    switch (startsInVisibleRange, endsInVisibleRange) {
+    case (true, true):
+      return .startAndEnd
+    case (true, false):
+      return .start
+    case (false, true):
+      return .end
+    case (false, false):
+      return .middle
+    }
+  }
+
+  static func makePositionedBadgeSegment(
+    event: CalendarEvent,
+    indexes: Set<Int>,
+    normalizedDates: [Date],
+    calendar: Calendar
+  ) -> PositionedBadgeSegment? {
+    let sortedIndexes = indexes.sorted()
+    guard let startIndex = sortedIndexes.first,
+          let endIndex = sortedIndexes.last else {
+      return nil
+    }
+
+    let eventStartDate = calendar.startOfDay(for: event.startDate)
+    let eventEndDate = calendar.startOfDay(for: event.endDate)
+    let visibleStartDate = normalizedDates[startIndex]
+    let visibleEndDate = normalizedDates[endIndex]
+    let badge = HomeCalendarComponent.Configuration.Badge(
+      id: event.id,
+      title: badgeTitle(for: event),
+      style: badgeStyle(for: event)
+    )
+
+    return PositionedBadgeSegment(
+      id: segmentID(for: event, weekStart: visibleStartDate),
+      badge: badge,
+      startIndex: startIndex,
+      endIndex: endIndex,
+      eventStartDate: eventStartDate,
+      position: badgeSegmentPosition(
+        eventStartDate: eventStartDate,
+        eventEndDate: eventEndDate,
+        visibleStartDate: visibleStartDate,
+        visibleEndDate: visibleEndDate
+      )
+    )
   }
 
   static func hiddenBadgeCounts(

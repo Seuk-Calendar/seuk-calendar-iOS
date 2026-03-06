@@ -3,20 +3,34 @@ import UIKit
 
 struct HomeCalendarComponentBadge: View {
   static let layoutHeight: CGFloat = 14
+  static let cornerRadius = Radius.rds100 / 2
 
   let badge: HomeCalendarComponent.Configuration.Badge
+  let position: HomeCalendarComponent.Configuration.BadgeSegmentPosition
+
+  init(
+    badge: HomeCalendarComponent.Configuration.Badge,
+    position: HomeCalendarComponent.Configuration.BadgeSegmentPosition = .startAndEnd
+  ) {
+    self.badge = badge
+    self.position = position
+  }
 
   var body: some View {
     HStack(spacing: 3) {
-      RoundedRectangle(cornerRadius: 1, style: .continuous)
-        .fill(badge.style.accentColor)
-        .frame(width: 2, height: 10)
+      if position.showsMetadata {
+        RoundedRectangle(cornerRadius: 1, style: .continuous)
+          .fill(badge.style.accentColor)
+          .frame(width: 2, height: 10)
+      }
 
-      Text(badge.title)
-        .font(.homeCalendar(weight: .medium, size: 8))
-        .foregroundStyle(badge.style.accentColor)
-        .lineLimit(1)
-        .minimumScaleFactor(0.7)
+      if position.showsMetadata {
+        Text(badge.title)
+          .font(.homeCalendar(weight: .medium, size: 8))
+          .foregroundStyle(badge.style.accentColor)
+          .lineLimit(1)
+          .minimumScaleFactor(0.7)
+      }
 
       Spacer(minLength: 0)
     }
@@ -28,7 +42,44 @@ struct HomeCalendarComponentBadge: View {
       alignment: .leading
     )
     .background(badge.style.backgroundColor)
-    .clipShape(RoundedRectangle(cornerRadius: Radius.rds100 / 2, style: .continuous))
+    .clipShape(
+      UnevenRoundedRectangle(
+        topLeadingRadius: position.hasLeadingCorner ? Self.cornerRadius : 0,
+        bottomLeadingRadius: position.hasLeadingCorner ? Self.cornerRadius : 0,
+        bottomTrailingRadius: position.hasTrailingCorner ? Self.cornerRadius : 0,
+        topTrailingRadius: position.hasTrailingCorner ? Self.cornerRadius : 0,
+        style: .continuous
+      )
+    )
+  }
+}
+
+private extension HomeCalendarComponent.Configuration.BadgeSegmentPosition {
+  var showsMetadata: Bool {
+    switch self {
+    case .startAndEnd, .start:
+      true
+    case .middle, .end:
+      false
+    }
+  }
+
+  var hasLeadingCorner: Bool {
+    switch self {
+    case .startAndEnd, .start:
+      true
+    case .middle, .end:
+      false
+    }
+  }
+
+  var hasTrailingCorner: Bool {
+    switch self {
+    case .startAndEnd, .end:
+      true
+    case .start, .middle:
+      false
+    }
   }
 }
 

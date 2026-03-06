@@ -5,7 +5,7 @@ struct HomeCalendarComponentWeekView: View {
   let eventListener: HomeCalendarComponent.EventListener?
 
   var body: some View {
-    if week.badgeRows.isEmpty {
+    if usesLegacyLayout {
       legacyWeekView
     } else {
       spanningWeekView
@@ -14,6 +14,19 @@ struct HomeCalendarComponentWeekView: View {
 }
 
 private extension HomeCalendarComponentWeekView {
+  static let dayNumberRowHeight: CGFloat = 20
+  static let hiddenBadgeCountRowHeight: CGFloat = 8
+  static var layoutHeight: CGFloat {
+    dayNumberRowHeight
+      + CGFloat(HomeCalendarConfigurationBuilder.maxVisibleBadgeRows) * HomeCalendarComponentBadge.layoutHeight
+      + hiddenBadgeCountRowHeight
+      + CGFloat(HomeCalendarConfigurationBuilder.maxVisibleBadgeRows + 1) * Spacing.sp100
+  }
+
+  var usesLegacyLayout: Bool {
+    week.badgeRows.isEmpty && week.days.contains { !$0.badges.isEmpty || $0.hiddenBadgeCount > 0 }
+  }
+
   var legacyWeekView: some View {
     HStack(alignment: .top, spacing: 0) {
       ForEach(week.days) { day in
@@ -30,6 +43,12 @@ private extension HomeCalendarComponentWeekView {
 
   var spanningWeekView: some View {
     gridContent
+      .frame(
+        maxWidth: .infinity,
+        minHeight: Self.layoutHeight,
+        maxHeight: Self.layoutHeight,
+        alignment: .top
+      )
       .allowsHitTesting(false)
       .background(selectionBackground)
       .overlay(dayTapOverlay)
@@ -47,12 +66,15 @@ private extension HomeCalendarComponentWeekView {
         }
       }
 
-      ForEach(week.badgeRows) { row in
+      ForEach(displayedBadgeRows) { row in
         GridRow {
           ForEach(layoutItems(for: row)) { item in
             if let segment = item.segment {
-              HomeCalendarComponentBadge(badge: segment.badge)
-                .gridCellColumns(item.span)
+              HomeCalendarComponentBadge(
+                badge: segment.badge,
+                position: segment.position
+              )
+              .gridCellColumns(item.span)
             } else {
               Color.clear
                 .frame(height: HomeCalendarComponentBadge.layoutHeight)
@@ -62,11 +84,9 @@ private extension HomeCalendarComponentWeekView {
         }
       }
 
-      if showsHiddenBadgeCountRow {
-        GridRow {
-          ForEach(week.days) { day in
-            hiddenBadgeCountView(for: day)
-          }
+      GridRow {
+        ForEach(week.days) { day in
+          hiddenBadgeCountView(for: day)
         }
       }
     }
@@ -103,8 +123,16 @@ private extension HomeCalendarComponentWeekView {
     }
   }
 
-  var showsHiddenBadgeCountRow: Bool {
-    week.days.contains(where: { $0.hiddenBadgeCount > 0 })
+  var displayedBadgeRows: [HomeCalendarComponent.Configuration.BadgeRow] {
+    let placeholderCount = max(HomeCalendarConfigurationBuilder.maxVisibleBadgeRows - week.badgeRows.count, 0)
+    let placeholders = (0 ..< placeholderCount).map { index in
+      HomeCalendarComponent.Configuration.BadgeRow(
+        id: "placeholder-\(week.id)-\(index)",
+        segments: []
+      )
+    }
+
+    return Array((week.badgeRows + placeholders).prefix(HomeCalendarConfigurationBuilder.maxVisibleBadgeRows))
   }
 
   func hiddenBadgeCountView(for day: HomeCalendarComponent.Configuration.Day) -> some View {
@@ -116,13 +144,13 @@ private extension HomeCalendarComponentWeekView {
           .lineLimit(1)
           .minimumScaleFactor(0.8)
           .padding(.horizontal, Spacing.sp050)
-          .frame(maxWidth: .infinity, alignment: .leading)
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
       } else {
         Color.clear
-          .frame(height: 8)
-          .frame(maxWidth: .infinity)
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
+    .frame(height: Self.hiddenBadgeCountRowHeight)
   }
 
   func layoutItems(

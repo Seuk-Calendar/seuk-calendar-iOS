@@ -135,18 +135,28 @@ public extension HomeCalendarComponent.Configuration {
     public let badge: Badge
     public let startIndex: Int
     public let span: Int
+    public let position: BadgeSegmentPosition
 
     public init(
       id: String,
       badge: Badge,
       startIndex: Int,
-      span: Int
+      span: Int,
+      position: BadgeSegmentPosition = .startAndEnd
     ) {
       self.id = id
       self.badge = badge
       self.startIndex = startIndex
       self.span = span
+      self.position = position
     }
+  }
+
+  enum BadgeSegmentPosition: Hashable, Sendable {
+    case startAndEnd
+    case start
+    case middle
+    case end
   }
 
   enum WeekdayRole: Hashable, Sendable {
