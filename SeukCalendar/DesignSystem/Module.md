@@ -21,7 +21,16 @@ DesignSystem/
 │   │   │   ├── CalendarDayView.swift
 │   │   │   ├── DateCell.swift
 │   │   │   └── ScheduleCard.swift
-│   │   ├── Tier1/    # 단일 컴포넌트
+│   │   ├── Tier1/
+│   │   │   └── HomeCalendarComponent/
+│   │   │       ├── HomeCalendarComponent.swift
+│   │   │       ├── HomeCalendarComponent+Configuration.swift
+│   │   │       ├── HomeCalendarComponent+Event.swift
+│   │   │       └── Components/
+│   │   │           ├── HomeCalendarComponentMonthBar.swift
+│   │   │           ├── HomeCalendarComponentWeekdayBar.swift
+│   │   │           ├── HomeCalendarComponentDayCell.swift
+│   │   │           └── HomeCalendarComponentBadge.swift
 │   │   ├── Tier2/    # 복수 개의 Tier1 컴포넌트
 │   │   └── Tier3/    # 복수 개의 Tier2 컴포넌트
 │   ├── Resources/
@@ -45,12 +54,14 @@ DesignSystem/
 - CalendarDayView: 일간 타임라인
 - DateCell: 날짜 셀 공통 컴포넌트
 - ScheduleCard: 일정 카드 공통 컴포넌트
+- CalendarMonthView+ConfigurationBuilder: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환
 
 ### Atomic Design 구조
 
 **Tier1** (기본 컴포넌트)
 **위치**: `DesignSystem/Components/Tier1/`
 - Button, Text, Icon 등 기본 요소
+- HomeCalendarComponent: Pencil `Home Calendar Component` 디자인을 반영한 홈 카드형 월간 캘린더
 
 **Tier2** (조합 컴포넌트, 복수 개의 Tier1 컴포넌트)
 **위치**: `DesignSystem/Components/Tier2/`
