@@ -8,10 +8,7 @@ struct HomeCalendarComponentDayCell: View {
   var body: some View {
     Button(action: action) {
       VStack(alignment: .leading, spacing: 3) {
-        Text(day.dayText)
-          .font(dayNumberFont)
-          .foregroundStyle(dayNumberColor)
-          .lineLimit(1)
+        dayNumberView
 
         ForEach(day.badges.prefix(2)) { badge in
           HomeCalendarComponentBadge(badge: badge)
@@ -36,13 +33,31 @@ struct HomeCalendarComponentDayCell: View {
 }
 
 private extension HomeCalendarComponentDayCell {
+  var dayNumberView: some View {
+    HStack(spacing: 0) {
+      Text(day.dayText)
+        .font(dayNumberFont)
+        .foregroundStyle(dayNumberColor)
+        .lineLimit(1)
+        .frame(width: dayNumberHighlightSize, height: dayNumberHighlightSize)
+        .background {
+          if day.isToday {
+            Circle()
+              .fill(Color.semanticExtensions.Background.backgroundAccent)
+          }
+        }
+
+      Spacer(minLength: 0)
+    }
+  }
+
   var dayNumberColor: Color {
-    if day.isSelected {
-      return .primitives.blue600
+    if day.isToday {
+      return .semanticExtensions.Content.contentOnColor
     }
 
-    if day.isToday {
-      return .primitives.gray900
+    if day.isSelected {
+      return .primitives.blue600
     }
 
     guard day.isInCurrentMonth else {
@@ -70,5 +85,9 @@ private extension HomeCalendarComponentDayCell {
     }
 
     return .homeCalendar(weight: weight, size: 14)
+  }
+
+  var dayNumberHighlightSize: CGFloat? {
+    day.isToday ? 24 : nil
   }
 }
