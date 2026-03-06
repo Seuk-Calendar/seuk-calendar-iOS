@@ -26,6 +26,12 @@ struct HomeCalendarComponentDayCell: View {
       }
       .padding(.horizontal, Spacing.sp050)
       .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
+      .background {
+        if day.isSelected {
+          RoundedRectangle(cornerRadius: Radius.rds500, style: .continuous)
+            .fill(Color.semantic.Background.backgroundTertiary)
+        }
+      }
       .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
@@ -54,10 +60,6 @@ private extension HomeCalendarComponentDayCell {
   var dayNumberColor: Color {
     if day.isToday {
       return .semanticExtensions.Content.contentOnColor
-    }
-
-    if day.isSelected {
-      return .primitives.blue600
     }
 
     guard day.isInCurrentMonth else {
