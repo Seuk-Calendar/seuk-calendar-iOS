@@ -8,9 +8,7 @@
 
 ## 적용 범위
 
-- `SeukCalendar/DesignSystem`에 추가되는 신규 컴포넌트
-- 기존 디자인시스템 컴포넌트의 public API를 개편하는 작업
-- `Tier1`, `Tier2`, `Tier3` 및 캘린더 계열 공용 컴포넌트
+- `SeukCalendar/DesignSystem`에 추가되는 신규 컴포넌트 및 기존 컴포넌트
 
 ## 규칙
 
