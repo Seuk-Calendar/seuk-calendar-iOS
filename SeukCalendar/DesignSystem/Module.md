@@ -15,13 +15,23 @@ DesignSystem/
 ├── DesignSystem.xcodeproj
 ├── DesignSystem/
 │   ├── Components/
-│   │   ├── Calendar/
-│   │   │   ├── CalendarMonthView.swift
-│   │   │   ├── CalendarWeekView.swift
-│   │   │   ├── CalendarDayView.swift
-│   │   │   ├── DateCell.swift
-│   │   │   └── ScheduleCard.swift
-│   │   ├── Tier1/    # 단일 컴포넌트
+│   │   ├── Tier1/
+│   │   │   └── HomeCalendarComponent/
+│   │   │       ├── CalendarEvent.swift
+│   │   │       ├── CalendarDayView.swift
+│   │   │       ├── CalendarWeekView.swift
+│   │   │       ├── DateCell.swift
+│   │   │       ├── ScheduleCard.swift
+│   │   │       ├── HomeCalendarComponent.swift
+│   │   │       ├── HomeCalendarComponent+Configuration.swift
+│   │   │       ├── HomeCalendarComponent+Event.swift
+│   │   │       ├── HomeCalendarComponent+Calculate.swift
+│   │   │       └── Components/
+│   │   │           ├── HomeCalendarComponentMonthBar.swift
+│   │   │           ├── HomeCalendarComponentWeekdayBar.swift
+│   │   │           ├── HomeCalendarComponentWeekView.swift
+│   │   │           ├── HomeCalendarComponentDayCell.swift
+│   │   │           └── HomeCalendarComponentBadge.swift
 │   │   ├── Tier2/    # 복수 개의 Tier1 컴포넌트
 │   │   └── Tier3/    # 복수 개의 Tier2 컴포넌트
 │   ├── Resources/
@@ -37,20 +47,15 @@ DesignSystem/
 
 ## 주요 구성요소
 
-### Calendar 컴포넌트
-
-**위치**: `DesignSystem/Components/Calendar/`
-- CalendarMonthView: 월간 캘린더 그리드
-- CalendarWeekView: 주간 헤더 + 선택 날짜 타임라인
-- CalendarDayView: 일간 타임라인
-- DateCell: 날짜 셀 공통 컴포넌트
-- ScheduleCard: 일정 카드 공통 컴포넌트
-
 ### Atomic Design 구조
 
 **Tier1** (기본 컴포넌트)
 **위치**: `DesignSystem/Components/Tier1/`
 - Button, Text, Icon 등 기본 요소
+- HomeCalendarComponent: Pencil `Home Calendar Component` 디자인을 반영한 홈 카드형 월간 캘린더
+- HomeCalendarComponent+Calculate: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환하며, 다일 일정은 주 단위 spanning row로 계산한다
+- HomeCalendarComponentWeekView: 날짜 행과 주 단위 이벤트 막대 행을 합성해 다일 일정이 하나의 막대처럼 이어지도록 렌더링한다
+- CalendarWeekView, CalendarDayView, DateCell, ScheduleCard, CalendarEvent: 캘린더 관련 공개 타입을 `HomeCalendarComponent` 디렉토리 아래로 통합 관리
 
 **Tier2** (조합 컴포넌트, 복수 개의 Tier1 컴포넌트)
 **위치**: `DesignSystem/Components/Tier2/`

@@ -17,27 +17,31 @@ public struct CalendarView: View {
 
   public var body: some View {
     NavigationStack(path: $path) {
-      VStack(spacing: 16) {
-        aiParsingSection
-        modePicker
-        dateHeader
-        permissionDescription
-        syncStatusDescription
+      ScrollView(showsIndicators: false) {
+        VStack(alignment: .leading, spacing: 16) {
+          modePicker
+          dateHeader
+          permissionDescription
+          syncStatusDescription
 
-        Group {
-          switch viewModel.viewMode {
-          case .month:
-            monthContent
-          case .week:
-            weekContent
-          case .day:
-            dayContent
+          Group {
+            switch viewModel.viewMode {
+            case .month:
+              monthContent
+            case .week:
+              weekContent
+            case .day:
+              dayContent
+            }
           }
+          .frame(maxWidth: .infinity, alignment: .topLeading)
+
+          aiParsingSection
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .gesture(swipeGesture)
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
       }
-      .padding(16)
+      .simultaneousGesture(swipeGesture)
       .navigationTitle("캘린더")
       .navigationBarTitleDisplayMode(.inline)
       .overlay {
@@ -298,22 +302,25 @@ private extension CalendarView {
   }
 
   var monthContent: some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 14) {
-        CalendarMonthView(
-          month: viewModel.selectedDate,
-          selectedDate: viewModel.selectedDate,
-          eventsByDay: viewModel.eventsByDay,
-          onSelectDate: { date in
-            viewModel.send(.selectDate(date))
+    VStack(alignment: .leading, spacing: 14) {
+      HomeCalendarComponent(
+        month: viewModel.selectedDate,
+        selectedDate: viewModel.selectedDate,
+        eventsByDay: viewModel.eventsByDay,
+        showsMonthBar: false,
+        eventListener: { event in
+          guard case let .tapDate(date) = event else {
+            return
           }
-        )
 
-        Text("선택한 날짜 일정")
-          .font(.system(size: 15, weight: .semibold))
+          viewModel.send(.selectDate(date))
+        }
+      )
 
-        scheduleList(for: viewModel.selectedDate)
-      }
+      Text("선택한 날짜 일정")
+        .font(.system(size: 15, weight: .semibold))
+
+      scheduleList(for: viewModel.selectedDate)
     }
   }
 
@@ -322,6 +329,7 @@ private extension CalendarView {
       referenceDate: viewModel.selectedDate,
       selectedDate: viewModel.selectedDate,
       eventsByDay: viewModel.eventsByDay,
+      wrapsDayContentInScrollView: false,
       onSelectDate: { date in
         viewModel.send(.selectDate(date))
       },
@@ -333,6 +341,7 @@ private extension CalendarView {
     CalendarDayView(
       date: viewModel.selectedDate,
       events: viewModel.events(on: viewModel.selectedDate),
+      wrapsContentInScrollView: false,
       onSelectEvent: openScheduleDetail
     )
   }
