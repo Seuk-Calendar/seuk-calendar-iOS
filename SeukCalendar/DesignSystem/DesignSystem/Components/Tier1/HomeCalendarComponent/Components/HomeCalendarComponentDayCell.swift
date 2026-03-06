@@ -7,7 +7,7 @@ struct HomeCalendarComponentDayCell: View {
 
   var body: some View {
     Button(action: action) {
-      VStack(alignment: .leading, spacing: 3) {
+      VStack(alignment: .center, spacing: Spacing.sp100) {
         dayNumberView
 
         ForEach(day.badges.prefix(2)) { badge in
@@ -91,7 +91,7 @@ private extension HomeCalendarComponentDayCell {
   }
 
   var dayNumberHighlightSize: CGFloat? {
-    day.isToday ? 24 : nil
+    day.isToday ? 20 : nil
   }
 }
 
