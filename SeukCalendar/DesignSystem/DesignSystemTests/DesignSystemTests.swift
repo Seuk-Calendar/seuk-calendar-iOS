@@ -17,6 +17,12 @@ struct DesignSystemTests {
     let days = configuration.weeks.flatMap(\.days)
     let selectedDay = days.first(where: { $0.date == Self.selectedDate })
     let todayDay = days.first(where: { $0.date == Self.today })
+    let tripWeek = configuration.weeks.first(where: { week in
+      week.days.contains(where: { $0.date == Self.today })
+    })
+    let tripSegment = tripWeek?.badgeRows
+      .flatMap(\.segments)
+      .first(where: { $0.badge.id == "trip" })
 
     #expect(configuration.monthBar?.previousMonthTitle == "1월")
     #expect(configuration.monthBar?.currentMonthTitle == "2026년 2월")
@@ -24,9 +30,11 @@ struct DesignSystemTests {
     #expect(configuration.weekdays.map(\.title) == ["일", "월", "화", "수", "목", "금", "토"])
     #expect(configuration.weeks.count == 4)
     #expect(selectedDay?.isSelected == true)
-    #expect(selectedDay?.badges.count == 2)
+    #expect(selectedDay?.badges.count == 3)
     #expect(selectedDay?.hiddenBadgeCount == 1)
     #expect(todayDay?.isToday == true)
+    #expect(tripSegment?.startIndex == 4)
+    #expect(tripSegment?.span == 3)
   }
 
   @Test("makeConfiguration_월바를_숨기면_nil을_반환합니다")
@@ -63,6 +71,13 @@ private extension DesignSystemTests {
   )
 
   static var eventsByDay: [Date: [CalendarEvent]] {
+    let trip = CalendarEvent(
+      id: "trip",
+      title: "경주 여행",
+      startDate: fixedCalendar.date(from: DateComponents(year: 2026, month: 2, day: 26, hour: 9)) ?? month,
+      endDate: fixedCalendar.date(from: DateComponents(year: 2026, month: 2, day: 28, hour: 18)) ?? month,
+      isAllDay: true
+    )
     let scheduleEvents = [
       CalendarEvent(
         id: "cafe",
@@ -87,6 +102,13 @@ private extension DesignSystemTests {
       )
     ]
 
-    return [selectedDate: scheduleEvents]
+    let nextDay = fixedCalendar.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
+    let previousDay = fixedCalendar.date(byAdding: .day, value: -1, to: selectedDate) ?? selectedDate
+
+    return [
+      previousDay: [trip],
+      selectedDate: [trip] + scheduleEvents,
+      nextDay: [trip]
+    ]
   }
 }

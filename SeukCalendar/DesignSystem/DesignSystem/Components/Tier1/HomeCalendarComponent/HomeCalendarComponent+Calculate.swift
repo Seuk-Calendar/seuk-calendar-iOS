@@ -1,6 +1,8 @@
 import Foundation
 
 enum HomeCalendarConfigurationBuilder {
+  static let maxVisibleBadgeRows = 3
+
   static func makeConfiguration(
     month: Date,
     selectedDate: Date,
@@ -24,13 +26,10 @@ enum HomeCalendarConfigurationBuilder {
 
     let weeks = stride(from: 0, to: dates.count, by: 7).map { index in
       let chunk = Array(dates[index ..< min(index + 7, dates.count)])
-      let days = chunk.map { date in
-        day(for: date, context: context)
-      }
-
-      return HomeCalendarComponent.Configuration.Week(
-        id: "week-\(index / 7)",
-        days: days
+      return week(
+        for: chunk,
+        weekIndex: index / 7,
+        context: context
       )
     }
 
@@ -49,6 +48,30 @@ private extension HomeCalendarConfigurationBuilder {
     let today: Date
     let eventsByDay: [Date: [CalendarEvent]]
     let calendar: Calendar
+  }
+
+  struct EventIdentity: Hashable {
+    let id: String
+    let title: String
+    let startDate: Date
+    let endDate: Date
+    let isAllDay: Bool
+  }
+
+  struct PositionedBadgeSegment: Hashable {
+    let id: String
+    let badge: HomeCalendarComponent.Configuration.Badge
+    let startIndex: Int
+    let endIndex: Int
+    let eventStartDate: Date
+
+    var span: Int {
+      endIndex - startIndex + 1
+    }
+
+    func overlaps(with other: PositionedBadgeSegment) -> Bool {
+      !(endIndex < other.startIndex || other.endIndex < startIndex)
+    }
   }
 
   static func orderedWeekdaySymbols(using calendar: Calendar) -> [HomeCalendarComponent.Configuration.Weekday] {
@@ -99,15 +122,16 @@ private extension HomeCalendarConfigurationBuilder {
 
   static func day(
     for date: Date,
+    hiddenBadgeCount: Int,
     context: DayContext
   ) -> HomeCalendarComponent.Configuration.Day {
     let normalizedDate = context.calendar.startOfDay(for: date)
     let events = sortedEvents(context.eventsByDay[normalizedDate] ?? [])
-    let visibleBadges = Array(events.prefix(2).enumerated()).map { index, event in
+    let visibleBadges = Array(events.prefix(maxVisibleBadgeRows)).map { event in
       HomeCalendarComponent.Configuration.Badge(
         id: event.id,
         title: badgeTitle(for: event),
-        style: badgeStyle(for: event, index: index)
+        style: badgeStyle(for: event)
       )
     }
 
@@ -120,8 +144,173 @@ private extension HomeCalendarConfigurationBuilder {
       isSelected: context.calendar.isDate(normalizedDate, inSameDayAs: context.selectedDate),
       isToday: context.calendar.isDate(normalizedDate, inSameDayAs: context.today),
       badges: visibleBadges,
-      hiddenBadgeCount: max(events.count - visibleBadges.count, 0)
+      hiddenBadgeCount: hiddenBadgeCount
     )
+  }
+
+  static func week(
+    for dates: [Date],
+    weekIndex: Int,
+    context: DayContext
+  ) -> HomeCalendarComponent.Configuration.Week {
+    let (badgeRows, hiddenBadgeCounts) = badgeRows(
+      for: dates,
+      context: context
+    )
+    let days = dates.enumerated().map { index, date in
+      day(
+        for: date,
+        hiddenBadgeCount: hiddenBadgeCounts[index],
+        context: context
+      )
+    }
+
+    return HomeCalendarComponent.Configuration.Week(
+      id: "week-\(weekIndex)",
+      days: days,
+      badgeRows: badgeRows
+    )
+  }
+
+  static func badgeRows(
+    for dates: [Date],
+    context: DayContext
+  ) -> ([HomeCalendarComponent.Configuration.BadgeRow], [Int]) {
+    let segments = positionedSegments(
+      for: dates,
+      context: context
+    )
+    let lanes = badgeLanes(for: segments)
+    let visibleLanes = Array(lanes.prefix(maxVisibleBadgeRows))
+    let rows = visibleLanes.enumerated().map { index, lane in
+      HomeCalendarComponent.Configuration.BadgeRow(
+        id: "badge-row-\(index)-\(dates.first?.ISO8601Format() ?? "week")",
+        segments: lane.map { segment in
+          HomeCalendarComponent.Configuration.BadgeSegment(
+            id: segment.id,
+            badge: segment.badge,
+            startIndex: segment.startIndex,
+            span: segment.span
+          )
+        }
+      )
+    }
+    let hiddenCounts = hiddenBadgeCounts(
+      for: lanes,
+      dayCount: dates.count
+    )
+
+    return (rows, hiddenCounts)
+  }
+
+  static func positionedSegments(
+    for dates: [Date],
+    context: DayContext
+  ) -> [PositionedBadgeSegment] {
+    let normalizedDates = dates.map(context.calendar.startOfDay(for:))
+    var eventsByIdentity: [EventIdentity: (event: CalendarEvent, indexes: Set<Int>)] = [:]
+
+    for (index, date) in normalizedDates.enumerated() {
+      for event in context.eventsByDay[date] ?? [] {
+        let identity = eventIdentity(for: event, calendar: context.calendar)
+        if eventsByIdentity[identity] == nil {
+          eventsByIdentity[identity] = (event, [index])
+        } else {
+          eventsByIdentity[identity]?.indexes.insert(index)
+        }
+      }
+    }
+
+    return eventsByIdentity.values.compactMap { value in
+      let indexes = value.indexes.sorted()
+      guard let startIndex = indexes.first,
+            let endIndex = indexes.last else {
+        return nil
+      }
+
+      let badge = HomeCalendarComponent.Configuration.Badge(
+        id: value.event.id,
+        title: badgeTitle(for: value.event),
+        style: badgeStyle(for: value.event)
+      )
+
+      return PositionedBadgeSegment(
+        id: segmentID(for: value.event, weekStart: normalizedDates[startIndex]),
+        badge: badge,
+        startIndex: startIndex,
+        endIndex: endIndex,
+        eventStartDate: context.calendar.startOfDay(for: value.event.startDate)
+      )
+    }
+    .sorted { lhs, rhs in
+      if lhs.startIndex == rhs.startIndex {
+        if lhs.span == rhs.span {
+          if lhs.eventStartDate == rhs.eventStartDate {
+            return lhs.badge.title < rhs.badge.title
+          }
+
+          return lhs.eventStartDate < rhs.eventStartDate
+        }
+
+        return lhs.span > rhs.span
+      }
+
+      return lhs.startIndex < rhs.startIndex
+    }
+  }
+
+  static func badgeLanes(
+    for segments: [PositionedBadgeSegment]
+  ) -> [[PositionedBadgeSegment]] {
+    var lanes: [[PositionedBadgeSegment]] = []
+
+    for segment in segments {
+      if let laneIndex = lanes.firstIndex(where: { lane in
+        lane.allSatisfy { !$0.overlaps(with: segment) }
+      }) {
+        lanes[laneIndex].append(segment)
+      } else {
+        lanes.append([segment])
+      }
+    }
+
+    return lanes
+  }
+
+  static func hiddenBadgeCounts(
+    for lanes: [[PositionedBadgeSegment]],
+    dayCount: Int
+  ) -> [Int] {
+    guard dayCount > 0 else {
+      return []
+    }
+
+    let visibleLanes = Array(lanes.prefix(maxVisibleBadgeRows))
+    var totalCounts = Array(repeating: 0, count: dayCount)
+    var visibleCounts = Array(repeating: 0, count: dayCount)
+
+    for lane in lanes {
+      applyCounts(of: lane, to: &totalCounts)
+    }
+
+    for lane in visibleLanes {
+      applyCounts(of: lane, to: &visibleCounts)
+    }
+
+    return zip(totalCounts, visibleCounts).map { total, visible in
+      max(total - visible, 0)
+    }
+  }
+
+  static func applyCounts(
+    of lane: [PositionedBadgeSegment],
+    to counts: inout [Int]
+  ) {
+    for segment in lane {
+      for index in segment.startIndex ... segment.endIndex {
+        counts[index] += 1
+      }
+    }
   }
 
   static func monthBar(
@@ -180,10 +369,7 @@ private extension HomeCalendarConfigurationBuilder {
     return trimmedTitle.isEmpty ? "일정" : trimmedTitle
   }
 
-  static func badgeStyle(
-    for event: CalendarEvent,
-    index: Int
-  ) -> HomeCalendarComponent.Configuration.BadgeStyle {
+  static func badgeStyle(for event: CalendarEvent) -> HomeCalendarComponent.Configuration.BadgeStyle {
     let palettes: [HomeCalendarComponent.Configuration.BadgeStyle] = [
       .green,
       .blue,
@@ -195,7 +381,28 @@ private extension HomeCalendarConfigurationBuilder {
       .pink
     ]
     let seed = stableHash(for: event.id.isEmpty ? event.title : event.id)
-    return palettes[(seed + index) % palettes.count]
+    return palettes[seed % palettes.count]
+  }
+
+  static func eventIdentity(
+    for event: CalendarEvent,
+    calendar: Calendar
+  ) -> EventIdentity {
+    EventIdentity(
+      id: event.id,
+      title: event.title,
+      startDate: calendar.startOfDay(for: event.startDate),
+      endDate: calendar.startOfDay(for: event.endDate),
+      isAllDay: event.isAllDay
+    )
+  }
+
+  static func segmentID(
+    for event: CalendarEvent,
+    weekStart: Date
+  ) -> String {
+    let base = event.id.isEmpty ? event.title : event.id
+    return "\(base)-\(weekStart.ISO8601Format())"
   }
 
   static func stableHash(for value: String) -> Int {

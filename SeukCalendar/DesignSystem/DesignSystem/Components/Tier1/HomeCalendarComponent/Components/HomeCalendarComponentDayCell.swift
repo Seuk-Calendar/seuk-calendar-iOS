@@ -3,6 +3,7 @@ import UIKit
 
 struct HomeCalendarComponentDayCell: View {
   let day: HomeCalendarComponent.Configuration.Day
+  let showsBadges: Bool
   let action: () -> Void
 
   var body: some View {
@@ -10,11 +11,13 @@ struct HomeCalendarComponentDayCell: View {
       VStack(alignment: .center, spacing: Spacing.sp100) {
         dayNumberView
 
-        ForEach(day.badges.prefix(2)) { badge in
-          HomeCalendarComponentBadge(badge: badge)
+        if showsBadges {
+          ForEach(day.badges.prefix(HomeCalendarConfigurationBuilder.maxVisibleBadgeRows)) { badge in
+            HomeCalendarComponentBadge(badge: badge)
+          }
         }
 
-        if day.hiddenBadgeCount > 0 {
+        if showsBadges, day.hiddenBadgeCount > 0 {
           Text("+\(day.hiddenBadgeCount)")
             .font(.homeCalendar(weight: .semiBold, size: 8))
             .foregroundStyle(Color.primitives.gray600)
@@ -22,12 +25,18 @@ struct HomeCalendarComponentDayCell: View {
             .minimumScaleFactor(0.8)
         }
 
-        Spacer(minLength: 0)
+        if showsBadges {
+          Spacer(minLength: 0)
+        }
       }
       .padding(.horizontal, Spacing.sp050)
-      .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
+      .frame(
+        maxWidth: .infinity,
+        minHeight: showsBadges ? 80 : dayNumberHighlightSize ?? 20,
+        alignment: .top
+      )
       .background {
-        if day.isSelected {
+        if showsBadges, day.isSelected {
           RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
             .fill(Color.semantic.Background.backgroundTertiary)
         }
@@ -40,22 +49,19 @@ struct HomeCalendarComponentDayCell: View {
 
 private extension HomeCalendarComponentDayCell {
   var dayNumberView: some View {
-    HStack(spacing: 0) {
-      Text(day.dayText)
-        .font(dayNumberFont)
-        .foregroundStyle(dayNumberColor)
-        .lineLimit(1)
-        .frame(width: dayNumberHighlightSize)
-        .background {
-          if day.isToday {
-            Circle()
-              .fill(Color.semanticExtensions.Background.backgroundAccent)
-              .frame(width: dayNumberHighlightSize, height: dayNumberHighlightSize)
-          }
+    Text(day.dayText)
+      .font(dayNumberFont)
+      .foregroundStyle(dayNumberColor)
+      .lineLimit(1)
+      .frame(maxWidth: .infinity, alignment: .center)
+      .frame(width: dayNumberHighlightSize)
+      .background {
+        if day.isToday {
+          Circle()
+            .fill(Color.semanticExtensions.Background.backgroundAccent)
+            .frame(width: dayNumberHighlightSize, height: dayNumberHighlightSize)
         }
-
-      Spacer(minLength: 0)
-    }
+      }
   }
 
   var dayNumberColor: Color {
@@ -108,6 +114,7 @@ private extension HomeCalendarComponentDayCell {
       isSelected: isSelected,
       isToday: true
     ),
+    showsBadges: false,
     action: {
       isSelected.toggle()
     }

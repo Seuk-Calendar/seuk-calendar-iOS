@@ -2,6 +2,8 @@ import SwiftUI
 import UIKit
 
 struct HomeCalendarComponentBadge: View {
+  static let layoutHeight: CGFloat = 14
+
   let badge: HomeCalendarComponent.Configuration.Badge
 
   var body: some View {
@@ -19,7 +21,12 @@ struct HomeCalendarComponentBadge: View {
       Spacer(minLength: 0)
     }
     .padding(.horizontal, Spacing.sp050)
-    .frame(maxWidth: .infinity, minHeight: 14, maxHeight: 14, alignment: .leading)
+    .frame(
+      maxWidth: .infinity,
+      minHeight: Self.layoutHeight,
+      maxHeight: Self.layoutHeight,
+      alignment: .leading
+    )
     .background(badge.style.backgroundColor)
     .clipShape(RoundedRectangle(cornerRadius: Radius.rds100 / 2, style: .continuous))
   }

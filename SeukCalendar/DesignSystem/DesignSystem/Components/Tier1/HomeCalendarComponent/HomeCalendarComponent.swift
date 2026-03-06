@@ -45,13 +45,10 @@ public struct HomeCalendarComponent: View {
 
       VStack(spacing: Spacing.sp150) {
         ForEach(configuration.weeks) { week in
-          HStack(alignment: .top, spacing: 0) {
-            ForEach(week.days) { day in
-              HomeCalendarComponentDayCell(day: day) {
-                eventListener?(.tapDate(day.date))
-              }
-            }
-          }
+          HomeCalendarComponentWeekView(
+            week: week,
+            eventListener: eventListener
+          )
         }
       }
     }
@@ -76,6 +73,7 @@ public struct HomeCalendarComponent: View {
     let month = calendar.date(from: DateComponents(year: 2026, month: 2, day: 1)) ?? .now
     let selectedDate = calendar.date(from: DateComponents(year: 2026, month: 2, day: 27)) ?? month
     let today = calendar.date(from: DateComponents(year: 2026, month: 2, day: 26)) ?? month
+
     func makeDate(
       _ day: Int,
       hour: Int = 0
@@ -111,7 +109,23 @@ public struct HomeCalendarComponent: View {
           isAllDay: false
         )
       ],
+      calendar.startOfDay(for: makeDate(25)): [
+        CalendarEvent(
+          id: "trip",
+          title: "경주 여행",
+          startDate: makeDate(25, hour: 9),
+          endDate: makeDate(27, hour: 18),
+          isAllDay: true
+        )
+      ],
       calendar.startOfDay(for: makeDate(26)): [
+        CalendarEvent(
+          id: "trip",
+          title: "경주 여행",
+          startDate: makeDate(25, hour: 9),
+          endDate: makeDate(27, hour: 18),
+          isAllDay: true
+        ),
         CalendarEvent(
           id: "holiday",
           title: "휴일",
@@ -121,6 +135,13 @@ public struct HomeCalendarComponent: View {
         )
       ],
       calendar.startOfDay(for: makeDate(27)): [
+        CalendarEvent(
+          id: "trip",
+          title: "경주 여행",
+          startDate: makeDate(25, hour: 9),
+          endDate: makeDate(27, hour: 18),
+          isAllDay: true
+        ),
         CalendarEvent(
           id: "cafe",
           title: "카페",

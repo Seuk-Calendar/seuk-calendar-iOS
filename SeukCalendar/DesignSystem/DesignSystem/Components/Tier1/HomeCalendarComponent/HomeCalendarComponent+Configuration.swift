@@ -54,13 +54,16 @@ public extension HomeCalendarComponent.Configuration {
   struct Week: Identifiable, Hashable, Sendable {
     public let id: String
     public let days: [Day]
+    public let badgeRows: [BadgeRow]
 
     public init(
       id: String,
-      days: [Day]
+      days: [Day],
+      badgeRows: [BadgeRow] = []
     ) {
       self.id = id
       self.days = days
+      self.badgeRows = badgeRows
     }
   }
 
@@ -111,6 +114,38 @@ public extension HomeCalendarComponent.Configuration {
       self.id = id
       self.title = title
       self.style = style
+    }
+  }
+
+  struct BadgeRow: Identifiable, Hashable, Sendable {
+    public let id: String
+    public let segments: [BadgeSegment]
+
+    public init(
+      id: String,
+      segments: [BadgeSegment]
+    ) {
+      self.id = id
+      self.segments = segments
+    }
+  }
+
+  struct BadgeSegment: Identifiable, Hashable, Sendable {
+    public let id: String
+    public let badge: Badge
+    public let startIndex: Int
+    public let span: Int
+
+    public init(
+      id: String,
+      badge: Badge,
+      startIndex: Int,
+      span: Int
+    ) {
+      self.id = id
+      self.badge = badge
+      self.startIndex = startIndex
+      self.span = span
     }
   }
 

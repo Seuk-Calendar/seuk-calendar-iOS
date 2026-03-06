@@ -29,6 +29,7 @@ DesignSystem/
 │   │   │       └── Components/
 │   │   │           ├── HomeCalendarComponentMonthBar.swift
 │   │   │           ├── HomeCalendarComponentWeekdayBar.swift
+│   │   │           ├── HomeCalendarComponentWeekView.swift
 │   │   │           ├── HomeCalendarComponentDayCell.swift
 │   │   │           └── HomeCalendarComponentBadge.swift
 │   │   ├── Tier2/    # 복수 개의 Tier1 컴포넌트
@@ -52,7 +53,8 @@ DesignSystem/
 **위치**: `DesignSystem/Components/Tier1/`
 - Button, Text, Icon 등 기본 요소
 - HomeCalendarComponent: Pencil `Home Calendar Component` 디자인을 반영한 홈 카드형 월간 캘린더
-- HomeCalendarComponent+Calculate: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환하며, `HomeCalendarComponent`의 월간 캘린더용 공개 초기화가 이를 사용
+- HomeCalendarComponent+Calculate: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환하며, 다일 일정은 주 단위 spanning row로 계산한다
+- HomeCalendarComponentWeekView: 날짜 행과 주 단위 이벤트 막대 행을 합성해 다일 일정이 하나의 막대처럼 이어지도록 렌더링한다
 - CalendarWeekView, CalendarDayView, DateCell, ScheduleCard, CalendarEvent: 캘린더 관련 공개 타입을 `HomeCalendarComponent` 디렉토리 아래로 통합 관리
 
 **Tier2** (조합 컴포넌트, 복수 개의 Tier1 컴포넌트)
