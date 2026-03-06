@@ -2,52 +2,80 @@ import SwiftUI
 import UIKit
 
 struct HomeCalendarComponentDayCell: View {
+  static let pressedScale: CGFloat = 0.96
+
   let day: HomeCalendarComponent.Configuration.Day
   let showsBadges: Bool
+  let isPressed: Bool
   let action: () -> Void
 
-  var body: some View {
-    Button(action: action) {
-      VStack(alignment: .center, spacing: Spacing.sp100) {
-        dayNumberView
+  init(
+    day: HomeCalendarComponent.Configuration.Day,
+    showsBadges: Bool,
+    isPressed: Bool = false,
+    action: @escaping () -> Void
+  ) {
+    self.day = day
+    self.showsBadges = showsBadges
+    self.isPressed = isPressed
+    self.action = action
+  }
 
-        if showsBadges {
-          ForEach(day.badges.prefix(HomeCalendarConfigurationBuilder.maxVisibleBadgeRows)) { badge in
-            HomeCalendarComponentBadge(badge: badge)
+  var body: some View {
+    Button(
+      action: {
+        generateLightHaptic()
+        action()
+      },
+      label: {
+        VStack(alignment: .center, spacing: Spacing.sp100) {
+          dayNumberView
+
+          if showsBadges {
+            ForEach(day.badges.prefix(HomeCalendarConfigurationBuilder.maxVisibleBadgeRows)) { badge in
+              HomeCalendarComponentBadge(badge: badge)
+            }
+          }
+
+          if showsBadges, day.hiddenBadgeCount > 0 {
+            Text("+\(day.hiddenBadgeCount)")
+              .font(.homeCalendar(weight: .semiBold, size: 8))
+              .foregroundStyle(Color.primitives.gray600)
+              .lineLimit(1)
+              .minimumScaleFactor(0.8)
+          }
+
+          if showsBadges {
+            Spacer(minLength: 0)
           }
         }
-
-        if showsBadges, day.hiddenBadgeCount > 0 {
-          Text("+\(day.hiddenBadgeCount)")
-            .font(.homeCalendar(weight: .semiBold, size: 8))
-            .foregroundStyle(Color.primitives.gray600)
-            .lineLimit(1)
-            .minimumScaleFactor(0.8)
+        .padding(.horizontal, Spacing.sp050)
+        .frame(
+          maxWidth: .infinity,
+          minHeight: showsBadges ? 80 : dayNumberHighlightSize ?? 20,
+          alignment: .top
+        )
+        .background {
+          if showsBadges, day.isSelected {
+            RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
+              .fill(Color.semantic.Background.backgroundTertiary)
+          }
         }
-
-        if showsBadges {
-          Spacer(minLength: 0)
-        }
+        .contentShape(Rectangle())
+        .scaleEffect(isPressed ? Self.pressedScale : 1)
+        .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isPressed)
       }
-      .padding(.horizontal, Spacing.sp050)
-      .frame(
-        maxWidth: .infinity,
-        minHeight: showsBadges ? 80 : dayNumberHighlightSize ?? 20,
-        alignment: .top
-      )
-      .background {
-        if showsBadges, day.isSelected {
-          RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
-            .fill(Color.semantic.Background.backgroundTertiary)
-        }
-      }
-      .contentShape(Rectangle())
-    }
-    .buttonStyle(.plain)
+    )
+    .buttonStyle(HomeCalendarComponentPressButtonStyle())
   }
 }
 
 private extension HomeCalendarComponentDayCell {
+  func generateLightHaptic() {
+    let generator = UIImpactFeedbackGenerator(style: .light)
+    generator.impactOccurred()
+  }
+
   var dayNumberView: some View {
     Text(day.dayText)
       .font(dayNumberFont)
@@ -98,6 +126,14 @@ private extension HomeCalendarComponentDayCell {
 
   var dayNumberHighlightSize: CGFloat? {
     day.isToday ? 20 : nil
+  }
+}
+
+private struct HomeCalendarComponentPressButtonStyle: ButtonStyle {
+  func makeBody(configuration: Configuration) -> some View {
+    configuration.label
+      .scaleEffect(configuration.isPressed ? HomeCalendarComponentDayCell.pressedScale : 1)
+      .animation(.spring(response: 0.18, dampingFraction: 0.72), value: configuration.isPressed)
   }
 }
 

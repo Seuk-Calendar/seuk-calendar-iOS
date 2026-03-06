@@ -1,6 +1,9 @@
 import SwiftUI
+import UIKit
 
 struct HomeCalendarComponentWeekView: View {
+  @State private var pressedDayID: String?
+
   let week: HomeCalendarComponent.Configuration.Week
   let eventListener: HomeCalendarComponent.EventListener?
 
@@ -61,6 +64,7 @@ private extension HomeCalendarComponentWeekView {
           HomeCalendarComponentDayCell(
             day: day,
             showsBadges: false,
+            isPressed: pressedDayID == day.id,
             action: {}
           )
         }
@@ -112,13 +116,22 @@ private extension HomeCalendarComponentWeekView {
     HStack(spacing: 0) {
       ForEach(week.days) { day in
         Button {
-          eventListener?(.tapDate(day.date))
+          tapDate(day)
         } label: {
           Color.clear
             .contentShape(Rectangle())
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .buttonStyle(.plain)
+        .simultaneousGesture(
+          DragGesture(minimumDistance: 0)
+            .onChanged { _ in
+              pressedDayID = day.id
+            }
+            .onEnded { _ in
+              pressedDayID = nil
+            }
+        )
       }
     }
   }
@@ -189,6 +202,12 @@ private extension HomeCalendarComponentWeekView {
     }
 
     return items
+  }
+
+  func tapDate(_ day: HomeCalendarComponent.Configuration.Day) {
+    let generator = UIImpactFeedbackGenerator(style: .light)
+    generator.impactOccurred()
+    eventListener?(.tapDate(day.date))
   }
 }
 
