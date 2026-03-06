@@ -9,7 +9,7 @@ struct CalendarMonthPager: View {
   let onMovePeriod: (Int) -> Void
 
   @State private var displayedBaseDate: Date
-  @State private var activatedPageID: String? = Self.currentPageID
+  @State private var selectedPage: Page = .current
   @State private var measuredHeight: CGFloat = 320
 
   init(
@@ -28,36 +28,27 @@ struct CalendarMonthPager: View {
   }
 
   var body: some View {
-    GeometryReader { geometry in
-      ScrollView(.horizontal) {
-        LazyHStack(spacing: 0) {
-          ForEach(pageModels) { page in
-            monthPage(for: page)
-              .id(page.id)
-              .frame(width: geometry.size.width)
-          }
-        }
-        .scrollTargetLayout()
+    TabView(selection: $selectedPage) {
+      ForEach(Page.allCases, id: \.self) { page in
+        monthPage(for: page)
+          .tag(page)
       }
-      .scrollPosition(id: $activatedPageID)
-      .scrollIndicators(.hidden)
-      .scrollTargetBehavior(.paging)
-      .onPreferenceChange(CalendarMonthPagerHeightsPreferenceKey.self) { heights in
-        guard let maxHeight = heights.values.max() else {
-          return
-        }
+    }
+    .tabViewStyle(.page(indexDisplayMode: .never))
+    .indexViewStyle(.page(backgroundDisplayMode: .never))
+    .onPreferenceChange(CalendarMonthPagerHeightsPreferenceKey.self) { heights in
+      guard let maxHeight = heights.values.max() else {
+        return
+      }
 
-        measuredHeight = maxHeight
+      measuredHeight = maxHeight
+    }
+    .onChange(of: selectedPage) { _, newValue in
+      guard newValue != .current else {
+        return
       }
-      .onChange(of: activatedPageID) { _, newValue in
-        guard let newValue,
-              newValue != Self.currentPageID
-        else {
-          return
-        }
 
-        onMovePeriod(newValue == Self.nextPageID ? 1 : -1)
-      }
+      onMovePeriod(newValue.offset)
     }
     .frame(height: measuredHeight)
     .clipped()
@@ -67,31 +58,33 @@ struct CalendarMonthPager: View {
 
       withTransaction(transaction) {
         displayedBaseDate = newValue
-        activatedPageID = Self.currentPageID
+        selectedPage = .current
       }
     }
   }
 }
 
 private extension CalendarMonthPager {
-  struct PageModel: Identifiable {
-    let id: String
-    let offset: Int
+  enum Page: String, CaseIterable {
+    case previous
+    case current
+    case next
+
+    var id: String { rawValue }
+
+    var offset: Int {
+      switch self {
+      case .previous:
+        -1
+      case .current:
+        0
+      case .next:
+        1
+      }
+    }
   }
 
-  static let previousPageID = "previous"
-  static let currentPageID = "current"
-  static let nextPageID = "next"
-
-  var pageModels: [PageModel] {
-    [
-      .init(id: Self.previousPageID, offset: -1),
-      .init(id: Self.currentPageID, offset: 0),
-      .init(id: Self.nextPageID, offset: 1)
-    ]
-  }
-
-  func monthPage(for page: PageModel) -> some View {
+  func monthPage(for page: Page) -> some View {
     let pageDate = shiftedMonthDate(by: page.offset)
 
     return HomeCalendarComponent(
