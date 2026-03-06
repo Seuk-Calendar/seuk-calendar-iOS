@@ -1,9 +1,9 @@
 ---
-name: format-swift
+name: hook-format-swift
 description: Swift 파일 수정 후 swiftformat을 실행해 포맷을 정리하고 결과를 보고합니다.
 ---
 
-# Format Swift
+# Hook Format Swift
 
 Claude `PostToolUse` 훅(`format-swift.sh`)의 동작을 Codex 스킬로 포팅한 버전입니다.
 
@@ -31,7 +31,7 @@ Claude `PostToolUse` 훅(`format-swift.sh`)의 동작을 Codex 스킬로 포팅�
 스크립트를 실행합니다.
 
 ```bash
-bash .agents/skills/format-swift/scripts/format-swift-files.sh [optional-swift-files...]
+bash .agents/skills/hook-format-swift/scripts/format-swift-files.sh [optional-swift-files...]
 ```
 
 ### 3. 결과 확인 및 보고

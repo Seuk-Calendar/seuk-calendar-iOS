@@ -1,9 +1,9 @@
 ---
-name: check-rules
+name: hook-check-rules
 description: 사용자 요청 키워드에 맞는 규칙 문서를 찾아 요약하고 작업 체크리스트를 생성합니다.
 ---
 
-# Check Rules
+# Hook Check Rules
 
 Claude `UserPromptSubmit` 훅(`check-rules.sh`)의 동작을 Codex 스킬로 포팅한 버전입니다.
 

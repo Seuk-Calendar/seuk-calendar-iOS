@@ -1,9 +1,9 @@
 ---
-name: check-memory
+name: hook-check-memory
 description: 사용자 요청 직후 memory 문서를 검색해 사전 점검 체크리스트를 주입합니다. 브랜치/리베이스/커밋/PR/리뷰/빌드 등 실행 전 실수 재발 방지가 필요한 작업에서 사용합니다.
 ---
 
-# Check Memory
+# Hook Check Memory
 
 사용자 명령 직후 과거 `memory`를 검색해 재발 방지 컨텍스트를 제공합니다.
 
