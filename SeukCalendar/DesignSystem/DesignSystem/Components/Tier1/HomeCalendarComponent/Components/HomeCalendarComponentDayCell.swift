@@ -28,7 +28,7 @@ struct HomeCalendarComponentDayCell: View {
       .frame(maxWidth: .infinity, minHeight: 80, alignment: .topLeading)
       .background {
         if day.isSelected {
-          RoundedRectangle(cornerRadius: Radius.rds500, style: .continuous)
+          RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
             .fill(Color.semantic.Background.backgroundTertiary)
         }
       }
@@ -45,11 +45,12 @@ private extension HomeCalendarComponentDayCell {
         .font(dayNumberFont)
         .foregroundStyle(dayNumberColor)
         .lineLimit(1)
-        .frame(width: dayNumberHighlightSize, height: dayNumberHighlightSize)
+        .frame(width: dayNumberHighlightSize)
         .background {
           if day.isToday {
             Circle()
               .fill(Color.semanticExtensions.Background.backgroundAccent)
+              .frame(width: dayNumberHighlightSize, height: dayNumberHighlightSize)
           }
         }
 
@@ -92,4 +93,23 @@ private extension HomeCalendarComponentDayCell {
   var dayNumberHighlightSize: CGFloat? {
     day.isToday ? 24 : nil
   }
+}
+
+#Preview {
+  @Previewable @State var isSelected = false
+
+  HomeCalendarComponentDayCell(
+    day: .init(
+      id: "1",
+      date: Date(),
+      dayText: "1",
+      weekdayRole: .weekday,
+      isInCurrentMonth: true,
+      isSelected: isSelected,
+      isToday: true
+    ),
+    action: {
+      isSelected.toggle()
+    }
+  )
 }
