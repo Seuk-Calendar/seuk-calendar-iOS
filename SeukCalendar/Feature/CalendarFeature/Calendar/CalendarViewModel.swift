@@ -105,6 +105,10 @@ public final class CalendarViewModel {
       }
       .sorted(by: { $0.startDate < $1.startDate })
   }
+
+  var displayCalendar: Calendar {
+    calendar
+  }
 }
 
 private extension CalendarViewModel {
@@ -500,15 +504,19 @@ private extension CalendarViewModel {
   func visibleRange() -> DateInterval {
     switch viewMode {
     case .month:
-      guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
-            let start = calendar.dateInterval(of: .weekOfYear, for: monthInterval.start)?.start,
-            let monthEndMinusOne = calendar.date(byAdding: .second, value: -1, to: monthInterval.end),
-            let end = calendar.dateInterval(of: .weekOfYear, for: monthEndMinusOne)?.end
+      guard let previousMonth = calendar.date(byAdding: .month, value: -1, to: selectedDate),
+            let nextMonth = calendar.date(byAdding: .month, value: 1, to: selectedDate),
+            let previousRange = monthGridRange(for: previousMonth),
+            let currentRange = monthGridRange(for: selectedDate),
+            let nextRange = monthGridRange(for: nextMonth)
       else {
         return DateInterval(start: selectedDate, duration: 0)
       }
 
-      return DateInterval(start: start, end: end)
+      return DateInterval(
+        start: min(previousRange.start, currentRange.start, nextRange.start),
+        end: max(previousRange.end, currentRange.end, nextRange.end)
+      )
     case .week:
       guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: selectedDate) else {
         return DateInterval(start: selectedDate, duration: 0)
@@ -519,6 +527,18 @@ private extension CalendarViewModel {
       let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
       return DateInterval(start: dayStart, end: dayEnd)
     }
+  }
+
+  func monthGridRange(for date: Date) -> DateInterval? {
+    guard let monthInterval = calendar.dateInterval(of: .month, for: date),
+          let start = calendar.dateInterval(of: .weekOfYear, for: monthInterval.start)?.start,
+          let monthEndMinusOne = calendar.date(byAdding: .second, value: -1, to: monthInterval.end),
+          let end = calendar.dateInterval(of: .weekOfYear, for: monthEndMinusOne)?.end
+    else {
+      return nil
+    }
+
+    return DateInterval(start: start, end: end)
   }
 
   func moveReferenceDate(by offset: Int) {

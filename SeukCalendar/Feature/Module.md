@@ -49,6 +49,7 @@ Feature 관련 유틸리티(모든 Feature가 의존).
   - 캘린더 로드/권한/자연어 파싱 + 알림 프리셋 편집 + iCloud 변경 감지 기반 자동 새로고침 처리
 - CalendarViewModel+Action.swift: ViewModel Action enum 분리 (`refreshSchedules` 포함)
 - CalendarViewModel+Model.swift: ViewModel 보조 enum/모델(ViewMode/PermissionState/ParsedEventDraft/SyncStatusTone) 분리
+- Components/CalendarMonthPager.swift: 월간 캘린더를 `LazyHStack + .scrollTargetBehavior(.paging)`로 페이징하는 서브뷰
 - Components/ScheduleDetailView.swift: 일정 상세 화면
 
 **ViewFactory**: `CalendarFeature/CalendarViewFactory.swift`
