@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 struct HomeCalendarComponentDayCell: View {
-  static let pressedScale: CGFloat = 0.96
+  static let pressedScale: CGFloat = 0.8
 
   let day: HomeCalendarComponent.Configuration.Day
   let showsBadges: Bool
