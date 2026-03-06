@@ -16,16 +16,17 @@ DesignSystem/
 ├── DesignSystem/
 │   ├── Components/
 │   │   ├── Calendar/
-│   │   │   ├── CalendarMonthView.swift
 │   │   │   ├── CalendarWeekView.swift
 │   │   │   ├── CalendarDayView.swift
 │   │   │   ├── DateCell.swift
 │   │   │   └── ScheduleCard.swift
 │   │   ├── Tier1/
 │   │   │   └── HomeCalendarComponent/
+│   │   │       ├── CalendarMonthView.swift
 │   │   │       ├── HomeCalendarComponent.swift
 │   │   │       ├── HomeCalendarComponent+Configuration.swift
 │   │   │       ├── HomeCalendarComponent+Event.swift
+│   │   │       ├── HomeCalendarComponent+Calculate.swift
 │   │   │       └── Components/
 │   │   │           ├── HomeCalendarComponentMonthBar.swift
 │   │   │           ├── HomeCalendarComponentWeekdayBar.swift
@@ -49,12 +50,10 @@ DesignSystem/
 ### Calendar 컴포넌트
 
 **위치**: `DesignSystem/Components/Calendar/`
-- CalendarMonthView: 월간 캘린더 그리드
 - CalendarWeekView: 주간 헤더 + 선택 날짜 타임라인
 - CalendarDayView: 일간 타임라인
 - DateCell: 날짜 셀 공통 컴포넌트
 - ScheduleCard: 일정 카드 공통 컴포넌트
-- CalendarMonthView+ConfigurationBuilder: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환
 
 ### Atomic Design 구조
 
@@ -62,6 +61,8 @@ DesignSystem/
 **위치**: `DesignSystem/Components/Tier1/`
 - Button, Text, Icon 등 기본 요소
 - HomeCalendarComponent: Pencil `Home Calendar Component` 디자인을 반영한 홈 카드형 월간 캘린더
+- CalendarMonthView: 기존 월간 캘린더 API를 유지하면서 `HomeCalendarComponent`를 감싸는 어댑터
+- HomeCalendarComponent+Calculate: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환
 
 **Tier2** (조합 컴포넌트, 복수 개의 Tier1 컴포넌트)
 **위치**: `DesignSystem/Components/Tier2/`
