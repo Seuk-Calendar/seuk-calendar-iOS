@@ -5,6 +5,7 @@ public struct CalendarDayView: View {
   public let events: [CalendarEvent]
   public var calendar: Calendar
   public var showDateHeader: Bool
+  public var wrapsContentInScrollView: Bool
   public var onSelectEvent: (CalendarEvent) -> Void
 
   public init(
@@ -12,12 +13,14 @@ public struct CalendarDayView: View {
     events: [CalendarEvent],
     calendar: Calendar = .current,
     showDateHeader: Bool = true,
+    wrapsContentInScrollView: Bool = true,
     onSelectEvent: @escaping (CalendarEvent) -> Void
   ) {
     self.date = date
     self.events = events
     self.calendar = calendar
     self.showDateHeader = showDateHeader
+    self.wrapsContentInScrollView = wrapsContentInScrollView
     self.onSelectEvent = onSelectEvent
   }
 
@@ -30,24 +33,34 @@ public struct CalendarDayView: View {
       }
 
       if events.isEmpty {
-        Text("해당 날짜에 일정이 없습니다.")
-          .font(.system(size: 14, weight: .regular))
-          .foregroundStyle(.secondary)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(.vertical, 12)
-      } else {
-        ScrollView {
-          VStack(alignment: .leading, spacing: 14) {
-            allDaySection
-            hourlyTimeline
-          }
+        emptyState
+      } else if wrapsContentInScrollView {
+        ScrollView(showsIndicators: false) {
+          contentSections
         }
+      } else {
+        contentSections
       }
     }
   }
 }
 
 private extension CalendarDayView {
+  var emptyState: some View {
+    Text("해당 날짜에 일정이 없습니다.")
+      .font(.system(size: 14, weight: .regular))
+      .foregroundStyle(.secondary)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.vertical, 12)
+  }
+
+  var contentSections: some View {
+    VStack(alignment: .leading, spacing: 14) {
+      allDaySection
+      hourlyTimeline
+    }
+  }
+
   var dayHeaderText: String {
     let formatter = DateFormatter()
     formatter.locale = Locale.current
@@ -87,7 +100,7 @@ private extension CalendarDayView {
 
   var hourlyTimeline: some View {
     VStack(alignment: .leading, spacing: 8) {
-      ForEach(0..<24, id: \.self) { hour in
+      ForEach(0 ..< 24, id: \.self) { hour in
         HStack(alignment: .top, spacing: 10) {
           Text(hourLabel(hour))
             .font(.system(size: 11, weight: .medium))

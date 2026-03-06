@@ -5,6 +5,7 @@ public struct CalendarWeekView: View {
   public let selectedDate: Date
   public let eventsByDay: [Date: [CalendarEvent]]
   public var calendar: Calendar
+  public var wrapsDayContentInScrollView: Bool
   public var onSelectDate: (Date) -> Void
   public var onSelectEvent: (CalendarEvent) -> Void
 
@@ -13,6 +14,7 @@ public struct CalendarWeekView: View {
     selectedDate: Date,
     eventsByDay: [Date: [CalendarEvent]],
     calendar: Calendar = .current,
+    wrapsDayContentInScrollView: Bool = true,
     onSelectDate: @escaping (Date) -> Void,
     onSelectEvent: @escaping (CalendarEvent) -> Void
   ) {
@@ -20,6 +22,7 @@ public struct CalendarWeekView: View {
     self.selectedDate = selectedDate
     self.eventsByDay = eventsByDay
     self.calendar = calendar
+    self.wrapsDayContentInScrollView = wrapsDayContentInScrollView
     self.onSelectDate = onSelectDate
     self.onSelectEvent = onSelectEvent
   }
@@ -50,6 +53,7 @@ public struct CalendarWeekView: View {
         events: eventsForSelectedDate,
         calendar: calendar,
         showDateHeader: false,
+        wrapsContentInScrollView: wrapsDayContentInScrollView,
         onSelectEvent: onSelectEvent
       )
     }
@@ -62,7 +66,7 @@ private extension CalendarWeekView {
       return []
     }
 
-    return (0..<7).compactMap {
+    return (0 ..< 7).compactMap {
       calendar.date(byAdding: .day, value: $0, to: weekInterval.start)
     }
   }
