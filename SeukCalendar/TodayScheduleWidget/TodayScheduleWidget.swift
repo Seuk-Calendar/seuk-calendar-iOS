@@ -364,8 +364,8 @@ private extension TodayScheduleWidgetEntryView {
 }
 
 private enum WidgetLayoutConstants {
-  static let mediumPreferredSize = CGSize(width: 320, height: 148)
-  static let largePreferredSize = CGSize(width: 320, height: 496)
+  static let mediumPreferredSize = CGSize(width: 320, height: 124)
+  static let largePreferredSize = CGSize(width: 320, height: 380)
 }
 
 private extension BadgeSegmentComponent.Configuration.Variant {

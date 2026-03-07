@@ -2,11 +2,11 @@ import SwiftUI
 
 public struct WidgetDayCellComponent: View {
   private enum Metrics {
-    static let topPadding = Spacing.sp100
+    static let topPadding: CGFloat = 0
     static let rowSpacing = Spacing.sp050
-    static let dateHeight: CGFloat = 28
-    static let badgeHeight: CGFloat = 16
-    static let moreWrapHeight: CGFloat = 11
+    static let dateHeight: CGFloat = 24
+    static let badgeHeight: CGFloat = 14
+    static let moreWrapHeight: CGFloat = 8
   }
 
   static let fixedHeight: CGFloat =

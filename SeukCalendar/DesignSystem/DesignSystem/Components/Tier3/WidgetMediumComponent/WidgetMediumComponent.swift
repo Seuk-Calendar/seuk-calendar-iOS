@@ -23,7 +23,6 @@ public struct WidgetMediumComponent: View {
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, Spacing.sp050)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }

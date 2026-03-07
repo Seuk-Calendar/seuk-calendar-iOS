@@ -2,8 +2,8 @@ import SwiftUI
 
 public struct DateWrapComponent: View {
   private enum Metrics {
-    static let rowHeight: CGFloat = 28
-    static let todayCircleSize: CGFloat = 26
+    static let rowHeight: CGFloat = 24
+    static let todayCircleSize: CGFloat = 20
   }
 
   private let configuration: Configuration
@@ -16,13 +16,13 @@ public struct DateWrapComponent: View {
     Group {
       if configuration.isToday {
         Text(configuration.dayText)
-          .font(.homeCalendar(weight: .bold, size: 16))
+          .font(Label.medium)
           .foregroundStyle(configuration.todayTextColor)
           .frame(width: Metrics.todayCircleSize, height: Metrics.todayCircleSize)
           .background(configuration.todayBackgroundColor, in: Circle())
       } else {
         Text(configuration.dayText)
-          .font(.homeCalendar(weight: .bold, size: 22))
+          .font(Label.large)
           .foregroundStyle(configuration.normalTextColor)
       }
     }

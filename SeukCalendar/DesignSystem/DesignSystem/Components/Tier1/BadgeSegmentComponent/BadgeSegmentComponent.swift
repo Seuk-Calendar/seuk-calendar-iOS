@@ -2,7 +2,7 @@ import SwiftUI
 
 public struct BadgeSegmentComponent: View {
   private enum Metrics {
-    static let height: CGFloat = 16
+    static let height: CGFloat = 14
     static let stripWidth: CGFloat = 2
     static let stripHeight: CGFloat = 10
     static let cornerRadius = Radius.rds100 / 2

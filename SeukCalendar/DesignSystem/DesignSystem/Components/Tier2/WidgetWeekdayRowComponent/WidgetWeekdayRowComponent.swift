@@ -11,7 +11,7 @@ public struct WidgetWeekdayRowComponent: View {
     HStack(spacing: 0) {
       ForEach(Array(configuration.weekdayItems.enumerated()), id: \.offset) { _, item in
         Text(item.title)
-          .font(Label.medium)
+          .font(Label.xSmall)
           .foregroundStyle(textColor(for: item.role))
           .lineLimit(1)
           .minimumScaleFactor(0.7)
