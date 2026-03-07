@@ -9,22 +9,11 @@ public struct WidgetTitleComponent: View {
 
   public var body: some View {
     Text(configuration.title)
-      .font(titleStyle)
+      .font(Heading.xSmall)
       .foregroundStyle(Color.semantic.Content.contentPrimary)
       .lineLimit(1)
       .minimumScaleFactor(0.7)
       .frame(maxWidth: .infinity, alignment: .leading)
-  }
-}
-
-private extension WidgetTitleComponent {
-  var titleStyle: any FontStyleType {
-    switch configuration.style {
-    case .standard:
-      Heading.xSmall
-    case .compact:
-      Label.large
-    }
   }
 }
 

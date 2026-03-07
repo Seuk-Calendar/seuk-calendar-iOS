@@ -10,7 +10,7 @@ public struct WidgetMediumComponent: View {
 
   public var body: some View {
     VStack(alignment: .leading, spacing: Spacing.sp150) {
-      WidgetTitleComponent(configuration: .init(title: configuration.title, style: .compact))
+      WidgetTitleComponent(configuration: .init(title: configuration.title))
 
       VStack(alignment: .leading, spacing: Spacing.sp100) {
         WidgetWeekdayRowComponent(configuration: .init())
