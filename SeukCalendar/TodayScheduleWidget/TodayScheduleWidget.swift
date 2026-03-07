@@ -1,3 +1,4 @@
+import DesignSystem
 import Foundation
 import SwiftUI
 import WidgetKit
@@ -54,7 +55,7 @@ private struct TodayScheduleWidgetEntryView: View {
 
   let entry: TodayScheduleEntry
 
-  private let calendar = Calendar.current
+  private let calendar = WidgetCalendarFactory.calendar
 
   var body: some View {
     switch family {
@@ -63,6 +64,8 @@ private struct TodayScheduleWidgetEntryView: View {
     case .systemMedium:
       mediumView
     case .systemLarge:
+      largeView
+    case .systemExtraLarge:
       largeView
     case .accessoryCircular:
       circularView
@@ -81,14 +84,6 @@ private extension TodayScheduleWidgetEntryView {
     entry.snapshot.events(on: entry.date, calendar: calendar)
   }
 
-  var tomorrowEvents: [WidgetScheduleSnapshot.Item] {
-    guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: entry.date) else {
-      return []
-    }
-
-    return entry.snapshot.events(on: tomorrow, calendar: calendar)
-  }
-
   var nextEvent: WidgetScheduleSnapshot.Item? {
     entry.snapshot.nextEvent(after: entry.date)
   }
@@ -99,6 +94,43 @@ private extension TodayScheduleWidgetEntryView {
 
   var remainingTodayCount: Int {
     entry.snapshot.remainingEventCount(after: entry.date, on: entry.date, calendar: calendar)
+  }
+
+  var widgetTitleText: String {
+    WidgetFormatters.widgetTitleFormatter.string(from: entry.date)
+  }
+
+  var mediumComponentConfiguration: WidgetMediumComponent.Configuration {
+    WidgetMediumComponent.Configuration(
+      title: widgetTitleText,
+      dayCells: weekDates.map(makeDayCellConfiguration(for:))
+    )
+  }
+
+  var largeComponentConfiguration: WidgetLargeComponent.Configuration {
+    WidgetLargeComponent.Configuration(
+      title: widgetTitleText,
+      weeks: monthWeeks.map { $0.map(makeDayCellConfiguration(for:)) }
+    )
+  }
+
+  var weekDates: [Date] {
+    let reference = calendar.dateInterval(of: .weekOfYear, for: entry.date)?.start ?? calendar
+      .startOfDay(for: entry.date)
+    return (0 ..< 7).compactMap { offset in
+      calendar.date(byAdding: .day, value: offset, to: reference)
+    }
+  }
+
+  var monthWeeks: [[Date]] {
+    let monthStart = calendar.dateInterval(of: .month, for: entry.date)?.start ?? calendar.startOfDay(for: entry.date)
+    let gridStart = calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
+
+    return (0 ..< 5).map { weekOffset in
+      (0 ..< 7).compactMap { dayOffset in
+        calendar.date(byAdding: .day, value: (weekOffset * 7) + dayOffset, to: gridStart)
+      }
+    }
   }
 
   var smallView: some View {
@@ -128,85 +160,21 @@ private extension TodayScheduleWidgetEntryView {
   }
 
   var mediumView: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      Text("오늘 일정")
-        .font(.system(size: 14, weight: .semibold))
-
-      if todayEvents.isEmpty {
-        Text("오늘은 예정된 일정이 없습니다")
-          .font(.system(size: 13, weight: .regular))
-          .foregroundStyle(.secondary)
-      } else {
-        VStack(alignment: .leading, spacing: 8) {
-          ForEach(todayEvents.prefix(3)) { event in
-            scheduleRow(event)
-          }
-
-          if todayEvents.count > 3 {
-            Text("+\(todayEvents.count - 3)개 더")
-              .font(.system(size: 12, weight: .medium))
-              .foregroundStyle(.secondary)
-          }
-        }
-      }
-
-      Spacer(minLength: 0)
+    scaledWidgetContent(preferredSize: WidgetLayoutConstants.mediumPreferredSize) {
+      WidgetMediumComponent(configuration: mediumComponentConfiguration)
     }
-    .containerBackground(.fill.tertiary, for: .widget)
+    .containerBackground(for: .widget) {
+      Color.semantic.Background.backgroundPrimary
+    }
   }
 
   var largeView: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Text("오늘 일정")
-        .font(.system(size: 16, weight: .bold))
-
-      if todayEvents.isEmpty {
-        Text("오늘 일정이 없습니다")
-          .font(.system(size: 14, weight: .medium))
-          .foregroundStyle(.secondary)
-      } else {
-        VStack(alignment: .leading, spacing: 8) {
-          ForEach(todayEvents.prefix(6)) { event in
-            scheduleRow(event)
-          }
-
-          if todayEvents.count > 6 {
-            Text("+\(todayEvents.count - 6)개 더")
-              .font(.system(size: 12, weight: .medium))
-              .foregroundStyle(.secondary)
-          }
-        }
-      }
-
-      Divider()
-
-      VStack(alignment: .leading, spacing: 4) {
-        Text("내일 미리보기")
-          .font(.system(size: 13, weight: .semibold))
-          .foregroundStyle(.secondary)
-
-        if let tomorrowNext = tomorrowEvents.first {
-          Link(destination: WidgetDeepLinkBuilder.scheduleURL(for: tomorrowNext)) {
-            HStack(spacing: 6) {
-              Text(timeText(for: tomorrowNext))
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.blue)
-              Text(tomorrowNext.title)
-                .font(.system(size: 13, weight: .regular))
-                .lineLimit(1)
-            }
-          }
-          .buttonStyle(.plain)
-        } else {
-          Text("내일 일정이 없습니다")
-            .font(.system(size: 13, weight: .regular))
-            .foregroundStyle(.secondary)
-        }
-      }
-
-      Spacer(minLength: 0)
+    scaledWidgetContent(preferredSize: WidgetLayoutConstants.largePreferredSize) {
+      WidgetLargeComponent(configuration: largeComponentConfiguration)
     }
-    .containerBackground(.fill.tertiary, for: .widget)
+    .containerBackground(for: .widget) {
+      Color.semantic.Background.backgroundPrimary
+    }
   }
 
   var circularView: some View {
@@ -267,31 +235,99 @@ private extension TodayScheduleWidgetEntryView {
     }
   }
 
-  func scheduleRow(_ event: WidgetScheduleSnapshot.Item) -> some View {
-    Link(destination: WidgetDeepLinkBuilder.scheduleURL(for: event)) {
-      HStack(alignment: .center, spacing: 8) {
-        Text(timeText(for: event))
-          .font(.system(size: 12, weight: .semibold))
-          .foregroundStyle(.blue)
-          .frame(minWidth: 52, alignment: .leading)
+  @ViewBuilder
+  func scaledWidgetContent<Content: View>(
+    preferredSize: CGSize,
+    @ViewBuilder content: @escaping () -> Content
+  ) -> some View {
+    GeometryReader { proxy in
+      let scale = min(
+        1,
+        min(
+          proxy.size.width / preferredSize.width,
+          proxy.size.height / preferredSize.height
+        )
+      )
 
-        VStack(alignment: .leading, spacing: 2) {
-          Text(event.title)
-            .font(.system(size: 12, weight: .medium))
-            .lineLimit(1)
-
-          if let location = event.location, !location.isEmpty {
-            Text(location)
-              .font(.system(size: 11, weight: .regular))
-              .foregroundStyle(.secondary)
-              .lineLimit(1)
-          }
-        }
-
-        Spacer(minLength: 0)
-      }
+      content()
+        .frame(width: preferredSize.width, height: preferredSize.height, alignment: .topLeading)
+        .scaleEffect(scale, anchor: .topLeading)
+        .frame(width: proxy.size.width, height: proxy.size.height, alignment: .topLeading)
     }
-    .buttonStyle(.plain)
+  }
+
+  func makeDayCellConfiguration(for date: Date) -> WidgetDayCellComponent.Configuration {
+    WidgetDayCellComponent.Configuration(
+      date: date,
+      isToday: calendar.isDate(date, inSameDayAs: entry.date),
+      dayTextColor: dayTextColor(for: date),
+      segments: badgeSegmentConfigurations(for: date)
+    )
+  }
+
+  func dayTextColor(for date: Date) -> Color {
+    if calendar.isDate(date, inSameDayAs: entry.date) {
+      return .semantic.Content.contentPrimary
+    }
+
+    switch calendar.component(.weekday, from: date) {
+    case 1:
+      return .semanticExtensions.Content.contentNegative
+    case 7:
+      return .semanticExtensions.Content.contentAccent
+    default:
+      return .semantic.Content.contentSecondary
+    }
+  }
+
+  func badgeSegmentConfigurations(for date: Date) -> [BadgeSegmentComponent.Configuration] {
+    entry.snapshot.events(on: date, calendar: calendar).map { event in
+      let variant = badgeVariant(for: event, on: date)
+      let colors = badgeColors(for: variant)
+
+      return BadgeSegmentComponent.Configuration(
+        variant: variant,
+        label: variant.showsMetadata ? event.title : nil,
+        foregroundColor: colors.foreground,
+        backgroundColor: colors.background,
+        showsLeadingStrip: variant.showsMetadata
+      )
+    }
+  }
+
+  func badgeVariant(
+    for event: WidgetScheduleSnapshot.Item,
+    on date: Date
+  ) -> BadgeSegmentComponent.Configuration.Variant {
+    let dayStart = calendar.startOfDay(for: date)
+    let nextDayStart = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
+
+    let continuesFromPreviousDay = event.startDate < dayStart
+    let continuesIntoNextDay = event.endDate > nextDayStart
+
+    switch (continuesFromPreviousDay, continuesIntoNextDay) {
+    case (false, false):
+      return .startAndEnd
+    case (false, true):
+      return .start
+    case (true, true):
+      return .middle
+    case (true, false):
+      return .end
+    }
+  }
+
+  func badgeColors(
+    for variant: BadgeSegmentComponent.Configuration.Variant
+  ) -> (foreground: Color, background: Color) {
+    switch variant {
+    case .startAndEnd:
+      return (.primitives.teal800, .primitives.green50)
+    case .start, .middle, .end:
+      return (.primitives.blue700, .primitives.blue100)
+    @unknown default:
+      return (.primitives.blue700, .primitives.blue100)
+    }
   }
 
   func timeText(for event: WidgetScheduleSnapshot.Item) -> String {
@@ -300,6 +336,24 @@ private extension TodayScheduleWidgetEntryView {
     }
 
     return WidgetFormatters.timeFormatter.string(from: event.startDate)
+  }
+}
+
+private enum WidgetLayoutConstants {
+  static let mediumPreferredSize = CGSize(width: 320, height: 148)
+  static let largePreferredSize = CGSize(width: 320, height: 496)
+}
+
+private extension BadgeSegmentComponent.Configuration.Variant {
+  var showsMetadata: Bool {
+    switch self {
+    case .startAndEnd, .start:
+      true
+    case .middle, .end:
+      false
+    @unknown default:
+      false
+    }
   }
 }
 
@@ -357,6 +411,25 @@ private enum WidgetFormatters {
     formatter.dateStyle = .none
     return formatter
   }()
+
+  static let widgetTitleFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.calendar = WidgetCalendarFactory.calendar
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = .current
+    formatter.dateFormat = "yyyy년 M월 d일 EEEE"
+    return formatter
+  }()
+}
+
+private enum WidgetCalendarFactory {
+  static var calendar: Calendar {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.locale = Locale(identifier: "ko_KR")
+    calendar.timeZone = .current
+    calendar.firstWeekday = 1
+    return calendar
+  }
 }
 
 private enum WidgetSharedConstants {
