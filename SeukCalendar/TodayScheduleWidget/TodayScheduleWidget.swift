@@ -269,11 +269,8 @@ private extension TodayScheduleWidgetEntryView {
   ) -> some View {
     GeometryReader { proxy in
       let scale = min(
-        1,
-        min(
-          proxy.size.width / preferredSize.width,
-          proxy.size.height / preferredSize.height
-        )
+        proxy.size.width / preferredSize.width,
+        proxy.size.height / preferredSize.height
       )
 
       content()
