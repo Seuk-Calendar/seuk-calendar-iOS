@@ -52,6 +52,29 @@ struct WidgetComponentTests {
     #expect(configuration.isEmptyState == true)
   }
 
+  @Test("WidgetLargeConfiguration_기준_월이_아닌_날짜는_숨김_처리합니다")
+  func widgetLargeHidesDatesOutsidePrimaryMonth() {
+    let baseDate = Self.calendar.date(from: DateComponents(year: 2026, month: 3, day: 1)) ?? Self.sampleDate
+    let configuration = WidgetLargeComponent.Configuration(
+      title: "2026년 3월 3일 화요일",
+      weeks: [0, 1, 2, 3, 4].map { weekIndex in
+        [0, 1, 2, 3, 4, 5, 6].map { dayIndex in
+          WidgetDayCellComponent.Configuration(
+            date: Self.calendar.date(byAdding: .day, value: (weekIndex * 7) + dayIndex, to: baseDate) ?? baseDate,
+            isToday: false,
+            dayTextColor: .semantic.Content.contentSecondary
+          )
+        }
+      }
+    )
+
+    #expect(configuration.visibleWeeks.last != nil)
+    guard let lastWeek = configuration.visibleWeeks.last else { return }
+
+    #expect(lastWeek.prefix(3).compactMap { $0?.dayText } == ["29", "30", "31"])
+    #expect(lastWeek.suffix(4).allSatisfy { $0 == nil })
+  }
+
   @Test("MoreWrapConfiguration_count가_0이하면_표시_텍스트가_nil입니다")
   func moreWrapHidesNonPositiveCounts() {
     #expect(MoreWrapComponent.Configuration(count: 0).displayText == nil)

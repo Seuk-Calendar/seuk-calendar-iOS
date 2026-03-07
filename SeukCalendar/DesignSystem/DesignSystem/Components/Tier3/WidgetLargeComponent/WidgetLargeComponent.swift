@@ -19,15 +19,19 @@ public struct WidgetLargeComponent: View {
         divider
 
         VStack(spacing: 0) {
-          ForEach(Array(configuration.displayedWeeks.enumerated()), id: \.offset) { index, week in
+          ForEach(Array(configuration.visibleWeeks.enumerated()), id: \.offset) { index, week in
             HStack(alignment: .top, spacing: 0) {
               ForEach(Array(week.enumerated()), id: \.offset) { _, dayCell in
-                WidgetDayCellComponent(configuration: dayCell)
+                if let dayCell {
+                  WidgetDayCellComponent(configuration: dayCell)
+                } else {
+                  emptyDayCell
+                }
               }
             }
             .padding(.vertical, Spacing.sp050)
 
-            if index < configuration.displayedWeeks.count - 1 {
+            if index < configuration.visibleWeeks.count - 1 {
               divider
             }
           }
@@ -42,6 +46,17 @@ private extension WidgetLargeComponent {
     Rectangle()
       .fill(Color.semantic.Background.backgroundTertiary)
       .frame(height: 1)
+  }
+
+  var emptyDayCell: some View {
+    Color.clear
+      .frame(maxWidth: .infinity)
+      .frame(
+        minHeight: WidgetDayCellComponent.fixedHeight,
+        maxHeight: WidgetDayCellComponent.fixedHeight,
+        alignment: .top
+      )
+      .allowsHitTesting(false)
   }
 }
 

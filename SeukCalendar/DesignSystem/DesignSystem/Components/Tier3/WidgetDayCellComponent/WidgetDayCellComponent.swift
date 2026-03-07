@@ -1,6 +1,21 @@
 import SwiftUI
 
 public struct WidgetDayCellComponent: View {
+  private enum Metrics {
+    static let topPadding = Spacing.sp100
+    static let rowSpacing = Spacing.sp050
+    static let dateHeight: CGFloat = 28
+    static let badgeHeight: CGFloat = 16
+    static let moreWrapHeight: CGFloat = 11
+  }
+
+  static let fixedHeight: CGFloat =
+    Metrics.topPadding
+      + Metrics.dateHeight
+      + (Metrics.badgeHeight * 2)
+      + Metrics.moreWrapHeight
+      + (Metrics.rowSpacing * 3)
+
   private let configuration: Configuration
 
   public init(configuration: Configuration) {
@@ -8,25 +23,57 @@ public struct WidgetDayCellComponent: View {
   }
 
   public var body: some View {
-    VStack(alignment: .center, spacing: Spacing.sp050) {
-      DateWrapComponent(
-        configuration: .init(
-          dayText: configuration.dayText,
-          isToday: configuration.isToday,
-          normalTextColor: configuration.dayTextColor,
-          todayBackgroundColor: .primitives.gray500,
-          todayTextColor: .semanticExtensions.Content.contentOnColor
-        )
-      )
-
-      ForEach(Array(configuration.visibleSegments.enumerated()), id: \.offset) { _, segment in
-        BadgeSegmentComponent(configuration: segment)
-      }
-
-      MoreWrapComponent(configuration: .init(count: configuration.resolvedOverflowCount))
+    VStack(alignment: .center, spacing: Metrics.rowSpacing) {
+      dateWrap
+      badgeSlot(at: 0)
+      badgeSlot(at: 1)
+      moreWrapSlot
     }
-    .padding(.top, Spacing.sp100)
-    .frame(maxWidth: .infinity, alignment: .top)
+    .padding(.top, Metrics.topPadding)
+    .frame(
+      maxWidth: .infinity,
+      minHeight: Self.fixedHeight,
+      maxHeight: Self.fixedHeight,
+      alignment: .top
+    )
+  }
+}
+
+private extension WidgetDayCellComponent {
+  var dateWrap: some View {
+    DateWrapComponent(
+      configuration: .init(
+        dayText: configuration.dayText,
+        isToday: configuration.isToday,
+        normalTextColor: configuration.dayTextColor,
+        todayBackgroundColor: .primitives.gray500,
+        todayTextColor: .semanticExtensions.Content.contentOnColor
+      )
+    )
+    .frame(height: Metrics.dateHeight)
+  }
+
+  @ViewBuilder
+  func badgeSlot(at index: Int) -> some View {
+    if configuration.visibleSegments.indices.contains(index) {
+      BadgeSegmentComponent(configuration: configuration.visibleSegments[index])
+    } else {
+      Color.clear
+        .frame(maxWidth: .infinity)
+        .frame(height: Metrics.badgeHeight)
+    }
+  }
+
+  @ViewBuilder
+  var moreWrapSlot: some View {
+    if configuration.resolvedOverflowCount > 0 {
+      MoreWrapComponent(configuration: .init(count: configuration.resolvedOverflowCount))
+        .frame(height: Metrics.moreWrapHeight)
+    } else {
+      Color.clear
+        .frame(maxWidth: .infinity)
+        .frame(height: Metrics.moreWrapHeight)
+    }
   }
 }
 
