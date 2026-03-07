@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		599D701F67B68D6A2979ED76 /* TodayScheduleWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 9F9767B9AE1050BD52AA356E /* TodayScheduleWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6CB44CFBAD0D77BE1D2EC84A /* TodayScheduleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA8277D61385A797079499 /* TodayScheduleWidget.swift */; };
+		76A5F34EC0A54E8A9A0F5A11 /* DesignSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D5C2F51513B008707E9 /* DesignSystem.framework */; };
 		7B0E0D622F51513B008707E9 /* AI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D552F51513B008707E9 /* AI.framework */; };
 		7B0E0D632F51513B008707E9 /* AI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D552F51513B008707E9 /* AI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7B0E0D642F51513B008707E9 /* Coordinator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D562F51513B008707E9 /* Coordinator.framework */; };
@@ -137,6 +138,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76A5F34EC0A54E8A9A0F5A11 /* DesignSystem.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
