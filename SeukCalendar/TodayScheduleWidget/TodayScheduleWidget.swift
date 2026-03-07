@@ -187,21 +187,19 @@ private extension TodayScheduleWidgetEntryView {
   }
 
   var mediumView: some View {
-    scaledWidgetContent(preferredSize: WidgetLayoutConstants.mediumPreferredSize) {
-      WidgetMediumComponent(configuration: mediumComponentConfiguration)
-    }
-    .containerBackground(for: .widget) {
-      Color.semantic.Background.backgroundPrimary
-    }
+    WidgetMediumComponent(configuration: mediumComponentConfiguration)
+      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+      .containerBackground(for: .widget) {
+        Color.semantic.Background.backgroundPrimary
+      }
   }
 
   var largeView: some View {
-    scaledWidgetContent(preferredSize: WidgetLayoutConstants.largePreferredSize) {
-      WidgetLargeComponent(configuration: largeComponentConfiguration)
-    }
-    .containerBackground(for: .widget) {
-      Color.semantic.Background.backgroundPrimary
-    }
+    WidgetLargeComponent(configuration: largeComponentConfiguration)
+      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+      .containerBackground(for: .widget) {
+        Color.semantic.Background.backgroundPrimary
+      }
   }
 
   var circularView: some View {
@@ -259,24 +257,6 @@ private extension TodayScheduleWidgetEntryView {
     }
     .containerBackground(for: .widget) {
       Color.clear
-    }
-  }
-
-  @ViewBuilder
-  func scaledWidgetContent<Content: View>(
-    preferredSize: CGSize,
-    @ViewBuilder content: @escaping () -> Content
-  ) -> some View {
-    GeometryReader { proxy in
-      let scale = min(
-        proxy.size.width / preferredSize.width,
-        proxy.size.height / preferredSize.height
-      )
-
-      content()
-        .frame(width: preferredSize.width, height: preferredSize.height, alignment: .topLeading)
-        .scaleEffect(scale, anchor: .center)
-        .frame(width: proxy.size.width, height: proxy.size.height, alignment: .center)
     }
   }
 
@@ -361,11 +341,6 @@ private extension TodayScheduleWidgetEntryView {
 
     return WidgetFormatters.timeFormatter.string(from: event.startDate)
   }
-}
-
-private enum WidgetLayoutConstants {
-  static let mediumPreferredSize = CGSize(width: 320, height: 124)
-  static let largePreferredSize = CGSize(width: 320, height: 380)
 }
 
 private extension BadgeSegmentComponent.Configuration.Variant {
