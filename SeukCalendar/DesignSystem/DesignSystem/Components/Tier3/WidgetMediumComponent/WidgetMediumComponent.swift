@@ -22,9 +22,12 @@ public struct WidgetMediumComponent: View {
             WidgetDayCellComponent(configuration: dayCell)
           }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, Spacing.sp050)
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
 

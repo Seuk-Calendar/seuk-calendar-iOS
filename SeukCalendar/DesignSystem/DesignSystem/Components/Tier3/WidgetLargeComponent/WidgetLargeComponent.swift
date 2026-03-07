@@ -29,6 +29,7 @@ public struct WidgetLargeComponent: View {
                 }
               }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, Spacing.sp050)
 
             if index < configuration.visibleWeeks.count - 1 {
@@ -36,8 +37,11 @@ public struct WidgetLargeComponent: View {
             }
           }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
 

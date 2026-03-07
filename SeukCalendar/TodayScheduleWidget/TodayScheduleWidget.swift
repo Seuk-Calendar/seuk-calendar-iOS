@@ -278,8 +278,8 @@ private extension TodayScheduleWidgetEntryView {
 
       content()
         .frame(width: preferredSize.width, height: preferredSize.height, alignment: .topLeading)
-        .scaleEffect(scale, anchor: .topLeading)
-        .frame(width: proxy.size.width, height: proxy.size.height, alignment: .topLeading)
+        .scaleEffect(scale, anchor: .center)
+        .frame(width: proxy.size.width, height: proxy.size.height, alignment: .center)
     }
   }
 

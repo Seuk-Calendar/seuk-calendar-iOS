@@ -18,6 +18,7 @@ public struct WidgetWeekdayRowComponent: View {
           .frame(maxWidth: .infinity, alignment: .center)
       }
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
   }
 }
 
