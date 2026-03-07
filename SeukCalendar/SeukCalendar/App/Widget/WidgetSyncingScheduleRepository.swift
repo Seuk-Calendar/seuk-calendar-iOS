@@ -103,8 +103,11 @@ private extension WidgetSyncingScheduleRepository {
   }
 
   func widgetRange(referenceDate: Date) -> DateInterval {
-    let start = calendar.startOfDay(for: referenceDate)
-    let end = calendar.date(byAdding: .day, value: 2, to: start) ?? start
-    return DateInterval(start: start, end: end)
+    let dayStart = calendar.startOfDay(for: referenceDate)
+    let monthStart = calendar.dateInterval(of: .month, for: dayStart)?.start ?? dayStart
+    let gridStart = calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
+    let gridEnd = calendar.date(byAdding: .day, value: 35, to: gridStart) ?? gridStart
+
+    return DateInterval(start: gridStart, end: gridEnd)
   }
 }
