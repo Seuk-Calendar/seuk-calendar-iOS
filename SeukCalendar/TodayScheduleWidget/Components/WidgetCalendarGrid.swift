@@ -5,7 +5,7 @@ import WidgetKit
 
 struct WidgetCalendarGrid: View {
   private enum Metrics {
-    static let dividerHeight: CGFloat = 1
+    static let dividerHeight: CGFloat = 0.5
   }
 
   let configuration: Configuration

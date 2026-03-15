@@ -148,7 +148,7 @@ private extension WidgetDayCell.Configuration {
       return nil
     }
 
-    return .semantic.Background.secondary
+    return .primitives.gray50
   }
 
   var visibleBadges: [WidgetBadge.Configuration] {

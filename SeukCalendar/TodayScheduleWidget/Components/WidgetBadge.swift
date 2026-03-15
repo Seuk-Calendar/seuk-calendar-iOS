@@ -80,7 +80,6 @@ private extension WidgetBadge {
       .font(Metrics.labelFont)
       .foregroundStyle(configuration.textColor)
       .lineLimit(1)
-      .minimumScaleFactor(0.8)
   }
 }
 

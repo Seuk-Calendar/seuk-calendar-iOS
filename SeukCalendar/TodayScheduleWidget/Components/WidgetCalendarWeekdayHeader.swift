@@ -7,7 +7,7 @@ struct WidgetCalendarWeekdayHeader: View {
   private enum Metrics {
     static let weekdayFont = Widget.Large.medium
     static let weekdayHeight: CGFloat = 24
-    static let dividerHeight: CGFloat = 1
+    static let dividerHeight: CGFloat = 0.5
   }
 
   let configuration: Configuration
