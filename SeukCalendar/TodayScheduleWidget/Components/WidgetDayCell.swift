@@ -8,7 +8,7 @@ struct WidgetDayCell: View {
     static let moreNumberFont = Widget.Large.small
     static let rowSpacing = Spacing.sp050
     static let badgeSpacing = Spacing.sp050
-    static let outerHorizontalPadding = Spacing.sp050
+    static let outerHorizontalPadding:CGFloat = .zero
     static let todayCornerRadius = Radius.rds100
 
     static var badgeRowHeight: CGFloat {

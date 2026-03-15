@@ -49,7 +49,7 @@ private extension WidgetBadge {
 
   var segmentBadge: some View {
     HStack(spacing: Metrics.contentSpacing) {
-      if configuration.state.showsLeadingStrip {
+      if configuration.showsLeadingStrip {
         Capsule()
           .fill(configuration.indicatorColor)
           .frame(width: Metrics.stripWidth)
@@ -65,10 +65,10 @@ private extension WidgetBadge {
     .background(configuration.backgroundColor)
     .clipShape(
       UnevenRoundedRectangle(
-        topLeadingRadius: configuration.state.hasLeadingCorner ? Metrics.segmentCornerRadius : 0,
-        bottomLeadingRadius: configuration.state.hasLeadingCorner ? Metrics.segmentCornerRadius : 0,
-        bottomTrailingRadius: configuration.state.hasTrailingCorner ? Metrics.segmentCornerRadius : 0,
-        topTrailingRadius: configuration.state.hasTrailingCorner ? Metrics.segmentCornerRadius : 0,
+        topLeadingRadius: configuration.hasLeadingCorner ? Metrics.segmentCornerRadius : 0,
+        bottomLeadingRadius: configuration.hasLeadingCorner ? Metrics.segmentCornerRadius : 0,
+        bottomTrailingRadius: configuration.hasTrailingCorner ? Metrics.segmentCornerRadius : 0,
+        topTrailingRadius: configuration.hasTrailingCorner ? Metrics.segmentCornerRadius : 0,
         style: .continuous
       )
     )
@@ -98,19 +98,22 @@ extension WidgetBadge {
     let indicatorColor: Color
     let textColor: Color
     let backgroundColor: Color
+    let showsLeadingMetadata: Bool
 
     init(
       state: State,
       title: String? = nil,
       indicatorColor: Color = .semanticExtensions.Content.contentWarning,
       textColor: Color = .semantic.Content.contentPrimary,
-      backgroundColor: Color = .semanticExtensions.Background.backgroundLightWarning
+      backgroundColor: Color = .semanticExtensions.Background.backgroundLightWarning,
+      showsLeadingMetadata: Bool = false
     ) {
       self.state = state
       self.title = title
       self.indicatorColor = indicatorColor
       self.textColor = textColor
       self.backgroundColor = backgroundColor
+      self.showsLeadingMetadata = showsLeadingMetadata
     }
   }
 }
@@ -126,7 +129,19 @@ private extension WidgetBadge.Configuration {
   }
 
   var showsMetadata: Bool {
-    state.showsLeadingStrip || trimmedTitle != nil
+    showsLeadingStrip || trimmedTitle != nil
+  }
+
+  var showsLeadingStrip: Bool {
+    state.showsLeadingStrip || showsLeadingMetadata
+  }
+
+  var hasLeadingCorner: Bool {
+    state.hasLeadingCorner || showsLeadingMetadata
+  }
+
+  var hasTrailingCorner: Bool {
+    state.hasTrailingCorner
   }
 }
 

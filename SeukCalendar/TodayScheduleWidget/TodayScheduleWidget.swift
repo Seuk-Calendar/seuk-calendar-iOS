@@ -63,19 +63,23 @@ private struct TodayScheduleTimelineProvider: TimelineProvider {
   }
 }
 
-private struct TodayScheduleEntry: TimelineEntry {
+struct TodayScheduleEntry: TimelineEntry {
   let date: Date
   let snapshot: WidgetScheduleSnapshot
   let showsPlaceholderPreview: Bool
 }
 
-private struct TodayScheduleWidgetEntryView: View {
+struct TodayScheduleWidgetEntryView: View {
+  private enum Metrics {
+    static let largeContentSpacing = Spacing.sp050
+  }
+
   @Environment(\.widgetFamily) private var family
   @Environment(\.redactionReasons) private var redactionReasons
 
   let entry: TodayScheduleEntry
 
-  private let calendar = WidgetCalendarFactory.calendar
+  let calendar = WidgetCalendarFactory.calendar
 
   var body: some View {
     Group {
@@ -105,59 +109,6 @@ private struct TodayScheduleWidgetEntryView: View {
 private extension TodayScheduleWidgetEntryView {
   var showsUnredactedPlaceholder: Bool {
     entry.showsPlaceholderPreview && redactionReasons == .placeholder
-  }
-
-  var todayEvents: [WidgetScheduleSnapshot.Item] {
-    entry.snapshot.events(on: entry.date, calendar: calendar)
-  }
-
-  var nextEvent: WidgetScheduleSnapshot.Item? {
-    entry.snapshot.nextEvent(after: entry.date)
-  }
-
-  var upcomingTodayEvents: [WidgetScheduleSnapshot.Item] {
-    todayEvents.filter { $0.endDate > entry.date }
-  }
-
-  var remainingTodayCount: Int {
-    entry.snapshot.remainingEventCount(after: entry.date, on: entry.date, calendar: calendar)
-  }
-
-  var widgetTitleText: String {
-    WidgetFormatters.widgetTitleFormatter.string(from: entry.date)
-  }
-
-  var mediumComponentConfiguration: WidgetMediumComponent.Configuration {
-    WidgetMediumComponent.Configuration(
-      title: widgetTitleText,
-      dayCells: weekDates.map(makeDayCellConfiguration(for:))
-    )
-  }
-
-  var largeComponentConfiguration: WidgetLargeComponent.Configuration {
-    WidgetLargeComponent.Configuration(
-      title: widgetTitleText,
-      weeks: monthWeeks.map { $0.map(makeDayCellConfiguration(for:)) }
-    )
-  }
-
-  var weekDates: [Date] {
-    let reference = calendar.dateInterval(of: .weekOfYear, for: entry.date)?.start ?? calendar
-      .startOfDay(for: entry.date)
-    return (0 ..< 7).compactMap { offset in
-      calendar.date(byAdding: .day, value: offset, to: reference)
-    }
-  }
-
-  var monthWeeks: [[Date]] {
-    let monthStart = calendar.dateInterval(of: .month, for: entry.date)?.start ?? calendar.startOfDay(for: entry.date)
-    let gridStart = calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
-
-    return (0 ..< 5).map { weekOffset in
-      (0 ..< 7).compactMap { dayOffset in
-        calendar.date(byAdding: .day, value: (weekOffset * 7) + dayOffset, to: gridStart)
-      }
-    }
   }
 
   var smallView: some View {
@@ -195,11 +146,25 @@ private extension TodayScheduleWidgetEntryView {
   }
 
   var largeView: some View {
-    WidgetLargeComponent(configuration: largeComponentConfiguration)
+    VStack(alignment: .leading, spacing: Metrics.largeContentSpacing) {
+      Text(widgetTitleText)
+        .font(Widget.Large.xLarge)
+        .foregroundStyle(Color.semantic.Content.contentPrimary)
+        .lineLimit(1)
+        .minimumScaleFactor(0.7)
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      WidgetCalendarWeekdayHeader(configuration: weekdayHeaderConfiguration)
+
+      WidgetCalendarGrid(
+        configuration: .init(weeks: largeCalendarWeeks)
+      )
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-      .containerBackground(for: .widget) {
-        Color.semantic.Background.backgroundPrimary
-      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .containerBackground(for: .widget) {
+      Color.semantic.Background.backgroundPrimary
+    }
   }
 
   var circularView: some View {
@@ -259,101 +224,6 @@ private extension TodayScheduleWidgetEntryView {
       Color.clear
     }
   }
-
-  func makeDayCellConfiguration(for date: Date) -> WidgetDayCellComponent.Configuration {
-    WidgetDayCellComponent.Configuration(
-      date: date,
-      isToday: calendar.isDate(date, inSameDayAs: entry.date),
-      dayTextColor: dayTextColor(for: date),
-      segments: badgeSegmentConfigurations(for: date)
-    )
-  }
-
-  func dayTextColor(for date: Date) -> Color {
-    if calendar.isDate(date, inSameDayAs: entry.date) {
-      return .semantic.Content.contentPrimary
-    }
-
-    switch calendar.component(.weekday, from: date) {
-    case 1:
-      return .semanticExtensions.Content.contentNegative
-    case 7:
-      return .semanticExtensions.Content.contentAccent
-    default:
-      return .semantic.Content.contentSecondary
-    }
-  }
-
-  func badgeSegmentConfigurations(for date: Date) -> [BadgeSegmentComponent.Configuration] {
-    entry.snapshot.events(on: date, calendar: calendar).map { event in
-      let variant = badgeVariant(for: event, on: date)
-      let colors = badgeColors(for: variant)
-
-      return BadgeSegmentComponent.Configuration(
-        variant: variant,
-        label: variant.showsMetadata ? event.title : nil,
-        foregroundColor: colors.foreground,
-        backgroundColor: colors.background,
-        showsLeadingStrip: variant.showsMetadata
-      )
-    }
-  }
-
-  func badgeVariant(
-    for event: WidgetScheduleSnapshot.Item,
-    on date: Date
-  ) -> BadgeSegmentComponent.Configuration.Variant {
-    let dayStart = calendar.startOfDay(for: date)
-    let nextDayStart = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
-
-    let continuesFromPreviousDay = event.startDate < dayStart
-    let continuesIntoNextDay = event.endDate > nextDayStart
-
-    switch (continuesFromPreviousDay, continuesIntoNextDay) {
-    case (false, false):
-      return .startAndEnd
-    case (false, true):
-      return .start
-    case (true, true):
-      return .middle
-    case (true, false):
-      return .end
-    }
-  }
-
-  func badgeColors(
-    for variant: BadgeSegmentComponent.Configuration.Variant
-  ) -> (foreground: Color, background: Color) {
-    switch variant {
-    case .startAndEnd:
-      return (.primitives.teal800, .primitives.green50)
-    case .start, .middle, .end:
-      return (.primitives.blue700, .primitives.blue100)
-    @unknown default:
-      return (.primitives.blue700, .primitives.blue100)
-    }
-  }
-
-  func timeText(for event: WidgetScheduleSnapshot.Item) -> String {
-    if event.isAllDay {
-      return "종일"
-    }
-
-    return WidgetFormatters.timeFormatter.string(from: event.startDate)
-  }
-}
-
-private extension BadgeSegmentComponent.Configuration.Variant {
-  var showsMetadata: Bool {
-    switch self {
-    case .startAndEnd, .start:
-      true
-    case .middle, .end:
-      false
-    @unknown default:
-      false
-    }
-  }
 }
 
 private enum WidgetDeepLinkBuilder {
@@ -393,7 +263,7 @@ private enum WidgetDeepLinkBuilder {
   }
 }
 
-private enum WidgetFormatters {
+enum WidgetFormatters {
   static let queryDateFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.calendar = Calendar(identifier: .gregorian)
@@ -421,7 +291,7 @@ private enum WidgetFormatters {
   }()
 }
 
-private enum WidgetCalendarFactory {
+enum WidgetCalendarFactory {
   static var calendar: Calendar {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = Locale(identifier: "ko_KR")
@@ -472,7 +342,7 @@ private struct WidgetScheduleSnapshotStore {
   }
 }
 
-private struct WidgetScheduleSnapshot: Codable {
+struct WidgetScheduleSnapshot: Codable {
   struct Item: Codable, Hashable, Identifiable {
     let id: String
     let title: String
@@ -609,3 +479,165 @@ private struct WidgetScheduleSnapshot: Codable {
       .count
   }
 }
+
+#if DEBUG
+  private enum TodayScheduleWidgetPreviewFactory {
+    static var calendar: Calendar {
+      var calendar = Calendar(identifier: .gregorian)
+      calendar.locale = Locale(identifier: "ko_KR")
+      calendar.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
+      calendar.firstWeekday = 1
+      return calendar
+    }
+
+    static var previewDate: Date {
+      date(month: 3, day: 12, hour: 9)
+    }
+
+    static var largePreviewEntry: TodayScheduleEntry {
+      TodayScheduleEntry(
+        date: previewDate,
+        snapshot: largePreviewSnapshot,
+        showsPlaceholderPreview: false
+      )
+    }
+
+    static var largePreviewSnapshot: WidgetScheduleSnapshot {
+      WidgetScheduleSnapshot(
+        generatedAt: previewDate,
+        items: previewItems
+      )
+    }
+
+    static var previewItems: [WidgetScheduleSnapshot.Item] {
+      let baseItems = gridDates.flatMap(makeBaseDayEvents(on:))
+      let mixedItems = [
+        spanningItem(
+          id: "preview-spanning-1",
+          title: "연속 일정",
+          startMonth: 3,
+          startDay: 3,
+          endMonth: 3,
+          endDay: 5
+        ),
+        spanningItem(
+          id: "preview-spanning-2",
+          title: "출장 일정",
+          startMonth: 3,
+          startDay: 11,
+          endMonth: 3,
+          endDay: 13
+        ),
+        spanningItem(
+          id: "preview-spanning-3",
+          title: "월말 연속 일정",
+          startMonth: 3,
+          startDay: 30,
+          endMonth: 4,
+          endDay: 2
+        ),
+      ]
+
+      return (baseItems + mixedItems).sorted { lhs, rhs in
+        if lhs.startDate == rhs.startDate {
+          return lhs.title < rhs.title
+        }
+        return lhs.startDate < rhs.startDate
+      }
+    }
+
+    static var gridDates: [Date] {
+      let monthStart = calendar.dateInterval(of: .month, for: previewDate)?.start ?? previewDate
+      let gridStart = calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
+
+      return (0 ..< 35).compactMap { dayOffset in
+        calendar.date(byAdding: .day, value: dayOffset, to: gridStart)
+      }
+    }
+
+    static func makeBaseDayEvents(on targetDate: Date) -> [WidgetScheduleSnapshot.Item] {
+      let day = calendar.component(.day, from: targetDate)
+      let month = calendar.component(.month, from: targetDate)
+      let dateKey = "\(month)-\(day)"
+
+      return [
+        WidgetScheduleSnapshot.Item(
+          id: "preview-all-day-\(dateKey)",
+          title: "하루 일정",
+          startDate: allDayStart(on: targetDate),
+          endDate: allDayEnd(on: targetDate),
+          isAllDay: true,
+          location: nil
+        ),
+        WidgetScheduleSnapshot.Item(
+          id: "preview-single-1-\(dateKey)",
+          title: "하루 일정",
+          startDate: date(month: month, day: day, hour: 10),
+          endDate: date(month: month, day: day, hour: 11),
+          isAllDay: false,
+          location: nil
+        ),
+        WidgetScheduleSnapshot.Item(
+          id: "preview-overflow-1-\(dateKey)",
+          title: "추가 일정",
+          startDate: date(month: month, day: day, hour: 13),
+          endDate: date(month: month, day: day, hour: 14),
+          isAllDay: false,
+          location: nil
+        ),
+        WidgetScheduleSnapshot.Item(
+          id: "preview-overflow-2-\(dateKey)",
+          title: "추가 일정",
+          startDate: date(month: month, day: day, hour: 15),
+          endDate: date(month: month, day: day, hour: 16),
+          isAllDay: false,
+          location: nil
+        ),
+      ]
+    }
+
+    static func spanningItem(
+      id: String,
+      title: String,
+      startMonth: Int,
+      startDay: Int,
+      endMonth: Int,
+      endDay: Int
+    ) -> WidgetScheduleSnapshot.Item {
+      WidgetScheduleSnapshot.Item(
+        id: id,
+        title: title,
+        startDate: date(month: startMonth, day: startDay, hour: 9),
+        endDate: date(month: endMonth, day: endDay, hour: 18),
+        isAllDay: false,
+        location: nil
+      )
+    }
+
+    static func allDayStart(on date: Date) -> Date {
+      calendar.startOfDay(for: date)
+    }
+
+    static func allDayEnd(on date: Date) -> Date {
+      calendar.date(bySettingHour: 23, minute: 59, second: 0, of: date) ?? date
+    }
+
+    static func date(month: Int, day: Int, hour: Int) -> Date {
+      calendar.date(
+        from: DateComponents(
+          year: 2026,
+          month: month,
+          day: day,
+          hour: hour,
+          minute: 0
+        )
+      ) ?? previewDate
+    }
+  }
+
+  #Preview("Today Schedule Large", as: .systemLarge) {
+    TodayScheduleCalendarWidget()
+  } timeline: {
+    TodayScheduleWidgetPreviewFactory.largePreviewEntry
+  }
+#endif
