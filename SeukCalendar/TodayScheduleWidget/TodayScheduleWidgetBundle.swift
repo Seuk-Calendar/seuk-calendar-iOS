@@ -2,8 +2,8 @@ import SwiftUI
 import WidgetKit
 
 @main
-struct TodayScheduleWidgetBundle: WidgetBundle {
-  var body: some Widget {
-    TodayScheduleWidget()
+struct TodayScheduleWidgetBundle: SwiftUI.WidgetBundle {
+  var body: some SwiftUI.Widget {
+    TodayScheduleCalendarWidget()
   }
 }

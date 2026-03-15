@@ -3,10 +3,10 @@ import Foundation
 import SwiftUI
 import WidgetKit
 
-struct TodayScheduleWidget: Widget {
+struct TodayScheduleCalendarWidget: SwiftUI.Widget {
   static let kind = "TodayScheduleWidget"
 
-  var body: some WidgetConfiguration {
+  var body: some SwiftUI.WidgetConfiguration {
     StaticConfiguration(kind: Self.kind, provider: TodayScheduleTimelineProvider()) { entry in
       TodayScheduleWidgetEntryView(entry: entry)
         .widgetURL(WidgetDeepLinkBuilder.dayURL(for: entry.date))
