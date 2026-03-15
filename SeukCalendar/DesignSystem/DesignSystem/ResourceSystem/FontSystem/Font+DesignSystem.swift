@@ -18,12 +18,12 @@ public enum Display: FontStyleType {
     }
   }
 
-  public var lineHeightRatio: CGFloat {
+  public var lineHeight: CGFloat {
     switch self {
-    case .large: 1.17
-    case .medium: 1.23
-    case .small: 1.18
-    case .xSmall: 1.22
+    case .large: 112
+    case .medium: 64
+    case .small: 52
+    case .xSmall: 44
     }
   }
 
@@ -50,23 +50,18 @@ public enum Heading: FontStyleType {
     }
   }
 
-  public var lineHeightRatio: CGFloat {
+  public var lineHeight: CGFloat {
     switch self {
-    case .xxLarge: 1.30
-    case .xLarge: 1.22
-    case .large: 1.25
-    case .medium: 1.29
-    case .small: 1.33
-    case .xSmall: 1.40
+    case .xxLarge: 52
+    case .xLarge: 44
+    case .large: 40
+    case .medium: 36
+    case .small: 32
+    case .xSmall: 28
     }
   }
 
-  public var letterSpacingRatio: CGFloat {
-    switch self {
-    case .xSmall: 1.25 // +0.25 / 20 * 100
-    case .xxLarge, .xLarge, .large, .medium, .small: 0
-    }
-  }
+  public var letterSpacingRatio: CGFloat { 0 }
 }
 
 // MARK: - Label
@@ -74,7 +69,7 @@ public enum Heading: FontStyleType {
 public enum Label: FontStyleType {
   public typealias Family = Pretendard
 
-  case large, medium, small, xSmall
+  case large, medium, small, xSmall, xxSmall
 
   public var weight: Pretendard.Weight { .medium }
 
@@ -84,15 +79,17 @@ public enum Label: FontStyleType {
     case .medium: 16
     case .small: 14
     case .xSmall: 12
+    case .xxSmall: 8
     }
   }
 
-  public var lineHeightRatio: CGFloat {
+  public var lineHeight: CGFloat {
     switch self {
-    case .large: 1.33
-    case .medium: 1.25
-    case .small: 1.14
-    case .xSmall: 1.33
+    case .large: 24
+    case .medium: 20
+    case .small: 16
+    case .xSmall: 16
+    case .xxSmall: uiFont.lineHeight
     }
   }
 
@@ -117,14 +114,59 @@ public enum Paragraph: FontStyleType {
     }
   }
 
-  public var lineHeightRatio: CGFloat {
+  public var lineHeight: CGFloat {
     switch self {
-    case .large: 1.56
-    case .medium: 1.50
-    case .small: 1.43
-    case .xSmall: 1.67
+    case .large: 28
+    case .medium: 24
+    case .small: 20
+    case .xSmall: 20
     }
   }
 
   public var letterSpacingRatio: CGFloat { 0 }
+}
+
+// MARK: - Widget
+
+public enum Widget {
+  public enum Large: FontStyleType {
+    public typealias Family = Pretendard
+
+    case small, medium, large, xLarge
+
+    public var weight: Pretendard.Weight {
+      switch self {
+      case .small, .medium:
+        .medium
+      case .large:
+        .bold
+      case .xLarge:
+        .extraBold
+      }
+    }
+
+    public var size: CGFloat {
+      switch self {
+      case .small:
+        8
+      case .medium, .large:
+        10
+      case .xLarge:
+        12
+      }
+    }
+
+    public var lineHeight: CGFloat {
+      switch self {
+      case .small:
+        10
+      case .medium, .large:
+        12
+      case .xLarge:
+        16
+      }
+    }
+
+    public var letterSpacingRatio: CGFloat { -0.75 }
+  }
 }
