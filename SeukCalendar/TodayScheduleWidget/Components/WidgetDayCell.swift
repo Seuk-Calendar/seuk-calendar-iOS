@@ -43,7 +43,6 @@ struct WidgetDayCell: View {
       .frame(
         maxWidth: .infinity,
         minHeight: Metrics.estimatedHeight,
-        maxHeight: Metrics.estimatedHeight,
         alignment: .top
       )
       .background(backgroundShape)
