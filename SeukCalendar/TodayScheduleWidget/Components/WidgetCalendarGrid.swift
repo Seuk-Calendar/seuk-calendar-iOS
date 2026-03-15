@@ -48,7 +48,7 @@ private extension WidgetCalendarGrid {
 
   var divider: some View {
     Rectangle()
-      .fill(Color.semantic.Background.backgroundTertiary)
+      .fill(Color.semantic.Background.secondary)
       .frame(maxWidth: .infinity)
       .frame(height: Metrics.dividerHeight)
   }
@@ -121,6 +121,7 @@ extension WidgetCalendarGrid {
           return WidgetDayCell.Configuration(
             dayNumber: String(Self.calendar.component(.day, from: date)),
             state: dayCellState(for: date),
+            isToday: Self.calendar.isDate(date, inSameDayAs: previewMonthDate),
             badges: previewBadges,
             moreCount: 2
           )
@@ -138,7 +139,7 @@ extension WidgetCalendarGrid {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .containerBackground(for: .widget) {
-          Color.semantic.Background.backgroundPrimary
+          Color.semantic.Background.primary
         }
       }
       .configurationDisplayName("Widget Calendar Grid Preview")
@@ -149,10 +150,6 @@ extension WidgetCalendarGrid {
 
   private extension WidgetCalendarGridPreviewWidget {
     func dayCellState(for date: Date) -> WidgetDayCell.Configuration.State {
-      if Self.calendar.isDate(date, inSameDayAs: previewMonthDate) {
-        return .today
-      }
-
       if !Self.calendar.isDate(date, equalTo: previewMonthDate, toGranularity: .month) {
         return .otherMonth
       }

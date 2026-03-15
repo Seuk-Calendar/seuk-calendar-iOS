@@ -4,7 +4,9 @@ public enum SCColor {
   public enum ColorFamily: String, CaseIterable {
     case primitives = "Primitives"
     case core = "Core"
-    case semantic = "Semantic"
+    case semantic = "Semantic" // TODO: 제거 필요
+    case semanticBackground = "Semantic/Background"
+    case semanticContent = "Semantic/Content"
     case semanticExtensions = "SemanticExtensions"
   }
 
@@ -134,11 +136,9 @@ public enum SCColor {
 
   public enum Semantic {
     public enum Background {
-      public static let backgroundInversePrimary = Primitives.black
-      public static let backgroundInverseSecondary = Primitives.gray800
-      public static let backgroundPrimary = Primitives.white
-      public static let backgroundSecondary = Primitives.gray50
-      public static let backgroundTertiary = Primitives.gray100
+      public static let primary = Color(SCColor.ColorFamily.semanticBackground, name: "Primary")
+      public static let secondary = Color(SCColor.ColorFamily.semanticBackground, name: "Secondary")
+      public static let tertiary = Color(SCColor.ColorFamily.semanticBackground, name: "Tertiary")
     }
 
     public enum Border {
@@ -151,12 +151,9 @@ public enum SCColor {
     }
 
     public enum Content {
-      public static let contentInversePrimary = Primitives.white
-      public static let contentInverseSecondary = Primitives.gray200
-      public static let contentInverseTertiary = Primitives.gray400
-      public static let contentPrimary = Primitives.black
-      public static let contentSecondary = Primitives.gray800
-      public static let contentTertiary = Primitives.gray700
+      public static let primary = Color(SCColor.ColorFamily.semanticContent, name: "Primary")
+      public static let secondary = Color(SCColor.ColorFamily.semanticContent, name: "Secondary")
+      public static let tertiary = Color(SCColor.ColorFamily.semanticContent, name: "Tertiary")
     }
   }
 

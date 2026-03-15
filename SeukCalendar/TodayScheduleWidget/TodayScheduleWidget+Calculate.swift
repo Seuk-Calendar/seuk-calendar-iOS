@@ -70,7 +70,7 @@ extension TodayScheduleWidgetEntryView {
 
   func dayTextColor(for date: Date) -> Color {
     if calendar.isDate(date, inSameDayAs: entry.date) {
-      return .semantic.Content.contentPrimary
+      return .semantic.Content.primary
     }
 
     switch calendar.component(.weekday, from: date) {
@@ -79,7 +79,7 @@ extension TodayScheduleWidgetEntryView {
     case 7:
       return .semanticExtensions.Content.contentAccent
     default:
-      return .semantic.Content.contentSecondary
+      return .semantic.Content.secondary
     }
   }
 
@@ -145,15 +145,12 @@ extension TodayScheduleWidgetEntryView {
     WidgetDayCell.Configuration(
       dayNumber: String(calendar.component(.day, from: date)),
       state: widgetDayCellState(for: date),
+      isToday: calendar.isDate(date, inSameDayAs: entry.date),
       badges: widgetBadgeConfigurations(for: date)
     )
   }
 
   func widgetDayCellState(for date: Date) -> WidgetDayCell.Configuration.State {
-    if calendar.isDate(date, inSameDayAs: entry.date) {
-      return .today
-    }
-
     if !calendar.isDate(date, equalTo: entry.date, toGranularity: .month) {
       return .otherMonth
     }

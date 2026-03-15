@@ -84,7 +84,7 @@ private extension WidgetDayCellComponent {
         configuration: .init(
           date: Date(),
           isToday: true,
-          dayTextColor: .semantic.Content.contentPrimary,
+          dayTextColor: .semantic.Content.primary,
           segments: [
             .init(
               variant: .start,
@@ -110,7 +110,7 @@ private extension WidgetDayCellComponent {
         configuration: .init(
           date: Date(),
           isToday: false,
-          dayTextColor: .semantic.Content.contentSecondary
+          dayTextColor: .semantic.Content.secondary
         )
       )
       .frame(width: 120)

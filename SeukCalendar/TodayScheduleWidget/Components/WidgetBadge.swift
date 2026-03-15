@@ -104,7 +104,7 @@ extension WidgetBadge {
       state: State,
       title: String? = nil,
       indicatorColor: Color = .semanticExtensions.Content.contentWarning,
-      textColor: Color = .semantic.Content.contentPrimary,
+      textColor: Color = .semantic.Content.primary,
       backgroundColor: Color = .semanticExtensions.Background.backgroundLightWarning,
       showsLeadingMetadata: Bool = false
     ) {
@@ -244,7 +244,7 @@ private extension WidgetBadge.Configuration.State {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding()
         .containerBackground(for: .widget) {
-          Color.semantic.Background.backgroundPrimary
+          Color.semantic.Background.primary
         }
       }
       .configurationDisplayName("Widget Badge Preview")

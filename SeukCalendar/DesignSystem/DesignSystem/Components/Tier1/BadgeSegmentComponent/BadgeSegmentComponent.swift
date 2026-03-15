@@ -92,6 +92,6 @@ public struct BadgeSegmentComponent: View {
       }
     }
     .padding()
-    .background(Color.semantic.Background.backgroundPrimary)
+    .background(Color.semantic.Background.primary)
   }
 #endif

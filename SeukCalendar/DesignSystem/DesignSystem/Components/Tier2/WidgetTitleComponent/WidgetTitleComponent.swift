@@ -10,7 +10,7 @@ public struct WidgetTitleComponent: View {
   public var body: some View {
     Text(configuration.title)
       .font(Heading.xSmall)
-      .foregroundStyle(Color.semantic.Content.contentPrimary)
+      .foregroundStyle(Color.semantic.Content.primary)
       .lineLimit(1)
       .minimumScaleFactor(0.7)
       .frame(maxWidth: .infinity, alignment: .leading)

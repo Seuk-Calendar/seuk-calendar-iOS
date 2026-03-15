@@ -102,7 +102,7 @@ private extension HomeCalendarComponentWeekView {
         Group {
           if day.isSelected {
             RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
-              .fill(Color.semantic.Background.backgroundTertiary)
+              .fill(Color.semantic.Background.tertiary)
           } else {
             Color.clear
           }

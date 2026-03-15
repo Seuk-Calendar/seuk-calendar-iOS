@@ -28,7 +28,7 @@ private extension WidgetWeekdayRowComponent {
     case .sunday:
       .semanticExtensions.Content.contentNegative
     case .weekday:
-      .semantic.Content.contentSecondary
+      .semantic.Content.secondary
     case .saturday:
       .semanticExtensions.Content.contentAccent
     }

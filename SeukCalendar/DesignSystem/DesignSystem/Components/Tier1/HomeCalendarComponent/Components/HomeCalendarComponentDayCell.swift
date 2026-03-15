@@ -58,7 +58,7 @@ struct HomeCalendarComponentDayCell: View {
         .background {
           if showsBadges, day.isSelected {
             RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
-              .fill(Color.semantic.Background.backgroundTertiary)
+              .fill(Color.semantic.Background.tertiary)
           }
         }
         .contentShape(Rectangle())

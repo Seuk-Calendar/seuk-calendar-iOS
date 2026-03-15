@@ -33,7 +33,7 @@ public struct WidgetMediumComponent: View {
 private extension WidgetMediumComponent {
   var divider: some View {
     Rectangle()
-      .fill(Color.semantic.Background.backgroundTertiary)
+      .fill(Color.semantic.Background.tertiary)
       .frame(height: 1)
   }
 }
@@ -75,7 +75,7 @@ private extension WidgetMediumComponent {
         .init(
           date: date,
           isToday: true,
-          dayTextColor: .semantic.Content.contentPrimary,
+          dayTextColor: .semantic.Content.primary,
           segments: [
             .init(
               variant: .start,
@@ -90,7 +90,7 @@ private extension WidgetMediumComponent {
         .init(
           date: date,
           isToday: false,
-          dayTextColor: .semantic.Content.contentSecondary,
+          dayTextColor: .semantic.Content.secondary,
           segments: [
             .init(
               variant: .middle,
@@ -124,7 +124,7 @@ private extension WidgetMediumComponent {
         .init(
           date: date,
           isToday: false,
-          dayTextColor: .semantic.Content.contentSecondary
+          dayTextColor: .semantic.Content.secondary
         )
       }
     }

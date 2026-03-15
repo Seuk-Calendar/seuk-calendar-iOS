@@ -141,7 +141,7 @@ private extension TodayScheduleWidgetEntryView {
     WidgetMediumComponent(configuration: mediumComponentConfiguration)
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
       .containerBackground(for: .widget) {
-        Color.semantic.Background.backgroundPrimary
+        Color.semantic.Background.primary
       }
   }
 
@@ -149,7 +149,7 @@ private extension TodayScheduleWidgetEntryView {
     VStack(alignment: .leading, spacing: Metrics.largeContentSpacing) {
       Text(widgetTitleText)
         .font(Widget.Large.xLarge)
-        .foregroundStyle(Color.semantic.Content.contentPrimary)
+        .foregroundStyle(Color.semantic.Content.primary)
         .lineLimit(1)
         .minimumScaleFactor(0.7)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -163,7 +163,7 @@ private extension TodayScheduleWidgetEntryView {
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .containerBackground(for: .widget) {
-      Color.semantic.Background.backgroundPrimary
+      Color.semantic.Background.primary
     }
   }
 

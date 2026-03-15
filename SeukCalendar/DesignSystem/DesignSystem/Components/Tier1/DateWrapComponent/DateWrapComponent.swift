@@ -39,7 +39,7 @@ public struct DateWrapComponent: View {
         configuration: .init(
           dayText: "25",
           isToday: false,
-          normalTextColor: .semantic.Content.contentPrimary,
+          normalTextColor: .semantic.Content.primary,
           todayBackgroundColor: .primitives.gray500,
           todayTextColor: .semanticExtensions.Content.contentOnColor
         )
@@ -49,7 +49,7 @@ public struct DateWrapComponent: View {
         configuration: .init(
           dayText: "3",
           isToday: true,
-          normalTextColor: .semantic.Content.contentPrimary,
+          normalTextColor: .semantic.Content.primary,
           todayBackgroundColor: .primitives.gray500,
           todayTextColor: .semanticExtensions.Content.contentOnColor
         )

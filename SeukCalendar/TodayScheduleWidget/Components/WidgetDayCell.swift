@@ -8,7 +8,7 @@ struct WidgetDayCell: View {
     static let moreNumberFont = Widget.Large.small
     static let rowSpacing = Spacing.sp050
     static let badgeSpacing = Spacing.sp050
-    static let outerHorizontalPadding:CGFloat = .zero
+    static let outerHorizontalPadding: CGFloat = .zero
     static let todayCornerRadius = Radius.rds100
 
     static var badgeRowHeight: CGFloat {
@@ -102,7 +102,7 @@ private extension WidgetDayCell {
 
   @ViewBuilder
   var backgroundShape: some View {
-    if let backgroundColor = configuration.state.backgroundColor {
+    if let backgroundColor = configuration.backgroundColor {
       RoundedRectangle(cornerRadius: Metrics.todayCornerRadius)
         .fill(backgroundColor)
     }
@@ -113,7 +113,6 @@ extension WidgetDayCell {
   struct Configuration: Hashable {
     enum State: Hashable {
       case `default`
-      case today
       case saturday
       case holiday
       case otherMonth
@@ -121,17 +120,20 @@ extension WidgetDayCell {
 
     let dayNumber: String
     let state: State
+    let isToday: Bool
     let badges: [WidgetBadge.Configuration]
     let moreCount: Int
 
     init(
       dayNumber: String,
       state: State,
+      isToday: Bool = false,
       badges: [WidgetBadge.Configuration] = [],
       moreCount: Int = 0
     ) {
       self.dayNumber = dayNumber
       self.state = state
+      self.isToday = isToday
       self.badges = badges
       self.moreCount = moreCount
     }
@@ -140,6 +142,14 @@ extension WidgetDayCell {
 
 private extension WidgetDayCell.Configuration {
   static let maxVisibleBadges = 2
+
+  var backgroundColor: Color? {
+    guard isToday else {
+      return nil
+    }
+
+    return .semantic.Background.secondary
+  }
 
   var visibleBadges: [WidgetBadge.Configuration] {
     Array(badges.prefix(Self.maxVisibleBadges))
@@ -161,23 +171,14 @@ private extension WidgetDayCell.Configuration {
 private extension WidgetDayCell.Configuration.State {
   var dayNumberColor: Color {
     switch self {
-    case .default, .today:
-      .semantic.Content.contentPrimary
+    case .default:
+        .semantic.Content.primary
     case .saturday:
-      .semanticExtensions.Content.contentAccent
+        .primitives.blue600
     case .holiday:
-      .semanticExtensions.Content.contentNegative
+        .primitives.red600
     case .otherMonth:
-      .semanticExtensions.Content.contentStateDisabled
-    }
-  }
-
-  var backgroundColor: Color? {
-    switch self {
-    case .today:
-      .semantic.Background.backgroundTertiary
-    case .default, .saturday, .holiday, .otherMonth:
-      nil
+        .primitives.gray300
     }
   }
 }
@@ -228,7 +229,8 @@ private extension WidgetDayCell.Configuration.State {
         ),
         .init(
           dayNumber: "21",
-          state: .today,
+          state: .default,
+          isToday: true,
           badges: previewBadges,
           moreCount: 2
         ),
@@ -239,13 +241,8 @@ private extension WidgetDayCell.Configuration.State {
         ),
         .init(
           dayNumber: "23",
-          state: .default,
-          badges: previewBadges,
-          moreCount: 2
-        ),
-        .init(
-          dayNumber: "23",
-          state: .default,
+          state: .saturday,
+          isToday: true,
           badges: previewBadges,
           moreCount: 2
         ),
@@ -255,6 +252,13 @@ private extension WidgetDayCell.Configuration.State {
         ),
         .init(
           dayNumber: "25",
+          state: .holiday,
+          isToday: true,
+          badges: previewBadges,
+          moreCount: 2
+        ),
+        .init(
+          dayNumber: "26",
           state: .otherMonth,
           badges: previewBadges,
           moreCount: 2
@@ -276,7 +280,7 @@ private extension WidgetDayCell.Configuration.State {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding()
         .containerBackground(for: .widget) {
-          Color.semantic.Background.backgroundPrimary
+          Color.semantic.Background.primary
         }
       }
       .configurationDisplayName("Widget Day Cell Preview")

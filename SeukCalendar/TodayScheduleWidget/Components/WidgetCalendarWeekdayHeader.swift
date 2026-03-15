@@ -41,7 +41,7 @@ struct WidgetCalendarWeekdayHeader: View {
 private extension WidgetCalendarWeekdayHeader {
   var divider: some View {
     Rectangle()
-      .fill(Color.semantic.Background.backgroundTertiary)
+      .fill(Color.semantic.Background.secondary)
       .frame(maxWidth: .infinity)
       .frame(height: Metrics.dividerHeight)
   }
@@ -96,7 +96,7 @@ private extension WidgetCalendarWeekdayHeader.Configuration.WeekdayItem.Role {
     case .sunday:
       .semanticExtensions.Content.contentNegative
     case .weekday:
-      .semantic.Content.contentSecondary
+      .semantic.Content.secondary
     case .saturday:
       .semanticExtensions.Content.contentAccent
     }
@@ -143,7 +143,7 @@ private extension WidgetCalendarWeekdayHeader.Configuration.WeekdayItem.Role {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .containerBackground(for: .widget) {
-          Color.semantic.Background.backgroundPrimary
+          Color.semantic.Background.primary
         }
       }
       .configurationDisplayName("Widget Calendar Weekday Header Preview")
