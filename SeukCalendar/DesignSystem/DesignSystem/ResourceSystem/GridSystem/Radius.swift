@@ -1,6 +1,8 @@
 import Foundation
 
 public enum Radius {
+  /// 2px
+  public static let rds050: CGFloat = 2
   /// 4px
   public static let rds100: CGFloat = 4
   /// 8px

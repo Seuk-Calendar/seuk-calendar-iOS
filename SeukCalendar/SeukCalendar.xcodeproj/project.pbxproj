@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		599D701F67B68D6A2979ED76 /* TodayScheduleWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 9F9767B9AE1050BD52AA356E /* TodayScheduleWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5C8C1A4C58C04C0BB3E27901 /* WidgetBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C1A4C58C04C0BB3E27902 /* WidgetBadge.swift */; };
+		5C8C1A4C58C04C0BB3E27904 /* WidgetDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C1A4C58C04C0BB3E27905 /* WidgetDayCell.swift */; };
 		6CB44CFBAD0D77BE1D2EC84A /* TodayScheduleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA8277D61385A797079499 /* TodayScheduleWidget.swift */; };
 		76A5F34EC0A54E8A9A0F5A11 /* DesignSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D5C2F51513B008707E9 /* DesignSystem.framework */; };
 		7B0E0D622F51513B008707E9 /* AI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D552F51513B008707E9 /* AI.framework */; };
@@ -91,6 +93,8 @@
 		16BA8277D61385A797079499 /* TodayScheduleWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TodayScheduleWidget.swift; sourceTree = "<group>"; };
 		1C7E67370CE6319E4CBBD641 /* TodayScheduleWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TodayScheduleWidgetBundle.swift; sourceTree = "<group>"; };
 		1DB52B69F41757AFC19878F9 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5C8C1A4C58C04C0BB3E27902 /* WidgetBadge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetBadge.swift; sourceTree = "<group>"; };
+		5C8C1A4C58C04C0BB3E27905 /* WidgetDayCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetDayCell.swift; sourceTree = "<group>"; };
 		4EFCE6C6A52CF38C214B3AFF /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7B09AD9A2E268FE500327B42 /* DesignSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DesignSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0D552F51513B008707E9 /* AI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -187,6 +191,7 @@
 		952FDDD702E194E9D1A81EBC /* TodayScheduleWidget */ = {
 			isa = PBXGroup;
 			children = (
+				5C8C1A4C58C04C0BB3E27903 /* Components */,
 				C2FF06A454074F664E2A6630 /* Resources */,
 				1C7E67370CE6319E4CBBD641 /* TodayScheduleWidgetBundle.swift */,
 				16BA8277D61385A797079499 /* TodayScheduleWidget.swift */,
@@ -194,6 +199,15 @@
 				A5313880E952C74761D382B3 /* TodayScheduleWidget.entitlements */,
 			);
 			path = TodayScheduleWidget;
+			sourceTree = "<group>";
+		};
+		5C8C1A4C58C04C0BB3E27903 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				5C8C1A4C58C04C0BB3E27902 /* WidgetBadge.swift */,
+				5C8C1A4C58C04C0BB3E27905 /* WidgetDayCell.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		B0B31AF72EBF498F00C1F532 /* Recovered References */ = {
@@ -335,6 +349,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5C8C1A4C58C04C0BB3E27901 /* WidgetBadge.swift in Sources */,
+				5C8C1A4C58C04C0BB3E27904 /* WidgetDayCell.swift in Sources */,
 				C32511CB4770232E34F6B6B8 /* TodayScheduleWidgetBundle.swift in Sources */,
 				6CB44CFBAD0D77BE1D2EC84A /* TodayScheduleWidget.swift in Sources */,
 			);

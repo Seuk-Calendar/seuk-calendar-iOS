@@ -26,6 +26,9 @@ SeukCalendar/
 │           ├── WidgetScheduleSnapshotStore.swift
 │           └── WidgetSyncingScheduleRepository.swift
 └── TodayScheduleWidget/
+    ├── Components/
+    │   ├── WidgetBadge.swift
+    │   └── WidgetDayCell.swift
     ├── TodayScheduleWidgetBundle.swift
     ├── TodayScheduleWidget.swift
     ├── Info.plist
@@ -55,6 +58,9 @@ WidgetKit extension 타겟.
 - TimelineProvider
   - App Group UserDefaults에서 스냅샷 로드
   - 일정 변경 시 앱에서 트리거된 reloadTimelines 반영
+- 위젯 전용 컴포넌트
+  - `Components/WidgetBadge.swift`에서 위젯 내부 일정 뱃지 스타일을 관리
+  - `Components/WidgetDayCell.swift`에서 날짜 셀 상태와 뱃지/더보기 레이아웃을 관리
 - 딥링크
   - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈
 
