@@ -28,6 +28,8 @@ SeukCalendar/
 └── TodayScheduleWidget/
     ├── Components/
     │   ├── WidgetBadge.swift
+    │   ├── WidgetCalendarGrid.swift
+    │   ├── WidgetCalendarWeekdayHeader.swift
     │   └── WidgetDayCell.swift
     ├── TodayScheduleWidgetBundle.swift
     ├── TodayScheduleWidget.swift
@@ -60,6 +62,8 @@ WidgetKit extension 타겟.
   - 일정 변경 시 앱에서 트리거된 reloadTimelines 반영
 - 위젯 전용 컴포넌트
   - `Components/WidgetBadge.swift`에서 위젯 내부 일정 뱃지 스타일을 관리
+  - `Components/WidgetCalendarGrid.swift`에서 5주 x 7일 캘린더 그리드와 주간 divider 레이아웃을 관리
+  - `Components/WidgetCalendarWeekdayHeader.swift`에서 locale 기반 요일 헤더와 하단 divider를 관리
   - `Components/WidgetDayCell.swift`에서 날짜 셀 상태와 뱃지/더보기 레이아웃을 관리
 - 딥링크
   - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈
