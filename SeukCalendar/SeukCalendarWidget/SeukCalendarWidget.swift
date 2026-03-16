@@ -13,14 +13,28 @@ struct SeukCalendarWidget: SwiftUI.Widget {
     }
     .configurationDisplayName("오늘 일정")
     .description("홈 화면과 잠금 화면에서 오늘의 일정을 빠르게 확인합니다.")
-    .supportedFamilies([
-      .systemSmall,
-      .systemMedium,
-      .systemLarge,
-      .accessoryCircular,
-      .accessoryRectangular,
-      .accessoryInline,
-    ])
+    .supportedFamilies(supportedFamilies)
+  }
+}
+
+private extension SeukCalendarWidget {
+  var supportedFamilies: [WidgetFamily] {
+    #if os(macOS)
+      return [
+        .systemSmall,
+        .systemMedium,
+        .systemLarge,
+      ]
+    #else
+      return [
+        .systemSmall,
+        .systemMedium,
+        .systemLarge,
+        .accessoryCircular,
+        .accessoryRectangular,
+        .accessoryInline,
+      ]
+    #endif
   }
 }
 
@@ -211,9 +225,11 @@ private extension SeukCalendarWidgetEntryView {
     .containerBackground(for: .widget) {
       Color.clear
     }
+    #if !os(macOS)
     .widgetLabel {
       Text("남은 일정 \(remainingTodayCount)개")
     }
+    #endif
   }
 
   var rectangularView: some View {

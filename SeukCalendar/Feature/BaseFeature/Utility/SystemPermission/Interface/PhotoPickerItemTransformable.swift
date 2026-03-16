@@ -2,6 +2,16 @@ import _PhotosUI_SwiftUI
 import Core
 import Foundation
 
+#if canImport(UIKit)
+  import UIKit
+
+  public typealias PlatformImage = UIImage
+#elseif canImport(AppKit)
+  import AppKit
+
+  public typealias PlatformImage = NSImage
+#endif
+
 enum PhotosPickerItemTransformerError: SCError {
   case failedToLoadData
   case missingSelf
@@ -21,7 +31,7 @@ enum PhotosPickerItemTransformerError: SCError {
 }
 
 public protocol PhotosPickerImagesRepresentable {
-  func transform(_ items: [PhotosPickerItem]) async throws -> [UIImage]
+  func transform(_ items: [PhotosPickerItem]) async throws -> [PlatformImage]
 }
 
 public protocol PhotoPickerPHAssetRepresentable {}

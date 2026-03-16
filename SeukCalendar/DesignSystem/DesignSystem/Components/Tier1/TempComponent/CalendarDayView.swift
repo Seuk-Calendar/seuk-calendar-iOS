@@ -100,7 +100,7 @@ private extension CalendarDayView {
 
   var hourlyTimeline: some View {
     VStack(alignment: .leading, spacing: 8) {
-      ForEach(0 ..< 24, id: \.self) { hour in
+      ForEach(Array(0 ..< 24), id: \.self) { hour in
         HStack(alignment: .top, spacing: 10) {
           Text(hourLabel(hour))
             .font(.system(size: 11, weight: .medium))
@@ -110,7 +110,7 @@ private extension CalendarDayView {
 
           VStack(alignment: .leading, spacing: 8) {
             Rectangle()
-              .fill(Color(uiColor: .separator))
+              .fill(Color.secondary.opacity(0.24))
               .frame(height: 1)
 
             let hourEvents = timedEvents(at: hour)

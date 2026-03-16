@@ -89,7 +89,7 @@ public enum Label: FontStyleType {
     case .medium: 20
     case .small: 16
     case .xSmall: 16
-    case .xxSmall: uiFont.lineHeight
+    case .xxSmall: fontLineHeight
     }
   }
 

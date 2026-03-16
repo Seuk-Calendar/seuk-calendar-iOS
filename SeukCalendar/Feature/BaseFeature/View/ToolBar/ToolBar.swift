@@ -8,13 +8,21 @@ public extension View {
     trailingItems: [ToolbarModel] = []
   ) -> some View {
     return self
+    #if os(iOS)
       .navigationBarTitleDisplayMode(.inline)
+    #endif
       .navigationBarBackButtonHidden()
       .toolbar {
         if let leadingItem = leadingItem {
-          ToolbarItem(placement: .topBarLeading) {
-            contentView(leadingItem)
-          }
+          #if os(iOS)
+            ToolbarItem(placement: .topBarLeading) {
+              contentView(leadingItem)
+            }
+          #else
+            ToolbarItem(placement: .navigation) {
+              contentView(leadingItem)
+            }
+          #endif
         }
 
         if let titleItem = titleItem {
@@ -24,13 +32,23 @@ public extension View {
         }
 
         if !trailingItems.isEmpty {
-          ToolbarItem(placement: .topBarTrailing) {
-            HStack(spacing: Spacing.sp300) {
-              ForEach(trailingItems, id: \.content) { item in
-                contentView(item)
+          #if os(iOS)
+            ToolbarItem(placement: .topBarTrailing) {
+              HStack(spacing: Spacing.sp300) {
+                ForEach(trailingItems, id: \.content) { item in
+                  contentView(item)
+                }
               }
             }
-          }
+          #else
+            ToolbarItem(placement: .automatic) {
+              HStack(spacing: Spacing.sp300) {
+                ForEach(trailingItems, id: \.content) { item in
+                  contentView(item)
+                }
+              }
+            }
+          #endif
         }
       }
 

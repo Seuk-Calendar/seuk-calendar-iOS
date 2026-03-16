@@ -1,5 +1,8 @@
 import SwiftUI
-import UIKit
+
+#if canImport(UIKit)
+  import UIKit
+#endif
 
 struct HomeCalendarComponentDayCell: View {
   static let pressedScale: CGFloat = 0.8
@@ -72,8 +75,10 @@ struct HomeCalendarComponentDayCell: View {
 
 private extension HomeCalendarComponentDayCell {
   func generateLightHaptic() {
-    let generator = UIImpactFeedbackGenerator(style: .light)
-    generator.impactOccurred()
+    #if canImport(UIKit)
+      let generator = UIImpactFeedbackGenerator(style: .light)
+      generator.impactOccurred()
+    #endif
   }
 
   var dayNumberView: some View {

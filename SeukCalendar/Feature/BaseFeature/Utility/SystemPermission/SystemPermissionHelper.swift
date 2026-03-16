@@ -1,6 +1,9 @@
 import AVFoundation
 import Photos
-import UIKit
+
+#if canImport(UIKit)
+  import UIKit
+#endif
 
 public struct SystemPermissionHelper: SystemPermissionHelperInterface {
   private enum Status {
@@ -69,26 +72,31 @@ extension SystemPermissionHelper {
     target: SystemPermissionTarget,
     behavior: SystemPermissionResultBehavior
   ) async -> SystemPermissionResultBehavior {
-    await withCheckedContinuation { continuation in
-      let alertController = UIAlertController(
-        title: target.title,
-        message: target.message,
-        preferredStyle: .alert
-      )
+    #if canImport(UIKit)
+      await withCheckedContinuation { continuation in
+        let alertController = UIAlertController(
+          title: target.title,
+          message: target.message,
+          preferredStyle: .alert
+        )
 
-      alertController.addAction(.init(title: String(localized: "Settings"), style: .default) { _ in
-        if let settingURL = URL(string: UIApplication.openSettingsURLString) {
-          UIApplication.shared.open(settingURL)
+        alertController.addAction(.init(title: String(localized: "Settings"), style: .default) { _ in
+          if let settingURL = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(settingURL)
+            continuation.resume(returning: behavior)
+          }
+        })
+
+        alertController.addAction(.init(title: String(localized: "cancel"), style: .cancel) { _ in
           continuation.resume(returning: behavior)
-        }
-      })
+        })
 
-      alertController.addAction(.init(title: String(localized: "cancel"), style: .cancel) { _ in
-        continuation.resume(returning: behavior)
-      })
-
-      UIApplication.shared.rootViewController?.present(alertController, animated: true)
-    }
+        UIApplication.shared.rootViewController?.present(alertController, animated: true)
+      }
+    #else
+      _ = target
+      return behavior
+    #endif
   }
 
   private func requestSystemAuthorization(

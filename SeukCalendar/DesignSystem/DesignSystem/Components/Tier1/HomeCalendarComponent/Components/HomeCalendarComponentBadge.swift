@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct HomeCalendarComponentBadge: View {
   static let layoutHeight: CGFloat = 14
@@ -131,7 +130,6 @@ extension Font {
     size: CGFloat
   ) -> Font {
     let fontName = "\(Pretendard.name)-\(weight.rawValue)"
-    let uiFont = UIFont(name: fontName, size: size) ?? .systemFont(ofSize: size)
-    return Font(uiFont)
+    return .custom(fontName, size: size)
   }
 }

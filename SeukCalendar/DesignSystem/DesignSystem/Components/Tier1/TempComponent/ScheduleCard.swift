@@ -16,39 +16,39 @@ public struct ScheduleCard: View {
     Button(
       action: { action?() },
       label: {
-      HStack(alignment: .top, spacing: 12) {
-        RoundedRectangle(cornerRadius: 2, style: .continuous)
-          .fill(.blue)
-          .frame(width: 4, height: 42)
+        HStack(alignment: .top, spacing: 12) {
+          RoundedRectangle(cornerRadius: 2, style: .continuous)
+            .fill(.blue)
+            .frame(width: 4, height: 42)
 
-        VStack(alignment: .leading, spacing: 4) {
-          Text(event.title.isEmpty ? "제목 없음" : event.title)
-            .font(.system(size: 15, weight: .semibold))
-            .foregroundStyle(.primary)
-            .lineLimit(1)
+          VStack(alignment: .leading, spacing: 4) {
+            Text(event.title.isEmpty ? "제목 없음" : event.title)
+              .font(.system(size: 15, weight: .semibold))
+              .foregroundStyle(.primary)
+              .lineLimit(1)
 
-          Text(timeText)
-            .font(.system(size: 12, weight: .regular))
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
-
-          if let location = event.location, !location.isEmpty {
-            Text(location)
+            Text(timeText)
               .font(.system(size: 12, weight: .regular))
               .foregroundStyle(.secondary)
               .lineLimit(1)
-          }
-        }
 
-        Spacer(minLength: 0)
-      }
-      .padding(.horizontal, 12)
-      .padding(.vertical, 10)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .background(
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-          .fill(Color(uiColor: .secondarySystemGroupedBackground))
-      )
+            if let location = event.location, !location.isEmpty {
+              Text(location)
+                .font(.system(size: 12, weight: .regular))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+            }
+          }
+
+          Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+          RoundedRectangle(cornerRadius: 12, style: .continuous)
+            .fill(Color.primary.opacity(0.06))
+        )
       }
     )
     .buttonStyle(.plain)

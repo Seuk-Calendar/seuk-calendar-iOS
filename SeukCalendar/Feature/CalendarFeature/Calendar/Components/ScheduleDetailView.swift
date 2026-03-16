@@ -25,7 +25,9 @@ struct ScheduleDetailView: View {
       }
     }
     .navigationTitle("일정 상세")
-    .navigationBarTitleDisplayMode(.inline)
+    #if os(iOS)
+      .navigationBarTitleDisplayMode(.inline)
+    #endif
   }
 }
 

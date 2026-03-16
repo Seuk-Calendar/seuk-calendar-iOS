@@ -1,7 +1,6 @@
 import _PhotosUI_SwiftUI
 import Photos
 import PhotosUI
-import UIKit
 
 public final class ImageTransformer: PhotosPickerImagesRepresentable, PhotoPickerPHAssetRepresentable {
   private let manager = PHImageManager.default()
@@ -11,12 +10,12 @@ public final class ImageTransformer: PhotosPickerImagesRepresentable, PhotoPicke
 
   public init() {}
 
-  public func transform(_ items: [PhotosPickerItem]) async throws -> [UIImage] {
+  public func transform(_ items: [PhotosPickerItem]) async throws -> [PlatformImage] {
     let assets = await getPHAssets(from: items)
 
-    var results: [UIImage?] = .init(repeating: nil, count: assets.count)
+    var results: [PlatformImage?] = .init(repeating: nil, count: assets.count)
 
-    try await withThrowingTaskGroup(of: (Int, UIImage).self) { group in
+    try await withThrowingTaskGroup(of: (Int, PlatformImage).self) { group in
       var iterator = assets.enumerated().makeIterator()
 
       // 초기 작업 투입
@@ -47,7 +46,7 @@ public final class ImageTransformer: PhotosPickerImagesRepresentable, PhotoPicke
 }
 
 private extension ImageTransformer {
-  func requestHighQualityImage(from asset: PHAsset) async throws -> UIImage {
+  func requestHighQualityImage(from asset: PHAsset) async throws -> PlatformImage {
     try await withCheckedThrowingContinuation { continuation in
       let options = PHImageRequestOptions()
       options.deliveryMode = .highQualityFormat

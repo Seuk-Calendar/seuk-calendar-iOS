@@ -41,7 +41,8 @@ SeukCalendar/
     ├── SeukCalendarWidget+Calculate.swift
     ├── SeukCalendarWidget.swift
     ├── Info.plist
-    └── SeukCalendarWidget.entitlements
+    ├── SeukCalendarWidget.entitlements
+    └── SeukCalendarWidgetiOS.entitlements
 ```
 
 ## 타겟 구성
@@ -53,6 +54,9 @@ SeukCalendar/
 - `ContentView.swift`
   - `WidgetSyncingScheduleRepository`를 사용해 일정 변경 시 위젯 스냅샷 동기화
   - `.onOpenURL`로 위젯 딥링크를 받아 초기 날짜/일정으로 진입
+- `App/Resources/SeukCalendar.entitlements`
+  - App Group 공유 저장소 사용
+  - macOS sandbox에서 캘린더 접근을 위해 `com.apple.security.personal-information.calendars` entitlement 포함
 - `App/Widget/WidgetScheduleSnapshotStore.swift`
   - App Group UserDefaults(`group.com.youngkyu.SeukCalendar`)에 위젯 스냅샷 저장
   - 저장 직후 `WidgetCenter.reloadTimelines` 호출
@@ -61,9 +65,12 @@ SeukCalendar/
 
 WidgetKit extension 타겟.
 
+- 지원 플랫폼
+  - iOS
+  - macOS
 - 지원 패밀리
-  - `systemSmall`, `systemMedium`, `systemLarge`
-  - `accessoryCircular`, `accessoryRectangular`, `accessoryInline`
+  - iOS: `systemSmall`, `systemMedium`, `systemLarge`, `accessoryCircular`, `accessoryRectangular`, `accessoryInline`
+  - macOS: `systemSmall`, `systemMedium`, `systemLarge`
 - TimelineProvider
   - App Group UserDefaults에서 스냅샷 로드
   - 일정 변경 시 앱에서 트리거된 reloadTimelines 반영
@@ -76,6 +83,9 @@ WidgetKit extension 타겟.
   - `SeukCalendarWidget+Calculate.swift`에서 위젯 날짜 계산과 large/medium 셀 매핑 로직을 분리 관리
 - 딥링크
   - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈
+- macOS 빌드 설정
+  - `CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = SeukCalendarWidget/SeukCalendarWidget.entitlements`
+  - macOS sandbox + App Group 권한을 함께 사용
 
 ## 의존성
 
@@ -94,3 +104,6 @@ WidgetKit extension 타겟.
 - App Group Entitlements
   - `SeukCalendar/App/Resources/SeukCalendar.entitlements`
   - `SeukCalendarWidget/SeukCalendarWidget.entitlements`
+    - macOS widget extension sandbox와 App Group 공유 저장소 entitlement 포함
+  - `SeukCalendarWidget/SeukCalendarWidgetiOS.entitlements`
+    - iOS widget extension App Group entitlement 포함
