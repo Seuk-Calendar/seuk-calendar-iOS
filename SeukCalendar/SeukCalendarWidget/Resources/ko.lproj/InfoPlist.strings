@@ -1,2 +1,3 @@
+/* Debug builds overwrite the built product to append the Dev suffix. */
 "CFBundleName" = "슥캘린더";
 "CFBundleDisplayName" = "슥캘린더";

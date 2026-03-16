@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>SeukCalendar</string>
+	<string>$(INFOPLIST_KEY_CFBundleDisplayName)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,13 +13,17 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>SeukCalendar</string>
+	<string>$(INFOPLIST_KEY_CFBundleName)</string>
 	<key>CFBundlePackageType</key>
 	<string>XPC!</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>SCWidgetAppGroupIdentifier</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
+	<key>SCWidgetDeepLinkScheme</key>
+	<string>$(WIDGET_DEEP_LINK_SCHEME)</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>위젯에서 최신 일정을 직접 읽어 자동으로 반영하려면 캘린더 접근 권한이 필요합니다.</string>
 	<key>NSCalendarsUsageDescription</key>

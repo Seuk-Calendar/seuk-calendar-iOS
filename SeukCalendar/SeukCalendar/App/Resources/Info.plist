@@ -39,10 +39,14 @@
 			<string>widget</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>seukcalendar</string>
+				<string>$(WIDGET_DEEP_LINK_SCHEME)</string>
 			</array>
 		</dict>
 	</array>
+	<key>SCWidgetAppGroupIdentifier</key>
+	<string>$(APP_GROUP_IDENTIFIER)</string>
+	<key>SCWidgetDeepLinkScheme</key>
+	<string>$(WIDGET_DEEP_LINK_SCHEME)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>naversearchapp</string>

@@ -63,9 +63,12 @@ SeukCalendar/
   - App Group 공유 저장소 사용
   - macOS sandbox에서 캘린더 접근을 위해 `com.apple.security.personal-information.calendars` entitlement 포함
 - `App/Resources/ko.lproj/InfoPlist.strings`
-  - macOS 위젯 갤러리와 시스템 노출 이름이 한국어 환경에서 `슥캘린더`로 보이도록 번들 이름/표시 이름을 로컬라이즈
+  - Release 한국어 환경에서 앱 이름을 `슥캘린더`로 현지화
+- `App/Resources/Info.plist`
+  - 위젯 딥링크 스킴과 App Group 식별자를 설정별(`Debug`/`Release`)로 주입
+  - 앱 번들 이름/표시 이름의 기본 fallback을 설정별로 주입 (`SeukCalendar-Dev` / `SeukCalendar`)
 - `App/Widget/WidgetScheduleSnapshotStore.swift`
-  - App Group UserDefaults(`group.com.youngkyu.SeukCalendar`)에 위젯 스냅샷 저장
+  - App Group UserDefaults(Info.plist 기반 설정값)에 위젯 스냅샷 저장
   - 저장 직후 `WidgetCenter.reloadTimelines` 호출
   - macOS에서는 `CFPreferencesAppSynchronize`로 App Group 반영 타이밍을 보강
 
@@ -91,20 +94,25 @@ WidgetKit extension 타겟.
   - `Components/WidgetSmallEvent.swift`, `Components/WidgetSmallEvent+Configuration.swift`에서 small 위젯 일정 row 레이아웃과 컬러 계층을 관리
   - `SeukCalendarWidget+Calculate.swift`에서 위젯 날짜 계산과 large/medium 셀 매핑 로직을 분리 관리
 - 딥링크
-  - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈
+  - 일정 row 탭 시 설정별 딥링크 스킴(`seukcalendar` / `seukcalendar-dev`)으로 `schedule` 경로 오픈
 - macOS 빌드 설정
   - `CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = SeukCalendarWidget/SeukCalendarWidget.entitlements`
   - macOS sandbox + App Group + calendars entitlement을 함께 사용
   - 위젯 extension은 `LD_RUNPATH_SEARCH_PATHS`로 상위 앱의 `Contents/Frameworks`를 참조해 공용 프레임워크를 로드
   - `ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon`으로 widget gallery에 브랜드 아이콘을 노출
+  - Debug 설정은 앱/위젯 bundle identifier와 App Group에 `.dev` suffix를 사용해 TestFlight 설치본과 공존
+  - Debug는 앱/위젯 번들 이름과 표시 이름을 `SeukCalendar-Dev`로 고정
+  - Release는 앱/위젯 번들 이름과 표시 이름의 기본 fallback을 `SeukCalendar`로 유지
+  - macOS Debug 앱 번들 파일명은 `SeukCalendar-Dev.app`로 분리
 - `Resources/ko.lproj/InfoPlist.strings`
-  - 위젯 갤러리의 앱 이름이 한국어 환경에서 `슥캘린더`로 보이도록 번들 이름/표시 이름을 로컬라이즈
+  - Release 한국어 환경에서 위젯 갤러리 앱 이름을 `슥캘린더`로 현지화
 
 ## 의존성
 
 - App 타겟: AI, CalendarData, CalendarDomain, CalendarFeature
 - Widget 타겟: WidgetKit, SwiftUI, Foundation, EventKit
 - 공유 저장소: App Groups (`group.com.youngkyu.SeukCalendar`)
+  - Debug는 `group.com.youngkyu.SeukCalendar.dev`로 분리
 
 ## Xcode 프로젝트 설정
 
