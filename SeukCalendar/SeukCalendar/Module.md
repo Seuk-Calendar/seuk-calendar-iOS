@@ -30,7 +30,8 @@ SeukCalendar/
     │   ├── WidgetBadge.swift
     │   ├── WidgetCalendarGrid.swift
     │   ├── WidgetCalendarWeekdayHeader.swift
-    │   └── WidgetDayCell.swift
+    │   ├── WidgetDayCell.swift
+    │   └── WidgetSmallEvent.swift
     ├── TodayScheduleWidgetBundle.swift
     ├── TodayScheduleWidget+Calculate.swift
     ├── TodayScheduleWidget.swift
@@ -66,6 +67,7 @@ WidgetKit extension 타겟.
   - `Components/WidgetCalendarGrid.swift`에서 5주 x 7일 캘린더 그리드와 주간 divider 레이아웃을 관리
   - `Components/WidgetCalendarWeekdayHeader.swift`에서 locale 기반 요일 헤더와 하단 divider를 관리
   - `Components/WidgetDayCell.swift`에서 날짜 셀 상태와 뱃지/더보기 레이아웃을 관리
+  - `Components/WidgetSmallEvent.swift`에서 small 위젯 일정 row의 제목/시간 레이아웃을 관리
   - `TodayScheduleWidget+Calculate.swift`에서 위젯 날짜 계산과 large/medium 셀 매핑 로직을 분리 관리
 - 딥링크
   - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈

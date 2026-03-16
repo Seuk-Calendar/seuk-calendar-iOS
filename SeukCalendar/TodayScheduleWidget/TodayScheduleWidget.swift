@@ -108,29 +108,45 @@ private extension TodayScheduleWidgetEntryView {
   }
 
   var smallView: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text("오늘 일정")
-        .font(.system(size: 13, weight: .semibold))
-        .foregroundStyle(.secondary)
+    VStack(alignment: .leading, spacing: Spacing.sp250) {
+      VStack(alignment: .leading, spacing: Spacing.sp050) {
+        Text("오늘")
+          .font(Widget.Large.xLarge)
+          .foregroundStyle(Color.semantic.Content.primary)
 
-      if let nextEvent {
-        Text(timeText(for: nextEvent))
-          .font(.system(size: 14, weight: .bold))
-          .foregroundStyle(.blue)
-        Text(nextEvent.title)
-          .font(.system(size: 13, weight: .medium))
-          .lineLimit(3)
-      } else {
-        Spacer(minLength: 0)
+        Text(smallHeaderDateText)
+          .font(Widget.Large.medium)
+          .foregroundStyle(Color.primitives.gray500)
+      }
+
+      if smallVisibleEvents.isEmpty {
         Text("등록된 일정이 없습니다")
-          .font(.system(size: 13, weight: .medium))
-          .foregroundStyle(.secondary)
-          .lineLimit(2)
+          .font(Widget.Large.medium)
+          .foregroundStyle(Color.primitives.gray500)
+          .lineLimit(1)
+      } else {
+        VStack(alignment: .leading, spacing: Spacing.sp250) {
+          ForEach(smallVisibleEvents) { event in
+            WidgetSmallEvent(
+              configuration: smallEventConfiguration(for: event)
+            )
+          }
+
+          if smallRemainingCount > 0 {
+            Text("+\(smallRemainingCount)")
+              .font(Widget.Large.medium)
+              .foregroundStyle(Color.primitives.gray500)
+              .lineLimit(1)
+          }
+        }
       }
 
       Spacer(minLength: 0)
     }
-    .containerBackground(.fill.tertiary, for: .widget)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .containerBackground(for: .widget) {
+      Color.semantic.Background.primary
+    }
   }
 
   var mediumView: some View {
@@ -302,6 +318,15 @@ enum WidgetFormatters {
     formatter.locale = Locale(identifier: "ko_KR")
     formatter.timeZone = .current
     formatter.dateFormat = "yyyy년 M월 d일 EEEE"
+    return formatter
+  }()
+
+  static let smallHeaderDateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.calendar = WidgetCalendarFactory.calendar
+    formatter.locale = Locale(identifier: "ko_KR")
+    formatter.timeZone = .current
+    formatter.dateFormat = "M월 d일 EEEE"
     return formatter
   }()
 }
@@ -521,6 +546,14 @@ struct WidgetScheduleSnapshot: Codable {
       )
     }
 
+    static var smallPreviewEntry: TodayScheduleEntry {
+      TodayScheduleEntry(
+        date: mediumPreviewDate,
+        snapshot: smallPreviewSnapshot,
+        showsPlaceholderPreview: false
+      )
+    }
+
     static var largePreviewEntry: TodayScheduleEntry {
       TodayScheduleEntry(
         date: previewDate,
@@ -540,6 +573,13 @@ struct WidgetScheduleSnapshot: Codable {
       WidgetScheduleSnapshot(
         generatedAt: mediumPreviewDate,
         items: mediumPreviewItems
+      )
+    }
+
+    static var smallPreviewSnapshot: WidgetScheduleSnapshot {
+      WidgetScheduleSnapshot(
+        generatedAt: mediumPreviewDate,
+        items: smallPreviewItems
       )
     }
 
@@ -722,6 +762,50 @@ struct WidgetScheduleSnapshot: Codable {
       }
     }
 
+    static var smallPreviewItems: [WidgetScheduleSnapshot.Item] {
+      [
+        timedItem(
+          id: "small-01",
+          title: "제목 길이 테스트",
+          month: 3,
+          day: 3,
+          startHour: 11,
+          endHour: 12
+        ),
+        timedItem(
+          id: "small-02",
+          title: "저녁 약속",
+          month: 3,
+          day: 3,
+          startHour: 17,
+          endHour: 18
+        ),
+        allDayItem(
+          id: "small-03",
+          title: "시작 시간 없는 종일 일정",
+          month: 3,
+          day: 3
+        ),
+        allDayItem(
+          id: "small-04",
+          title: "추가 일정 1",
+          month: 3,
+          day: 3
+        ),
+        allDayItem(
+          id: "small-05",
+          title: "추가 일정 2",
+          month: 3,
+          day: 3
+        ),
+      ].sorted { lhs, rhs in
+        if lhs.startDate == rhs.startDate {
+          return lhs.title < rhs.title
+        }
+        return lhs.startDate < rhs.startDate
+      }
+    }
+
     static func allDayItem(
       id: String,
       title: String,
@@ -807,5 +891,11 @@ struct WidgetScheduleSnapshot: Codable {
     TodayScheduleCalendarWidget()
   } timeline: {
     TodayScheduleWidgetPreviewFactory.mediumPreviewEntry
+  }
+
+  #Preview("Today Schedule Small", as: .systemSmall) {
+    TodayScheduleCalendarWidget()
+  } timeline: {
+    TodayScheduleWidgetPreviewFactory.smallPreviewEntry
   }
 #endif

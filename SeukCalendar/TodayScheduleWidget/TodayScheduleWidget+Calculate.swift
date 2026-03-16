@@ -28,6 +28,26 @@ extension TodayScheduleWidgetEntryView {
     WidgetFormatters.widgetTitleFormatter.string(from: entry.date)
   }
 
+  /// small 위젯 날짜 헤더에 사용하는 날짜 문자열을 반환한다.
+  var smallHeaderDateText: String {
+    WidgetFormatters.smallHeaderDateFormatter.string(from: entry.date)
+  }
+
+  /// small 위젯에서 노출 순서에 맞게 정렬된 오늘 일정을 반환한다.
+  var smallDisplayEvents: [WidgetScheduleSnapshot.Item] {
+    todayEvents.sorted(by: compareSmallDisplayEvents)
+  }
+
+  /// small 위젯에 직접 노출할 최대 3개의 일정 목록을 반환한다.
+  var smallVisibleEvents: [WidgetScheduleSnapshot.Item] {
+    Array(smallDisplayEvents.prefix(3))
+  }
+
+  /// small 위젯에서 +N으로 접어둘 남은 일정 수를 반환한다.
+  var smallRemainingCount: Int {
+    max(smallDisplayEvents.count - smallVisibleEvents.count, 0)
+  }
+
   /// medium 위젯에 필요한 주간 셀 구성을 생성한다.
   var mediumComponentConfiguration: WidgetMediumComponent.Configuration {
     WidgetMediumComponent.Configuration(
@@ -161,6 +181,60 @@ extension TodayScheduleWidgetEntryView {
     }
 
     return WidgetFormatters.timeFormatter.string(from: event.startDate)
+  }
+
+  /// small 위젯용 이벤트 row 구성을 생성한다.
+  func smallEventConfiguration(
+    for event: WidgetScheduleSnapshot.Item
+  ) -> WidgetSmallEvent.Configuration {
+    WidgetSmallEvent.Configuration(
+      title: event.title,
+      timeText: smallEventTimeText(for: event)
+    )
+  }
+
+  /// small 위젯에서 trailing time label에 표시할 시간 문자열을 반환한다.
+  func smallEventTimeText(for event: WidgetScheduleSnapshot.Item) -> String? {
+    guard !event.isAllDay,
+          calendar.isDate(event.startDate, inSameDayAs: entry.date)
+    else {
+      return nil
+    }
+
+    return WidgetFormatters.timeFormatter.string(from: event.startDate)
+  }
+
+  /// small 위젯 이벤트 정렬 우선순위를 비교한다.
+  func compareSmallDisplayEvents(
+    lhs: WidgetScheduleSnapshot.Item,
+    rhs: WidgetScheduleSnapshot.Item
+  ) -> Bool {
+    let lhsHasDisplayTime = smallEventTimeText(for: lhs) != nil
+    let rhsHasDisplayTime = smallEventTimeText(for: rhs) != nil
+
+    // 시작 시간이 보이는 일정이 상단에 오도록 먼저 정렬해,
+    // small 위젯에서 timed event가 all-day/연속 일정보다 먼저 노출되게 한다.
+    if lhsHasDisplayTime != rhsHasDisplayTime {
+      return lhsHasDisplayTime && !rhsHasDisplayTime
+    }
+
+    if lhsHasDisplayTime, rhsHasDisplayTime, lhs.startDate != rhs.startDate {
+      return lhs.startDate < rhs.startDate
+    }
+
+    if lhs.isAllDay != rhs.isAllDay {
+      return !lhs.isAllDay && rhs.isAllDay
+    }
+
+    if lhs.endDate != rhs.endDate {
+      return lhs.endDate < rhs.endDate
+    }
+
+    if lhs.title != rhs.title {
+      return lhs.title < rhs.title
+    }
+
+    return lhs.id < rhs.id
   }
 
   /// 주 단위 lane 배치 결과를 반영해 large 위젯 하루 셀 구성을 생성한다.
