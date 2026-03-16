@@ -1,5 +1,8 @@
 import SwiftUI
-import UIKit
+
+#if canImport(UIKit)
+  import UIKit
+#endif
 
 struct HomeCalendarComponentWeekView: View {
   @State private var pressedDayID: String?
@@ -102,7 +105,7 @@ private extension HomeCalendarComponentWeekView {
         Group {
           if day.isSelected {
             RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
-              .fill(Color.semantic.Background.backgroundTertiary)
+              .fill(Color.semantic.Background.tertiary)
           } else {
             Color.clear
           }
@@ -205,8 +208,10 @@ private extension HomeCalendarComponentWeekView {
   }
 
   func tapDate(_ day: HomeCalendarComponent.Configuration.Day) {
-    let generator = UIImpactFeedbackGenerator(style: .light)
-    generator.impactOccurred()
+    #if canImport(UIKit)
+      let generator = UIImpactFeedbackGenerator(style: .light)
+      generator.impactOccurred()
+    #endif
     eventListener?(.tapDate(day.date))
   }
 }

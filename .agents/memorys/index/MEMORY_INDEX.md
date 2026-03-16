@@ -6,6 +6,7 @@
 
 | 날짜(Date) | 파일(File) | 제목(Title) | 핵심 키워드(Keywords) |
 |---|---|---|---|
+| 2026-03-07 | `entries/2026-03-07-unicode-workspace-path-verify.md` | 유니코드가 섞인 유사 워크스페이스 경로에서 파일 생성 위치를 먼저 검증해야 하는 사례 | workflow:issue-to-pr, workflow:path-safety, failure:wrong-unicode-path, verify:pwd-git-root-before-move |
 | 2026-03-06 | `entries/2026-03-06-explicit-skill-path-priority.md` | 사용자가 스킬 경로나 이름을 직접 제공한 경우 즉시 해당 스킬을 우선 확인해야 하는 사례 | workflow:skill, workflow:issue-to-pr, action:read-explicit-skill-path, failure:ignored-user-provided-skill, verify:explicit-skill-open-first |
 | 2026-03-05 | `entries/2026-03-05-pencil-full-color-family-sync.md` | 펜슬 컬러 토큰 작업에서 캘린더 일부만 반영해 전체 디자인 시스템 컬러 계층 동기화를 놓칠 뻔한 사례 | workflow:issue-to-pr, workflow:design-token, action:pencil-color-family-sync, failure:partial-color-registration, verify:color-designsystem-full-coverage |
 | 2026-03-05 | `entries/2026-03-05-issue-template-mismatch-gh-cli.md` | `gh issue create --body-file` 사용 시 Issue Form 템플릿 구조를 반영하지 않아 이슈 본문 형식이 어긋난 사례 | workflow:issue-to-pr, action:gh-issue-create, failure:template-mismatch, verify:issue-template-sections |

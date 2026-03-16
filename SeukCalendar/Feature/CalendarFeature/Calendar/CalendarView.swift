@@ -43,25 +43,27 @@ public struct CalendarView: View {
       }
       .simultaneousGesture(swipeGesture)
       .navigationTitle("캘린더")
-      .navigationBarTitleDisplayMode(.inline)
-      .overlay {
-        if viewModel.isLoading || viewModel.isParsingNaturalLanguage || viewModel.isSavingParsedEvent {
-          ProgressView()
-            .padding(20)
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+      #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+      #endif
+        .overlay {
+          if viewModel.isLoading || viewModel.isParsingNaturalLanguage || viewModel.isSavingParsedEvent {
+            ProgressView()
+              .padding(20)
+              .background(.ultraThinMaterial)
+              .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+          }
         }
-      }
-      .task {
-        await viewModel.send(.onAppear).value
-        openPendingScheduleIfNeeded()
-      }
-      .onChange(of: viewModel.visibleEvents.map(\.id)) { _, _ in
-        openPendingScheduleIfNeeded()
-      }
-      .navigationDestination(for: CalendarEvent.self) { event in
-        ScheduleDetailView(event: event)
-      }
+        .task {
+          await viewModel.send(.onAppear).value
+          openPendingScheduleIfNeeded()
+        }
+        .onChange(of: viewModel.visibleEvents.map(\.id)) { _, _ in
+          openPendingScheduleIfNeeded()
+        }
+        .navigationDestination(for: CalendarEvent.self) { event in
+          ScheduleDetailView(event: event)
+        }
     }
   }
 }
@@ -128,7 +130,7 @@ private extension CalendarView {
       }
     }
     .padding(12)
-    .background(Color(.secondarySystemBackground))
+    .background(Color.primary.opacity(0.06))
     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
   }
 
@@ -142,21 +144,27 @@ private extension CalendarView {
 
       TextField("날짜 (yyyy-MM-dd)", text: parsedDateStringBinding)
         .textFieldStyle(.roundedBorder)
+      #if os(iOS)
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
+      #endif
 
       Toggle("종일 일정", isOn: parsedIsAllDayBinding)
 
       if !(viewModel.parsedEventDraft?.isAllDay ?? true) {
         TextField("시작 시간 (HH:mm)", text: parsedStartTimeBinding)
           .textFieldStyle(.roundedBorder)
+        #if os(iOS)
           .textInputAutocapitalization(.never)
           .autocorrectionDisabled()
+        #endif
       }
 
       TextField("소요 시간(분)", text: parsedDurationMinutesBinding)
         .textFieldStyle(.roundedBorder)
+      #if os(iOS)
         .keyboardType(.numberPad)
+      #endif
 
       VStack(alignment: .leading, spacing: 8) {
         HStack(spacing: 8) {
@@ -197,7 +205,7 @@ private extension CalendarView {
         }
       }
       .padding(10)
-      .background(Color(.secondarySystemBackground))
+      .background(Color.primary.opacity(0.06))
       .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
 
       TextField("장소", text: parsedLocationBinding)
@@ -214,7 +222,7 @@ private extension CalendarView {
       .disabled(viewModel.parsedEventDraft == nil)
     }
     .padding(12)
-    .background(Color(.systemBackground))
+    .background(Color.primary.opacity(0.03))
     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
   }
 

@@ -1,7 +1,11 @@
 import SwiftUI
 
-public extension Color {
-  func uiColor() -> UIColor {
-    return UIColor(self)
+#if canImport(UIKit)
+  import UIKit
+
+  public extension Color {
+    func uiColor() -> UIColor {
+      return UIColor(self)
+    }
   }
-}
+#endif

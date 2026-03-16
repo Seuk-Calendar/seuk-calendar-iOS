@@ -1,5 +1,8 @@
 import SwiftUI
-import UIKit
+
+#if canImport(UIKit)
+  import UIKit
+#endif
 
 struct HomeCalendarComponentDayCell: View {
   static let pressedScale: CGFloat = 0.8
@@ -58,7 +61,7 @@ struct HomeCalendarComponentDayCell: View {
         .background {
           if showsBadges, day.isSelected {
             RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
-              .fill(Color.semantic.Background.backgroundTertiary)
+              .fill(Color.semantic.Background.tertiary)
           }
         }
         .contentShape(Rectangle())
@@ -72,8 +75,10 @@ struct HomeCalendarComponentDayCell: View {
 
 private extension HomeCalendarComponentDayCell {
   func generateLightHaptic() {
-    let generator = UIImpactFeedbackGenerator(style: .light)
-    generator.impactOccurred()
+    #if canImport(UIKit)
+      let generator = UIImpactFeedbackGenerator(style: .light)
+      generator.impactOccurred()
+    #endif
   }
 
   var dayNumberView: some View {

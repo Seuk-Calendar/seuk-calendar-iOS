@@ -1,5 +1,11 @@
 import SwiftUI
-import UIKit.UIFont
+
+#if canImport(UIKit)
+  import UIKit
+#elseif canImport(AppKit)
+  import AppKit
+#endif
+import CoreText
 
 public struct FontManager {
   public enum FontFamily: CaseIterable {
@@ -22,10 +28,13 @@ public struct FontManager {
       let name = "\(T.name)-\($0)"
       let path = "\(name)\(font.extension.rawValue)"
 
-      if !UIFont.fontNames(forFamilyName: T.name).contains(name) {
-        guard let url = Bundle.designSystemBundle.url(forResource: path, withExtension: nil) else { return }
-        CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
-      }
+      guard let url = Bundle.designSystemBundle.url(forResource: path, withExtension: nil) else { return }
+
+      #if canImport(UIKit)
+        guard !PlatformFont.fontNames(forFamilyName: T.name).contains(name) else { return }
+      #endif
+
+      CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
     }
   }
 

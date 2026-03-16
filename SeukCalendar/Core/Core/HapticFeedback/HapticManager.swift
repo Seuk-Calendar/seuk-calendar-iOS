@@ -5,18 +5,24 @@
 //  Created by YoungK on 3/6/26.
 //
 
-import UIKit
+#if canImport(UIKit)
+  import UIKit
+#endif
 
 public enum HapticFeedback {
-  public static func generate(style: UIImpactFeedbackGenerator.FeedbackStyle) {
-    let generator = UIImpactFeedbackGenerator(style: style)
-    generator.impactOccurred()
-  }
+  #if canImport(UIKit)
+    public static func generate(style: UIImpactFeedbackGenerator.FeedbackStyle) {
+      let generator = UIImpactFeedbackGenerator(style: style)
+      generator.impactOccurred()
+    }
+  #endif
 
-  public static func generate(success: Bool) {
-    let generator = UINotificationFeedbackGenerator()
-    success
-    ? generator.notificationOccurred(.success)
-    : generator.notificationOccurred(.error)
-  }
+  #if canImport(UIKit)
+    public static func generate(success: Bool) {
+      let generator = UINotificationFeedbackGenerator()
+      success
+        ? generator.notificationOccurred(.success)
+        : generator.notificationOccurred(.error)
+    }
+  #endif
 }

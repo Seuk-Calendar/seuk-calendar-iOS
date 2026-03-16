@@ -3,7 +3,7 @@ import Foundation
 enum WidgetSharedConstants {
   static let appGroupIdentifier = "group.com.youngkyu.SeukCalendar"
   static let snapshotStorageKey = "today_schedule_widget_snapshot_v1"
-  static let widgetKind = "TodayScheduleWidget"
+  static let widgetKind = "SeukCalendarWidget"
   static let deepLinkScheme = "seukcalendar"
   static let deepLinkHost = "schedule"
 }

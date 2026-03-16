@@ -28,27 +28,27 @@ public struct DateCell: View {
     Button(
       action: { action?() },
       label: {
-      VStack(spacing: 6) {
-        Text(dayText)
-          .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
-          .foregroundStyle(foregroundColor)
-          .frame(maxWidth: .infinity)
-          .padding(.top, 6)
+        VStack(spacing: 6) {
+          Text(dayText)
+            .font(.system(size: 14, weight: isSelected ? .semibold : .regular))
+            .foregroundStyle(foregroundColor)
+            .frame(maxWidth: .infinity)
+            .padding(.top, 6)
 
-        HStack(spacing: 3) {
-          ForEach(0..<dotCount, id: \.self) { _ in
-            Circle()
-              .fill(isSelected ? Color.white.opacity(0.9) : .blue)
-              .frame(width: 4, height: 4)
+          HStack(spacing: 3) {
+            ForEach(Array(0 ..< dotCount), id: \.self) { _ in
+              Circle()
+                .fill(isSelected ? Color.white.opacity(0.9) : .blue)
+                .frame(width: 4, height: 4)
+            }
           }
+          .frame(height: 6)
+          .padding(.bottom, 6)
         }
-        .frame(height: 6)
-        .padding(.bottom, 6)
-      }
-      .frame(maxWidth: .infinity)
-      .frame(height: 48)
-      .background(backgroundColor)
-      .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .frame(maxWidth: .infinity)
+        .frame(height: 48)
+        .background(backgroundColor)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
       }
     )
     .buttonStyle(.plain)
