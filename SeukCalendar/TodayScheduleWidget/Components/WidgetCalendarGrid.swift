@@ -122,7 +122,7 @@ extension WidgetCalendarGrid {
             dayNumber: String(Self.calendar.component(.day, from: date)),
             state: dayCellState(for: date),
             isToday: Self.calendar.isDate(date, inSameDayAs: previewMonthDate),
-            badges: previewBadges,
+            badgeSlots: previewBadges,
             moreCount: 2
           )
         }

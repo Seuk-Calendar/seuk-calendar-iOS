@@ -75,8 +75,9 @@ private extension WidgetDayCell {
 
   @ViewBuilder
   func badgeSlot(at index: Int) -> some View {
-    if configuration.visibleBadges.indices.contains(index) {
-      WidgetBadge(configuration: configuration.visibleBadges[index])
+    if configuration.resolvedBadgeSlots.indices.contains(index),
+       let badgeConfiguration = configuration.resolvedBadgeSlots[index] {
+      WidgetBadge(configuration: badgeConfiguration)
     } else {
       Color.clear
         .frame(maxWidth: .infinity)
@@ -111,6 +112,8 @@ private extension WidgetDayCell {
 
 extension WidgetDayCell {
   struct Configuration: Hashable {
+    static let maxVisibleBadgeSlotCount = 2
+
     enum State: Hashable {
       case `default`
       case saturday
@@ -121,28 +124,26 @@ extension WidgetDayCell {
     let dayNumber: String
     let state: State
     let isToday: Bool
-    let badges: [WidgetBadge.Configuration]
+    let badgeSlots: [WidgetBadge.Configuration?]
     let moreCount: Int
 
     init(
       dayNumber: String,
       state: State,
       isToday: Bool = false,
-      badges: [WidgetBadge.Configuration] = [],
+      badgeSlots: [WidgetBadge.Configuration?] = [],
       moreCount: Int = 0
     ) {
       self.dayNumber = dayNumber
       self.state = state
       self.isToday = isToday
-      self.badges = badges
+      self.badgeSlots = badgeSlots
       self.moreCount = moreCount
     }
   }
 }
 
 private extension WidgetDayCell.Configuration {
-  static let maxVisibleBadges = 2
-
   var backgroundColor: Color? {
     guard isToday else {
       return nil
@@ -151,12 +152,15 @@ private extension WidgetDayCell.Configuration {
     return .primitives.gray50
   }
 
-  var visibleBadges: [WidgetBadge.Configuration] {
-    Array(badges.prefix(Self.maxVisibleBadges))
+  var resolvedBadgeSlots: [WidgetBadge.Configuration?] {
+    let normalizedSlots = Array(badgeSlots.prefix(Self.maxVisibleBadgeSlotCount))
+    let missingSlotCount = max(0, Self.maxVisibleBadgeSlotCount - normalizedSlots.count)
+
+    return normalizedSlots + Array(repeating: nil, count: missingSlotCount)
   }
 
   var resolvedMoreCount: Int {
-    max(moreCount, 0) + max(badges.count - visibleBadges.count, 0)
+    max(moreCount, 0)
   }
 
   var moreNumberText: String? {
@@ -172,13 +176,13 @@ private extension WidgetDayCell.Configuration.State {
   var dayNumberColor: Color {
     switch self {
     case .default:
-        .semantic.Content.primary
+      .semantic.Content.primary
     case .saturday:
-        .primitives.blue600
+      .primitives.blue600
     case .holiday:
-        .primitives.red600
+      .primitives.red600
     case .otherMonth:
-        .primitives.gray300
+      .primitives.gray300
     }
   }
 }
@@ -224,26 +228,26 @@ private extension WidgetDayCell.Configuration.State {
         .init(
           dayNumber: "20",
           state: .default,
-          badges: previewBadges,
+          badgeSlots: previewBadges,
           moreCount: 2
         ),
         .init(
           dayNumber: "21",
           state: .default,
           isToday: true,
-          badges: previewBadges,
+          badgeSlots: previewBadges,
           moreCount: 2
         ),
         .init(
           dayNumber: "22",
           state: .saturday,
-          badges: [.init(state: .allDay, title: "하루 일정")]
+          badgeSlots: [.init(state: .allDay, title: "하루 일정")]
         ),
         .init(
           dayNumber: "23",
           state: .saturday,
           isToday: true,
-          badges: previewBadges,
+          badgeSlots: previewBadges,
           moreCount: 2
         ),
         .init(
@@ -254,13 +258,13 @@ private extension WidgetDayCell.Configuration.State {
           dayNumber: "25",
           state: .holiday,
           isToday: true,
-          badges: previewBadges,
+          badgeSlots: previewBadges,
           moreCount: 2
         ),
         .init(
           dayNumber: "26",
           state: .otherMonth,
-          badges: previewBadges,
+          badgeSlots: previewBadges,
           moreCount: 2
         ),
       ]

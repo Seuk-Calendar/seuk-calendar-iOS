@@ -70,10 +70,6 @@ struct TodayScheduleEntry: TimelineEntry {
 }
 
 struct TodayScheduleWidgetEntryView: View {
-  private enum Metrics {
-    static let largeContentSpacing = Spacing.sp050
-  }
-
   @Environment(\.widgetFamily) private var family
   @Environment(\.redactionReasons) private var redactionReasons
 
@@ -138,15 +134,34 @@ private extension TodayScheduleWidgetEntryView {
   }
 
   var mediumView: some View {
-    WidgetMediumComponent(configuration: mediumComponentConfiguration)
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-      .containerBackground(for: .widget) {
-        Color.semantic.Background.primary
+    VStack(alignment: .leading, spacing: Spacing.sp050) {
+      Text(widgetTitleText)
+        .font(Widget.Large.xLarge)
+        .foregroundStyle(Color.semantic.Content.primary)
+        .lineLimit(1)
+        .minimumScaleFactor(0.8)
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      WidgetCalendarWeekdayHeader(configuration: weekdayHeaderConfiguration)
+
+      HStack(alignment: .top, spacing: 0) {
+        ForEach(Array(mediumCalendarWeek.enumerated()), id: \.offset) { _, dayCell in
+          WidgetDayCell(configuration: dayCell)
+            .frame(maxWidth: .infinity)
+        }
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+      Spacer(minLength: 0)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    .containerBackground(for: .widget) {
+      Color.semantic.Background.primary
+    }
   }
 
   var largeView: some View {
-    VStack(alignment: .leading, spacing: Metrics.largeContentSpacing) {
+    VStack(alignment: .leading, spacing: Spacing.sp050) {
       Text(widgetTitleText)
         .font(Widget.Large.xLarge)
         .foregroundStyle(Color.semantic.Content.primary)
@@ -491,7 +506,19 @@ struct WidgetScheduleSnapshot: Codable {
     }
 
     static var previewDate: Date {
-      date(month: 3, day: 12, hour: 9)
+      date(month: 3, day: 15, hour: 9)
+    }
+
+    static var mediumPreviewDate: Date {
+      date(month: 3, day: 3, hour: 9)
+    }
+
+    static var mediumPreviewEntry: TodayScheduleEntry {
+      TodayScheduleEntry(
+        date: mediumPreviewDate,
+        snapshot: mediumPreviewSnapshot,
+        showsPlaceholderPreview: false
+      )
     }
 
     static var largePreviewEntry: TodayScheduleEntry {
@@ -509,36 +536,136 @@ struct WidgetScheduleSnapshot: Codable {
       )
     }
 
+    static var mediumPreviewSnapshot: WidgetScheduleSnapshot {
+      WidgetScheduleSnapshot(
+        generatedAt: mediumPreviewDate,
+        items: mediumPreviewItems
+      )
+    }
+
     static var previewItems: [WidgetScheduleSnapshot.Item] {
-      let baseItems = gridDates.flatMap(makeBaseDayEvents(on:))
-      let mixedItems = [
+      [
+        allDayItem(
+          id: "preview-holiday-1",
+          title: "삼일절",
+          month: 3,
+          day: 1
+        ),
+        timedItem(
+          id: "preview-holiday-2",
+          title: "가족 점심",
+          month: 3,
+          day: 1,
+          startHour: 12,
+          endHour: 13
+        ),
+        timedItem(
+          id: "preview-holiday-3",
+          title: "추가 일정",
+          month: 3,
+          day: 1,
+          startHour: 16,
+          endHour: 17
+        ),
+        allDayItem(
+          id: "preview-saturday",
+          title: "토요 일정",
+          month: 3,
+          day: 7
+        ),
         spanningItem(
-          id: "preview-spanning-1",
-          title: "연속 일정",
+          id: "preview-week-span",
+          title: "제주도 여행",
           startMonth: 3,
-          startDay: 3,
+          startDay: 8,
           endMonth: 3,
-          endDay: 5
+          endDay: 11
+        ),
+        timedItem(
+          id: "preview-single-1",
+          title: "디자인 리뷰",
+          month: 3,
+          day: 12,
+          startHour: 10,
+          endHour: 11
+        ),
+        timedItem(
+          id: "preview-single-2",
+          title: "알바",
+          month: 3,
+          day: 12,
+          startHour: 15,
+          endHour: 16
         ),
         spanningItem(
           id: "preview-spanning-2",
-          title: "출장 일정",
+          title: "테스트4",
           startMonth: 3,
-          startDay: 11,
+          startDay: 13,
           endMonth: 3,
-          endDay: 13
+          endDay: 18
         ),
         spanningItem(
           id: "preview-spanning-3",
-          title: "월말 연속 일정",
+          title: "테스트5",
           startMonth: 3,
-          startDay: 30,
-          endMonth: 4,
-          endDay: 2
+          startDay: 14,
+          endMonth: 3,
+          endDay: 16
         ),
-      ]
-
-      return (baseItems + mixedItems).sorted { lhs, rhs in
+        timedItem(
+          id: "preview-overflow-today",
+          title: "주간 회고",
+          month: 3,
+          day: 15,
+          startHour: 13,
+          endHour: 14
+        ),
+        timedItem(
+          id: "preview-single-3",
+          title: "저녁 약속",
+          month: 3,
+          day: 18,
+          startHour: 18,
+          endHour: 19
+        ),
+        spanningItem(
+          id: "preview-spanning-4",
+          title: "테스트6",
+          startMonth: 3,
+          startDay: 20,
+          endMonth: 4,
+          endDay: 1
+        ),
+        timedItem(
+          id: "preview-single-4",
+          title: "알바 대타",
+          month: 3,
+          day: 22,
+          startHour: 12,
+          endHour: 13
+        ),
+        allDayItem(
+          id: "preview-single-5",
+          title: "엄마 생일",
+          month: 3,
+          day: 25
+        ),
+        allDayItem(
+          id: "preview-single-6",
+          title: "월말 정리",
+          month: 3,
+          day: 29
+        ),
+        timedItem(
+          id: "preview-other-month",
+          title: "다음 달 준비",
+          month: 4,
+          day: 2,
+          startHour: 10,
+          endHour: 11
+        ),
+      ].sorted { lhs, rhs in
         if lhs.startDate == rhs.startDate {
           return lhs.title < rhs.title
         }
@@ -546,54 +673,89 @@ struct WidgetScheduleSnapshot: Codable {
       }
     }
 
-    static var gridDates: [Date] {
-      let monthStart = calendar.dateInterval(of: .month, for: previewDate)?.start ?? previewDate
-      let gridStart = calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
+    static var mediumPreviewItems: [WidgetScheduleSnapshot.Item] {
+      [
+        allDayItem(id: "medium-01-1", title: "하루 일정", month: 3, day: 1),
+        allDayItem(id: "medium-01-2", title: "하루 일정", month: 3, day: 1),
+        timedItem(id: "medium-01-3", title: "하루 일정", month: 3, day: 1, startHour: 12, endHour: 13),
+        timedItem(id: "medium-01-4", title: "하루 일정", month: 3, day: 1, startHour: 15, endHour: 16),
 
-      return (0 ..< 35).compactMap { dayOffset in
-        calendar.date(byAdding: .day, value: dayOffset, to: gridStart)
+        allDayItem(id: "medium-02-1", title: "하루 일정", month: 3, day: 2),
+        allDayItem(id: "medium-02-2", title: "하루 일정", month: 3, day: 2),
+        timedItem(id: "medium-02-3", title: "하루 일정", month: 3, day: 2, startHour: 12, endHour: 13),
+        timedItem(id: "medium-02-4", title: "하루 일정", month: 3, day: 2, startHour: 15, endHour: 16),
+
+        allDayItem(id: "medium-03-1", title: "하루 일정", month: 3, day: 3),
+        allDayItem(id: "medium-03-2", title: "하루 일정", month: 3, day: 3),
+        timedItem(id: "medium-03-3", title: "하루 일정", month: 3, day: 3, startHour: 12, endHour: 13),
+        timedItem(id: "medium-03-4", title: "하루 일정", month: 3, day: 3, startHour: 15, endHour: 16),
+
+        spanningItem(
+          id: "medium-span-1",
+          title: "연속 시작",
+          startMonth: 3,
+          startDay: 4,
+          endMonth: 3,
+          endDay: 6
+        ),
+        allDayItem(id: "medium-04-1", title: "하루 일정", month: 3, day: 4),
+        timedItem(id: "medium-04-2", title: "하루 일정", month: 3, day: 4, startHour: 12, endHour: 13),
+        timedItem(id: "medium-04-3", title: "하루 일정", month: 3, day: 4, startHour: 15, endHour: 16),
+
+        allDayItem(id: "medium-05-1", title: "하루 일정", month: 3, day: 5),
+        timedItem(id: "medium-05-2", title: "하루 일정", month: 3, day: 5, startHour: 12, endHour: 13),
+        timedItem(id: "medium-05-3", title: "하루 일정", month: 3, day: 5, startHour: 15, endHour: 16),
+
+        allDayItem(id: "medium-06-1", title: "하루 일정", month: 3, day: 6),
+        timedItem(id: "medium-06-2", title: "하루 일정", month: 3, day: 6, startHour: 12, endHour: 13),
+        timedItem(id: "medium-06-3", title: "하루 일정", month: 3, day: 6, startHour: 15, endHour: 16),
+
+        allDayItem(id: "medium-07-1", title: "하루 일정", month: 3, day: 7),
+        allDayItem(id: "medium-07-2", title: "하루 일정", month: 3, day: 7),
+        timedItem(id: "medium-07-3", title: "하루 일정", month: 3, day: 7, startHour: 12, endHour: 13),
+        timedItem(id: "medium-07-4", title: "하루 일정", month: 3, day: 7, startHour: 15, endHour: 16),
+      ].sorted { lhs, rhs in
+        if lhs.startDate == rhs.startDate {
+          return lhs.title < rhs.title
+        }
+        return lhs.startDate < rhs.startDate
       }
     }
 
-    static func makeBaseDayEvents(on targetDate: Date) -> [WidgetScheduleSnapshot.Item] {
-      let day = calendar.component(.day, from: targetDate)
-      let month = calendar.component(.month, from: targetDate)
-      let dateKey = "\(month)-\(day)"
+    static func allDayItem(
+      id: String,
+      title: String,
+      month: Int,
+      day: Int
+    ) -> WidgetScheduleSnapshot.Item {
+      let targetDate = date(month: month, day: day, hour: 0)
 
-      return [
-        WidgetScheduleSnapshot.Item(
-          id: "preview-all-day-\(dateKey)",
-          title: "하루 일정",
-          startDate: allDayStart(on: targetDate),
-          endDate: allDayEnd(on: targetDate),
-          isAllDay: true,
-          location: nil
-        ),
-        WidgetScheduleSnapshot.Item(
-          id: "preview-single-1-\(dateKey)",
-          title: "하루 일정",
-          startDate: date(month: month, day: day, hour: 10),
-          endDate: date(month: month, day: day, hour: 11),
-          isAllDay: false,
-          location: nil
-        ),
-        WidgetScheduleSnapshot.Item(
-          id: "preview-overflow-1-\(dateKey)",
-          title: "추가 일정",
-          startDate: date(month: month, day: day, hour: 13),
-          endDate: date(month: month, day: day, hour: 14),
-          isAllDay: false,
-          location: nil
-        ),
-        WidgetScheduleSnapshot.Item(
-          id: "preview-overflow-2-\(dateKey)",
-          title: "추가 일정",
-          startDate: date(month: month, day: day, hour: 15),
-          endDate: date(month: month, day: day, hour: 16),
-          isAllDay: false,
-          location: nil
-        ),
-      ]
+      return WidgetScheduleSnapshot.Item(
+        id: id,
+        title: title,
+        startDate: allDayStart(on: targetDate),
+        endDate: allDayEnd(on: targetDate),
+        isAllDay: true,
+        location: nil
+      )
+    }
+
+    static func timedItem(
+      id: String,
+      title: String,
+      month: Int,
+      day: Int,
+      startHour: Int,
+      endHour: Int
+    ) -> WidgetScheduleSnapshot.Item {
+      WidgetScheduleSnapshot.Item(
+        id: id,
+        title: title,
+        startDate: date(month: month, day: day, hour: startHour),
+        endDate: date(month: month, day: day, hour: endHour),
+        isAllDay: false,
+        location: nil
+      )
     }
 
     static func spanningItem(
@@ -639,5 +801,11 @@ struct WidgetScheduleSnapshot: Codable {
     TodayScheduleCalendarWidget()
   } timeline: {
     TodayScheduleWidgetPreviewFactory.largePreviewEntry
+  }
+
+  #Preview("Today Schedule Medium", as: .systemMedium) {
+    TodayScheduleCalendarWidget()
+  } timeline: {
+    TodayScheduleWidgetPreviewFactory.mediumPreviewEntry
   }
 #endif
