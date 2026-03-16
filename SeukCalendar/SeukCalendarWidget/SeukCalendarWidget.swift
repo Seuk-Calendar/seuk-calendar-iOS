@@ -1,4 +1,5 @@
 import DesignSystem
+import EventKit
 import Foundation
 import SwiftUI
 import WidgetKit
@@ -49,31 +50,38 @@ private struct SeukCalendarTimelineProvider: TimelineProvider {
   }
 
   func getSnapshot(in context: Context, completion: @escaping (SeukCalendarEntry) -> Void) {
-    let snapshotStore = WidgetScheduleSnapshotStore()
-    let storedSnapshot = snapshotStore.load()
-    let placeholderDate = WidgetScheduleSnapshot.placeholderReferenceDate
-    let isPlaceholderPreview = context.isPreview && storedSnapshot == nil
-    let snapshot = storedSnapshot ?? (isPlaceholderPreview ? .placeholder(for: placeholderDate) : .empty)
-    let entryDate = isPlaceholderPreview ? placeholderDate : Date()
+    Task {
+      let referenceDate = Date()
+      let dataSource = WidgetScheduleDataSource()
+      let snapshot = dataSource.loadSnapshot(referenceDate: referenceDate)
+      let placeholderDate = WidgetScheduleSnapshot.placeholderReferenceDate
+      let isPlaceholderPreview = context.isPreview && snapshot == nil
+      let resolvedSnapshot = snapshot ?? (isPlaceholderPreview ? .placeholder(for: placeholderDate) : .empty)
+      let entryDate = isPlaceholderPreview ? placeholderDate : referenceDate
 
-    completion(
-      SeukCalendarEntry(
-        date: entryDate,
-        snapshot: snapshot,
-        showsPlaceholderPreview: isPlaceholderPreview
+      completion(
+        SeukCalendarEntry(
+          date: entryDate,
+          snapshot: resolvedSnapshot,
+          showsPlaceholderPreview: isPlaceholderPreview
+        )
       )
-    )
+    }
   }
 
   func getTimeline(in context: Context, completion: @escaping (Timeline<SeukCalendarEntry>) -> Void) {
-    let snapshot = WidgetScheduleSnapshotStore().load() ?? .empty
-    let entry = SeukCalendarEntry(
-      date: Date(),
-      snapshot: snapshot,
-      showsPlaceholderPreview: false
-    )
-    let nextRefresh = Calendar.current.date(byAdding: .minute, value: 15, to: Date()) ?? Date().addingTimeInterval(900)
-    completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
+    Task {
+      let referenceDate = Date()
+      let snapshot = WidgetScheduleDataSource().loadSnapshot(referenceDate: referenceDate) ?? .empty
+      let entry = SeukCalendarEntry(
+        date: referenceDate,
+        snapshot: snapshot,
+        showsPlaceholderPreview: false
+      )
+      let nextRefresh = Calendar.current.date(byAdding: .minute, value: 5, to: referenceDate)
+        ?? referenceDate.addingTimeInterval(300)
+      completion(Timeline(entries: [entry], policy: .after(nextRefresh)))
+    }
   }
 }
 
@@ -395,6 +403,107 @@ private struct WidgetScheduleSnapshotStore {
     }
 
     return try? decoder.decode(WidgetScheduleSnapshot.self, from: data)
+  }
+}
+
+private struct WidgetScheduleDataSource {
+  private let snapshotStore: WidgetScheduleSnapshotStore
+  private let calendar: Calendar
+  private let eventStoreFactory: () -> EKEventStore
+
+  init(
+    snapshotStore: WidgetScheduleSnapshotStore = WidgetScheduleSnapshotStore(),
+    calendar: Calendar = WidgetCalendarFactory.calendar,
+    eventStoreFactory: @escaping () -> EKEventStore = { EKEventStore() }
+  ) {
+    self.snapshotStore = snapshotStore
+    self.calendar = calendar
+    self.eventStoreFactory = eventStoreFactory
+  }
+
+  func loadSnapshot(referenceDate: Date) -> WidgetScheduleSnapshot? {
+    if let directSnapshot = loadDirectSnapshot(referenceDate: referenceDate) {
+      debugLog("loaded direct EventKit snapshot: \(directSnapshot.items.count) items")
+      return directSnapshot
+    }
+
+    if let storedSnapshot = snapshotStore.load() {
+      debugLog("loaded fallback App Group snapshot: \(storedSnapshot.items.count) items")
+      return storedSnapshot
+    }
+
+    debugLog("no widget snapshot source available, using empty state")
+    return nil
+  }
+}
+
+private extension WidgetScheduleDataSource {
+  func loadDirectSnapshot(referenceDate: Date) -> WidgetScheduleSnapshot? {
+    guard isReadableAuthorizationStatus(EKEventStore.authorizationStatus(for: .event)) else {
+      debugLog("direct EventKit fetch skipped: authorization is unavailable")
+      return nil
+    }
+
+    let eventStore = eventStoreFactory()
+    let range = widgetRange(referenceDate: referenceDate)
+    let predicate = eventStore.predicateForEvents(
+      withStart: range.start,
+      end: range.end,
+      calendars: nil
+    )
+
+    let items = eventStore
+      .events(matching: predicate)
+      .compactMap(mapItem(from:))
+      .sorted(by: { lhs, rhs in
+        if lhs.startDate == rhs.startDate {
+          return lhs.title < rhs.title
+        }
+        return lhs.startDate < rhs.startDate
+      })
+
+    return WidgetScheduleSnapshot(generatedAt: referenceDate, items: items)
+  }
+
+  func mapItem(from event: EKEvent) -> WidgetScheduleSnapshot.Item? {
+    let fallbackIdentifier = "\(Int(event.startDate.timeIntervalSince1970))_\(event.title ?? "untitled")"
+
+    return WidgetScheduleSnapshot.Item(
+      id: event.eventIdentifier ?? fallbackIdentifier,
+      title: (event.title?.isEmpty == false ? event.title : nil) ?? "제목 없음",
+      startDate: event.startDate,
+      endDate: event.endDate,
+      isAllDay: event.isAllDay,
+      location: event.location
+    )
+  }
+
+  func widgetRange(referenceDate: Date) -> DateInterval {
+    let dayStart = calendar.startOfDay(for: referenceDate)
+    let monthStart = calendar.dateInterval(of: .month, for: dayStart)?.start ?? dayStart
+    let gridStart = calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
+    let gridEnd = calendar.date(byAdding: .day, value: 35, to: gridStart) ?? gridStart
+
+    return DateInterval(start: gridStart, end: gridEnd)
+  }
+
+  func isReadableAuthorizationStatus(_ status: EKAuthorizationStatus) -> Bool {
+    switch status {
+    case .authorized:
+      return true
+    case .fullAccess:
+      return true
+    case .writeOnly, .notDetermined, .denied, .restricted:
+      return false
+    @unknown default:
+      return false
+    }
+  }
+
+  func debugLog(_ message: String) {
+    #if DEBUG
+      print("[SeukCalendarWidget] \(message)")
+    #endif
   }
 }
 

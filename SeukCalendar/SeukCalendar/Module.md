@@ -7,7 +7,7 @@
 - 앱 진입점(App life cycle) 관리
 - CalendarFeature 화면 생성 및 의존성 조립
 - Widget 딥링크 처리(`seukcalendar://schedule?...`)
-- App Groups 기반 위젯 데이터 동기화
+- EventKit 직접 조회 + App Groups fallback 기반 위젯 데이터 동기화
 
 ## 디렉토리 구조
 
@@ -53,6 +53,7 @@ SeukCalendar/
 
 - `ContentView.swift`
   - `WidgetSyncingScheduleRepository`를 사용해 일정 변경 시 위젯 스냅샷 동기화
+  - scene phase가 active가 될 때 위젯 스냅샷 동기화를 한 번 더 보장
   - `.onOpenURL`로 위젯 딥링크를 받아 초기 날짜/일정으로 진입
 - `App/Resources/SeukCalendar.entitlements`
   - App Group 공유 저장소 사용
@@ -60,6 +61,7 @@ SeukCalendar/
 - `App/Widget/WidgetScheduleSnapshotStore.swift`
   - App Group UserDefaults(`group.com.youngkyu.SeukCalendar`)에 위젯 스냅샷 저장
   - 저장 직후 `WidgetCenter.reloadTimelines` 호출
+  - macOS에서는 `CFPreferencesAppSynchronize`로 App Group 반영 타이밍을 보강
 
 ### 2. SeukCalendarWidget (Widget Extension)
 
@@ -72,8 +74,9 @@ WidgetKit extension 타겟.
   - iOS: `systemSmall`, `systemMedium`, `systemLarge`, `accessoryCircular`, `accessoryRectangular`, `accessoryInline`
   - macOS: `systemSmall`, `systemMedium`, `systemLarge`
 - TimelineProvider
-  - App Group UserDefaults에서 스냅샷 로드
-  - 일정 변경 시 앱에서 트리거된 reloadTimelines 반영
+  - EventKit에서 위젯 표시 범위의 일정을 직접 조회
+  - direct fetch 실패 또는 권한 부재 시 App Group UserDefaults 스냅샷으로 fallback
+  - 기본 timeline refresh 주기를 5분으로 유지
 - 위젯 전용 컴포넌트
   - `Components/WidgetBadge.swift`, `Components/WidgetBadge+Configuration.swift`에서 일정 뱃지 레이아웃과 tinted/clear 대응 컬러를 관리
   - `Components/WidgetCalendarGrid.swift`, `Components/WidgetCalendarGrid+Configuration.swift`에서 5주 x 7일 캘린더 그리드와 divider 컬러를 관리
@@ -85,13 +88,13 @@ WidgetKit extension 타겟.
   - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈
 - macOS 빌드 설정
   - `CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = SeukCalendarWidget/SeukCalendarWidget.entitlements`
-  - macOS sandbox + App Group 권한을 함께 사용
+  - macOS sandbox + App Group + calendars entitlement을 함께 사용
   - 위젯 extension은 `LD_RUNPATH_SEARCH_PATHS`로 상위 앱의 `Contents/Frameworks`를 참조해 공용 프레임워크를 로드
 
 ## 의존성
 
 - App 타겟: AI, CalendarData, CalendarDomain, CalendarFeature
-- Widget 타겟: WidgetKit, SwiftUI, Foundation
+- Widget 타겟: WidgetKit, SwiftUI, Foundation, EventKit
 - 공유 저장소: App Groups (`group.com.youngkyu.SeukCalendar`)
 
 ## Xcode 프로젝트 설정
@@ -105,6 +108,6 @@ WidgetKit extension 타겟.
 - App Group Entitlements
   - `SeukCalendar/App/Resources/SeukCalendar.entitlements`
   - `SeukCalendarWidget/SeukCalendarWidget.entitlements`
-    - macOS widget extension sandbox와 App Group 공유 저장소 entitlement 포함
+    - macOS widget extension sandbox와 App Group 공유 저장소, calendars entitlement 포함
   - `SeukCalendarWidget/SeukCalendarWidgetiOS.entitlements`
     - iOS widget extension App Group entitlement 포함

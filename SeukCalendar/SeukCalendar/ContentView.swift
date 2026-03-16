@@ -13,16 +13,19 @@ import SwiftUI
 
 @MainActor
 struct ContentView: View {
+  @Environment(\.scenePhase) private var scenePhase
   @State private var widgetRoute = WidgetRoute()
 
   private let calendarViewFactory: CalendarViewFactory
+  private let scheduleRepository: WidgetSyncingScheduleRepository
 
   init() {
     let baseRepository: any ScheduleRepository = EventKitScheduleRepository()
-    let repository: any ScheduleRepository = WidgetSyncingScheduleRepository(base: baseRepository)
+    let scheduleRepository = WidgetSyncingScheduleRepository(base: baseRepository)
     let parser: any ScheduleNaturalLanguageParser = FoundationModelsParser()
+    self.scheduleRepository = scheduleRepository
     self.calendarViewFactory = CalendarViewFactory(
-      repository: repository,
+      repository: scheduleRepository,
       parser: parser
     )
   }
@@ -34,6 +37,18 @@ struct ContentView: View {
         initialScheduleID: widgetRoute.scheduleID
       )
       .id(widgetRoute.renderID)
+      .task {
+        await scheduleRepository.refreshWidgetSnapshot()
+      }
+      .onChange(of: scenePhase) { _, newPhase in
+        guard newPhase == .active else {
+          return
+        }
+
+        Task {
+          await scheduleRepository.refreshWidgetSnapshot()
+        }
+      }
       .onOpenURL { url in
         guard let deepLink = WidgetScheduleDeepLink(url: url) else {
           return
