@@ -19,6 +19,7 @@ SeukCalendar/
 │   ├── ContentView.swift
 │   └── App/
 │       ├── Resources/
+│       │   ├── ko.lproj/InfoPlist.strings
 │       │   ├── Info.plist
 │       │   └── SeukCalendar.entitlements
 │       └── Widget/
@@ -41,6 +42,9 @@ SeukCalendar/
     ├── SeukCalendarWidget+Calculate.swift
     ├── SeukCalendarWidget.swift
     ├── Info.plist
+    ├── Resources/
+    │   ├── Assets.xcassets/AppIcon.appiconset
+    │   └── ko.lproj/InfoPlist.strings
     ├── SeukCalendarWidget.entitlements
     └── SeukCalendarWidgetiOS.entitlements
 ```
@@ -58,6 +62,8 @@ SeukCalendar/
 - `App/Resources/SeukCalendar.entitlements`
   - App Group 공유 저장소 사용
   - macOS sandbox에서 캘린더 접근을 위해 `com.apple.security.personal-information.calendars` entitlement 포함
+- `App/Resources/ko.lproj/InfoPlist.strings`
+  - macOS 위젯 갤러리와 시스템 노출 이름이 한국어 환경에서 `슥캘린더`로 보이도록 번들 이름/표시 이름을 로컬라이즈
 - `App/Widget/WidgetScheduleSnapshotStore.swift`
   - App Group UserDefaults(`group.com.youngkyu.SeukCalendar`)에 위젯 스냅샷 저장
   - 저장 직후 `WidgetCenter.reloadTimelines` 호출
@@ -90,6 +96,9 @@ WidgetKit extension 타겟.
   - `CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = SeukCalendarWidget/SeukCalendarWidget.entitlements`
   - macOS sandbox + App Group + calendars entitlement을 함께 사용
   - 위젯 extension은 `LD_RUNPATH_SEARCH_PATHS`로 상위 앱의 `Contents/Frameworks`를 참조해 공용 프레임워크를 로드
+  - `ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon`으로 widget gallery에 브랜드 아이콘을 노출
+- `Resources/ko.lproj/InfoPlist.strings`
+  - 위젯 갤러리의 앱 이름이 한국어 환경에서 `슥캘린더`로 보이도록 번들 이름/표시 이름을 로컬라이즈
 
 ## 의존성
 
