@@ -20,6 +20,12 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>위젯에서 최신 일정을 직접 읽어 자동으로 반영하려면 캘린더 접근 권한이 필요합니다.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>위젯에서 최신 일정을 표시하려면 캘린더 접근 권한이 필요합니다.</string>
+	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+	<string>위젯에서 일정 동기화를 준비하려면 캘린더 접근 권한이 필요합니다.</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

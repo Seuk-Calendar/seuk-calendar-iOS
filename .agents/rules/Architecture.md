@@ -144,7 +144,7 @@ SeukCalendar/
 | **AI** | Foundation Models, External API, OCR, Speech | Core, Domain | [Module.md](SeukCalendar/AI/Module.md) |
 | **Feature** | View, ViewModel, ViewFactory | Core, DesignSystem, Domain, Navigation | [Module.md](SeukCalendar/Feature/Module.md) |
 | **SeukCalendar(App)** | 앱 진입점, DI 조립, 위젯 딥링크 처리 | Feature, Data, Domain, AI | [Module.md](SeukCalendar/SeukCalendar/Module.md) |
-| **SeukCalendarWidget** | 홈/잠금화면 일정 위젯, TimelineProvider | App Groups(UserDefaults), WidgetKit | [Module.md](SeukCalendar/SeukCalendar/Module.md) |
+| **SeukCalendarWidget** | 홈/잠금화면 일정 위젯, TimelineProvider | EventKit, App Groups(UserDefaults), WidgetKit | [Module.md](SeukCalendar/SeukCalendar/Module.md) |
 
 **의존성 방향**:
 1. **Core**: 최하위 레이어, 의존성 없음
@@ -155,7 +155,7 @@ SeukCalendar/
 6. **Feature**: 필요한 Domain + DesignSystem + Core에 의존
 7. **Coordinator**: Feature + Domain + Navigation에 의존
 8. **App**: 모든 Framework 통합 + Widget 데이터 동기화
-9. **Widget Extension**: App Groups를 통해 공유 스냅샷을 읽고 UI 렌더링
+9. **Widget Extension**: EventKit 직접 조회를 우선 사용하고, 실패 시 App Groups 공유 스냅샷으로 fallback 렌더링
 
 ---
 
@@ -293,6 +293,8 @@ WidgetScheduleSnapshotStore (App Groups UserDefaults)
 WidgetCenter.reloadTimelines()
     ↓
 SeukCalendarWidget TimelineProvider
+    ↓ direct EventKit fetch 우선
+EventKit / App Group Snapshot Fallback
     ↓
 Small / Medium / Large / Lock Screen 위젯 렌더링
 ```

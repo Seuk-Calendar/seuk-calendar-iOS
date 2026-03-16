@@ -17,10 +17,12 @@ struct WidgetScheduleSnapshot: Codable, Sendable {
 }
 
 struct WidgetScheduleSnapshotStore {
+  private let appGroupIdentifier: String
   private let userDefaults: UserDefaults?
   private let encoder: JSONEncoder
 
   init(appGroupIdentifier: String = WidgetSharedConstants.appGroupIdentifier) {
+    self.appGroupIdentifier = appGroupIdentifier
     userDefaults = UserDefaults(suiteName: appGroupIdentifier)
 
     let encoder = JSONEncoder()
@@ -77,6 +79,16 @@ private extension WidgetScheduleSnapshotStore {
     }
 
     userDefaults.set(encoded, forKey: WidgetSharedConstants.snapshotStorageKey)
+    #if os(macOS)
+      CFPreferencesAppSynchronize(appGroupIdentifier as CFString)
+    #endif
     WidgetCenter.shared.reloadTimelines(ofKind: WidgetSharedConstants.widgetKind)
+    debugLog("persisted widget snapshot: \(snapshot.items.count) items")
+  }
+
+  func debugLog(_ message: String) {
+    #if DEBUG
+      print("[WidgetScheduleSnapshotStore] \(message)")
+    #endif
   }
 }

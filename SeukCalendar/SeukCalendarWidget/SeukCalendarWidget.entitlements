@@ -8,5 +8,7 @@
 	<array>
 		<string>group.com.youngkyu.SeukCalendar</string>
 	</array>
+	<key>com.apple.security.personal-information.calendars</key>
+	<true/>
 </dict>
 </plist>
