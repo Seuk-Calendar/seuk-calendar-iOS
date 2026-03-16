@@ -3,12 +3,12 @@ import Foundation
 import SwiftUI
 import WidgetKit
 
-struct TodayScheduleCalendarWidget: SwiftUI.Widget {
-  static let kind = "TodayScheduleWidget"
+struct SeukCalendarWidget: SwiftUI.Widget {
+  static let kind = "SeukCalendarWidget"
 
   var body: some SwiftUI.WidgetConfiguration {
-    StaticConfiguration(kind: Self.kind, provider: TodayScheduleTimelineProvider()) { entry in
-      TodayScheduleWidgetEntryView(entry: entry)
+    StaticConfiguration(kind: Self.kind, provider: SeukCalendarTimelineProvider()) { entry in
+      SeukCalendarWidgetEntryView(entry: entry)
         .widgetURL(WidgetDeepLinkBuilder.dayURL(for: entry.date))
     }
     .configurationDisplayName("오늘 일정")
@@ -24,17 +24,17 @@ struct TodayScheduleCalendarWidget: SwiftUI.Widget {
   }
 }
 
-private struct TodayScheduleTimelineProvider: TimelineProvider {
-  func placeholder(in context: Context) -> TodayScheduleEntry {
+private struct SeukCalendarTimelineProvider: TimelineProvider {
+  func placeholder(in context: Context) -> SeukCalendarEntry {
     let placeholderDate = WidgetScheduleSnapshot.placeholderReferenceDate
-    return TodayScheduleEntry(
+    return SeukCalendarEntry(
       date: placeholderDate,
       snapshot: .placeholder(for: placeholderDate),
       showsPlaceholderPreview: true
     )
   }
 
-  func getSnapshot(in context: Context, completion: @escaping (TodayScheduleEntry) -> Void) {
+  func getSnapshot(in context: Context, completion: @escaping (SeukCalendarEntry) -> Void) {
     let snapshotStore = WidgetScheduleSnapshotStore()
     let storedSnapshot = snapshotStore.load()
     let placeholderDate = WidgetScheduleSnapshot.placeholderReferenceDate
@@ -43,7 +43,7 @@ private struct TodayScheduleTimelineProvider: TimelineProvider {
     let entryDate = isPlaceholderPreview ? placeholderDate : Date()
 
     completion(
-      TodayScheduleEntry(
+      SeukCalendarEntry(
         date: entryDate,
         snapshot: snapshot,
         showsPlaceholderPreview: isPlaceholderPreview
@@ -51,9 +51,9 @@ private struct TodayScheduleTimelineProvider: TimelineProvider {
     )
   }
 
-  func getTimeline(in context: Context, completion: @escaping (Timeline<TodayScheduleEntry>) -> Void) {
+  func getTimeline(in context: Context, completion: @escaping (Timeline<SeukCalendarEntry>) -> Void) {
     let snapshot = WidgetScheduleSnapshotStore().load() ?? .empty
-    let entry = TodayScheduleEntry(
+    let entry = SeukCalendarEntry(
       date: Date(),
       snapshot: snapshot,
       showsPlaceholderPreview: false
@@ -63,17 +63,17 @@ private struct TodayScheduleTimelineProvider: TimelineProvider {
   }
 }
 
-struct TodayScheduleEntry: TimelineEntry {
+struct SeukCalendarEntry: TimelineEntry {
   let date: Date
   let snapshot: WidgetScheduleSnapshot
   let showsPlaceholderPreview: Bool
 }
 
-struct TodayScheduleWidgetEntryView: View {
+struct SeukCalendarWidgetEntryView: View {
   @Environment(\.widgetFamily) private var family
   @Environment(\.redactionReasons) private var redactionReasons
 
-  let entry: TodayScheduleEntry
+  let entry: SeukCalendarEntry
 
   let calendar = WidgetCalendarFactory.calendar
 
@@ -102,7 +102,7 @@ struct TodayScheduleWidgetEntryView: View {
   }
 }
 
-private extension TodayScheduleWidgetEntryView {
+private extension SeukCalendarWidgetEntryView {
   var showsUnredactedPlaceholder: Bool {
     entry.showsPlaceholderPreview && redactionReasons == .placeholder
   }
@@ -521,7 +521,7 @@ struct WidgetScheduleSnapshot: Codable {
 }
 
 #if DEBUG
-  private enum TodayScheduleWidgetPreviewFactory {
+  private enum SeukCalendarWidgetPreviewFactory {
     static var calendar: Calendar {
       var calendar = Calendar(identifier: .gregorian)
       calendar.locale = Locale(identifier: "ko_KR")
@@ -538,24 +538,24 @@ struct WidgetScheduleSnapshot: Codable {
       date(month: 3, day: 3, hour: 9)
     }
 
-    static var mediumPreviewEntry: TodayScheduleEntry {
-      TodayScheduleEntry(
+    static var mediumPreviewEntry: SeukCalendarEntry {
+      SeukCalendarEntry(
         date: mediumPreviewDate,
         snapshot: mediumPreviewSnapshot,
         showsPlaceholderPreview: false
       )
     }
 
-    static var smallPreviewEntry: TodayScheduleEntry {
-      TodayScheduleEntry(
+    static var smallPreviewEntry: SeukCalendarEntry {
+      SeukCalendarEntry(
         date: mediumPreviewDate,
         snapshot: smallPreviewSnapshot,
         showsPlaceholderPreview: false
       )
     }
 
-    static var largePreviewEntry: TodayScheduleEntry {
-      TodayScheduleEntry(
+    static var largePreviewEntry: SeukCalendarEntry {
+      SeukCalendarEntry(
         date: previewDate,
         snapshot: largePreviewSnapshot,
         showsPlaceholderPreview: false
@@ -882,20 +882,20 @@ struct WidgetScheduleSnapshot: Codable {
   }
 
   #Preview("Today Schedule Large", as: .systemLarge) {
-    TodayScheduleCalendarWidget()
+    SeukCalendarWidget()
   } timeline: {
-    TodayScheduleWidgetPreviewFactory.largePreviewEntry
+    SeukCalendarWidgetPreviewFactory.largePreviewEntry
   }
 
   #Preview("Today Schedule Medium", as: .systemMedium) {
-    TodayScheduleCalendarWidget()
+    SeukCalendarWidget()
   } timeline: {
-    TodayScheduleWidgetPreviewFactory.mediumPreviewEntry
+    SeukCalendarWidgetPreviewFactory.mediumPreviewEntry
   }
 
   #Preview("Today Schedule Small", as: .systemSmall) {
-    TodayScheduleCalendarWidget()
+    SeukCalendarWidget()
   } timeline: {
-    TodayScheduleWidgetPreviewFactory.smallPreviewEntry
+    SeukCalendarWidgetPreviewFactory.smallPreviewEntry
   }
 #endif

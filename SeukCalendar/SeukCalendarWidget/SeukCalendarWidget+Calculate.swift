@@ -2,7 +2,7 @@ import DesignSystem
 import Foundation
 import SwiftUI
 
-extension TodayScheduleWidgetEntryView {
+extension SeukCalendarWidgetEntryView {
   /// 현재 기준일에 표시할 오늘 일정 목록을 반환한다.
   var todayEvents: [WidgetScheduleSnapshot.Item] {
     entry.snapshot.events(on: entry.date, calendar: calendar)
@@ -527,7 +527,7 @@ extension TodayScheduleWidgetEntryView {
   }
 }
 
-private extension TodayScheduleWidgetEntryView {
+private extension SeukCalendarWidgetEntryView {
   /// 주간 lane 배치에 사용하는 이벤트 단위 segment 정보다.
   struct WeekBadgeSegment {
     let event: WidgetScheduleSnapshot.Item

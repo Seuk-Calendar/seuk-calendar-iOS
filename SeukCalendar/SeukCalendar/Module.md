@@ -25,7 +25,7 @@ SeukCalendar/
 │           ├── WidgetSharedConstants.swift
 │           ├── WidgetScheduleSnapshotStore.swift
 │           └── WidgetSyncingScheduleRepository.swift
-└── TodayScheduleWidget/
+└── SeukCalendarWidget/
     ├── Components/
     │   ├── WidgetBadge.swift
     │   ├── WidgetBadge+Configuration.swift
@@ -37,11 +37,11 @@ SeukCalendar/
     │   ├── WidgetDayCell+Configuration.swift
     │   ├── WidgetSmallEvent.swift
     │   └── WidgetSmallEvent+Configuration.swift
-    ├── TodayScheduleWidgetBundle.swift
-    ├── TodayScheduleWidget+Calculate.swift
-    ├── TodayScheduleWidget.swift
+    ├── SeukCalendarWidgetBundle.swift
+    ├── SeukCalendarWidget+Calculate.swift
+    ├── SeukCalendarWidget.swift
     ├── Info.plist
-    └── TodayScheduleWidget.entitlements
+    └── SeukCalendarWidget.entitlements
 ```
 
 ## 타겟 구성
@@ -57,7 +57,7 @@ SeukCalendar/
   - App Group UserDefaults(`group.com.youngkyu.SeukCalendar`)에 위젯 스냅샷 저장
   - 저장 직후 `WidgetCenter.reloadTimelines` 호출
 
-### 2. TodayScheduleWidget (Widget Extension)
+### 2. SeukCalendarWidget (Widget Extension)
 
 WidgetKit extension 타겟.
 
@@ -73,7 +73,7 @@ WidgetKit extension 타겟.
   - `Components/WidgetCalendarWeekdayHeader.swift`, `Components/WidgetCalendarWeekdayHeader+Configuration.swift`에서 locale 기반 요일 헤더와 tinted/clear 대응 컬러를 관리
   - `Components/WidgetDayCell.swift`, `Components/WidgetDayCell+Configuration.swift`에서 날짜 셀 상태와 today/더보기 컬러 계층을 관리
   - `Components/WidgetSmallEvent.swift`, `Components/WidgetSmallEvent+Configuration.swift`에서 small 위젯 일정 row 레이아웃과 컬러 계층을 관리
-  - `TodayScheduleWidget+Calculate.swift`에서 위젯 날짜 계산과 large/medium 셀 매핑 로직을 분리 관리
+  - `SeukCalendarWidget+Calculate.swift`에서 위젯 날짜 계산과 large/medium 셀 매핑 로직을 분리 관리
 - 딥링크
   - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈
 
@@ -90,7 +90,7 @@ WidgetKit extension 타겟.
 **주요 설정**:
 - 타겟
   - `SeukCalendar` (Application)
-  - `TodayScheduleWidget` (App Extension)
+  - `SeukCalendarWidget` (App Extension)
 - App Group Entitlements
   - `SeukCalendar/App/Resources/SeukCalendar.entitlements`
-  - `TodayScheduleWidget/TodayScheduleWidget.entitlements`
+  - `SeukCalendarWidget/SeukCalendarWidget.entitlements`

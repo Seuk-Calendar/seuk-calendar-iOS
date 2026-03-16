@@ -121,9 +121,9 @@ SeukCalendar/
 │   └── Feature.xcodeproj
 ├── SeukCalendar/           # App + Widget Extension 타겟
 │   └── SeukCalendar.xcodeproj
-└── TodayScheduleWidget/    # Widget Extension 소스
-    ├── TodayScheduleWidget.swift
-    └── TodayScheduleWidgetBundle.swift
+└── SeukCalendarWidget/    # Widget Extension 소스
+    ├── SeukCalendarWidget.swift
+    └── SeukCalendarWidgetBundle.swift
 ```
 
 **핵심 설계 원칙**:
@@ -144,7 +144,7 @@ SeukCalendar/
 | **AI** | Foundation Models, External API, OCR, Speech | Core, Domain | [Module.md](SeukCalendar/AI/Module.md) |
 | **Feature** | View, ViewModel, ViewFactory | Core, DesignSystem, Domain, Navigation | [Module.md](SeukCalendar/Feature/Module.md) |
 | **SeukCalendar(App)** | 앱 진입점, DI 조립, 위젯 딥링크 처리 | Feature, Data, Domain, AI | [Module.md](SeukCalendar/SeukCalendar/Module.md) |
-| **TodayScheduleWidget** | 홈/잠금화면 일정 위젯, TimelineProvider | App Groups(UserDefaults), WidgetKit | [Module.md](SeukCalendar/SeukCalendar/Module.md) |
+| **SeukCalendarWidget** | 홈/잠금화면 일정 위젯, TimelineProvider | App Groups(UserDefaults), WidgetKit | [Module.md](SeukCalendar/SeukCalendar/Module.md) |
 
 **의존성 방향**:
 1. **Core**: 최하위 레이어, 의존성 없음
@@ -292,7 +292,7 @@ WidgetScheduleSnapshotStore (App Groups UserDefaults)
     ↓
 WidgetCenter.reloadTimelines()
     ↓
-TodayScheduleWidget TimelineProvider
+SeukCalendarWidget TimelineProvider
     ↓
 Small / Medium / Large / Lock Screen 위젯 렌더링
 ```
