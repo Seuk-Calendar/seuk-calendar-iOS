@@ -3,6 +3,8 @@ import SwiftUI
 import WidgetKit
 
 struct WidgetSmallEvent: View {
+  @Environment(\.widgetRenderingMode) private var widgetRenderingMode
+
   private enum Metrics {
     static let labelFont = Widget.Large.medium
     static let dotSize: CGFloat = 4
@@ -28,7 +30,7 @@ struct WidgetSmallEvent: View {
 
         Text(timeText)
           .font(Metrics.labelFont)
-          .foregroundStyle(Color.primitives.gray500)
+          .foregroundStyle(configuration.resolvedTimeColor(for: widgetRenderingMode))
           .lineLimit(1)
       }
     }
@@ -41,49 +43,15 @@ private extension WidgetSmallEvent {
   var titleGroup: some View {
     HStack(alignment: .center, spacing: Metrics.contentSpacing) {
       Circle()
-        .fill(configuration.dotColor)
+        .fill(configuration.resolvedDotColor(for: widgetRenderingMode))
         .frame(width: Metrics.dotSize, height: Metrics.dotSize)
 
       Text(configuration.trimmedTitle)
         .font(Metrics.labelFont)
-        .foregroundStyle(Color.semantic.Content.primary)
+        .foregroundStyle(configuration.resolvedTitleColor(for: widgetRenderingMode))
         .lineLimit(1)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-  }
-}
-
-extension WidgetSmallEvent {
-  struct Configuration: Hashable {
-    let title: String
-    let timeText: String?
-    let dotColor: Color
-
-    init(
-      title: String,
-      timeText: String? = nil,
-      dotColor: Color = .semanticExtensions.Content.contentWarning
-    ) {
-      self.title = title
-      self.timeText = timeText
-      self.dotColor = dotColor
-    }
-  }
-}
-
-private extension WidgetSmallEvent.Configuration {
-  var trimmedTitle: String {
-    let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
-    return trimmedTitle.isEmpty ? title : trimmedTitle
-  }
-
-  var trimmedTimeText: String? {
-    guard let timeText else {
-      return nil
-    }
-
-    let trimmedTimeText = timeText.trimmingCharacters(in: .whitespacesAndNewlines)
-    return trimmedTimeText.isEmpty ? nil : trimmedTimeText
   }
 }
 

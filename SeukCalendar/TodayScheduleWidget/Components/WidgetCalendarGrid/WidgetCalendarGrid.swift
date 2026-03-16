@@ -4,6 +4,8 @@ import SwiftUI
 import WidgetKit
 
 struct WidgetCalendarGrid: View {
+  @Environment(\.widgetRenderingMode) private var widgetRenderingMode
+
   private enum Metrics {
     static let dividerHeight: CGFloat = 0.5
   }
@@ -48,19 +50,9 @@ private extension WidgetCalendarGrid {
 
   var divider: some View {
     Rectangle()
-      .fill(Color.semantic.Background.secondary)
+      .fill(configuration.resolvedDividerColor(for: widgetRenderingMode))
       .frame(maxWidth: .infinity)
       .frame(height: Metrics.dividerHeight)
-  }
-}
-
-extension WidgetCalendarGrid {
-  struct Configuration: Hashable {
-    let weeks: [[WidgetDayCell.Configuration]]
-
-    init(weeks: [[WidgetDayCell.Configuration]]) {
-      self.weeks = weeks
-    }
   }
 }
 

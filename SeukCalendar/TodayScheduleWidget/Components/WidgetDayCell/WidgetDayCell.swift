@@ -3,6 +3,8 @@ import SwiftUI
 import WidgetKit
 
 struct WidgetDayCell: View {
+  @Environment(\.widgetRenderingMode) private var widgetRenderingMode
+
   private enum Metrics {
     static let dayNumberFont = Widget.Large.large
     static let moreNumberFont = Widget.Large.small
@@ -67,7 +69,7 @@ private extension WidgetDayCell {
   var dayNumberText: some View {
     Text(configuration.dayNumber)
       .font(Metrics.dayNumberFont)
-      .foregroundStyle(configuration.state.dayNumberColor)
+      .foregroundStyle(configuration.resolvedDayNumberColor(for: widgetRenderingMode))
       .lineLimit(1)
       .minimumScaleFactor(0.8)
       .frame(minHeight: Metrics.dayNumberHeight, alignment: .center)
@@ -90,7 +92,7 @@ private extension WidgetDayCell {
     if let moreNumberText = configuration.moreNumberText {
       Text(moreNumberText)
         .font(Metrics.moreNumberFont)
-        .foregroundStyle(Color.primitives.gray500)
+        .foregroundStyle(configuration.resolvedMoreNumberColor(for: widgetRenderingMode))
         .lineLimit(1)
         .minimumScaleFactor(0.7)
         .frame(minHeight: Metrics.moreNumberRowHeight, alignment: .center)
@@ -103,86 +105,9 @@ private extension WidgetDayCell {
 
   @ViewBuilder
   var backgroundShape: some View {
-    if let backgroundColor = configuration.backgroundColor {
+    if let backgroundColor = configuration.resolvedBackgroundColor(for: widgetRenderingMode) {
       RoundedRectangle(cornerRadius: Metrics.todayCornerRadius)
         .fill(backgroundColor)
-    }
-  }
-}
-
-extension WidgetDayCell {
-  struct Configuration: Hashable {
-    static let maxVisibleBadgeSlotCount = 2
-
-    enum State: Hashable {
-      case `default`
-      case saturday
-      case holiday
-      case otherMonth
-    }
-
-    let dayNumber: String
-    let state: State
-    let isToday: Bool
-    let badgeSlots: [WidgetBadge.Configuration?]
-    let moreCount: Int
-
-    init(
-      dayNumber: String,
-      state: State,
-      isToday: Bool = false,
-      badgeSlots: [WidgetBadge.Configuration?] = [],
-      moreCount: Int = 0
-    ) {
-      self.dayNumber = dayNumber
-      self.state = state
-      self.isToday = isToday
-      self.badgeSlots = badgeSlots
-      self.moreCount = moreCount
-    }
-  }
-}
-
-private extension WidgetDayCell.Configuration {
-  var backgroundColor: Color? {
-    guard isToday else {
-      return nil
-    }
-
-    return .primitives.gray50
-  }
-
-  var resolvedBadgeSlots: [WidgetBadge.Configuration?] {
-    let normalizedSlots = Array(badgeSlots.prefix(Self.maxVisibleBadgeSlotCount))
-    let missingSlotCount = max(0, Self.maxVisibleBadgeSlotCount - normalizedSlots.count)
-
-    return normalizedSlots + Array(repeating: nil, count: missingSlotCount)
-  }
-
-  var resolvedMoreCount: Int {
-    max(moreCount, 0)
-  }
-
-  var moreNumberText: String? {
-    guard resolvedMoreCount > 0 else {
-      return nil
-    }
-
-    return "+\(resolvedMoreCount)"
-  }
-}
-
-private extension WidgetDayCell.Configuration.State {
-  var dayNumberColor: Color {
-    switch self {
-    case .default:
-      .semantic.Content.primary
-    case .saturday:
-      .primitives.blue600
-    case .holiday:
-      .primitives.red600
-    case .otherMonth:
-      .primitives.gray300
     }
   }
 }

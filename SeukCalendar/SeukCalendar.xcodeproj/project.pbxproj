@@ -8,12 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		599D701F67B68D6A2979ED76 /* TodayScheduleWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 9F9767B9AE1050BD52AA356E /* TodayScheduleWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		5C8C1A4C58C04C0BB3E27901 /* WidgetBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C1A4C58C04C0BB3E27902 /* WidgetBadge.swift */; };
-		5C8C1A4C58C04C0BB3E27904 /* WidgetDayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C1A4C58C04C0BB3E27905 /* WidgetDayCell.swift */; };
-		5C8C1A4C58C04C0BB3E27906 /* WidgetCalendarGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C1A4C58C04C0BB3E27907 /* WidgetCalendarGrid.swift */; };
-		5C8C1A4C58C04C0BB3E27908 /* WidgetCalendarWeekdayHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C1A4C58C04C0BB3E27909 /* WidgetCalendarWeekdayHeader.swift */; };
 		5C8C1A4C58C04C0BB3E2790A /* TodayScheduleWidget+Calculate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C1A4C58C04C0BB3E2790B /* TodayScheduleWidget+Calculate.swift */; };
-		5C8C1A4C58C04C0BB3E2790C /* WidgetSmallEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C8C1A4C58C04C0BB3E2790D /* WidgetSmallEvent.swift */; };
 		6CB44CFBAD0D77BE1D2EC84A /* TodayScheduleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BA8277D61385A797079499 /* TodayScheduleWidget.swift */; };
 		76A5F34EC0A54E8A9A0F5A11 /* DesignSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D5C2F51513B008707E9 /* DesignSystem.framework */; };
 		7B0E0D622F51513B008707E9 /* AI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B0E0D552F51513B008707E9 /* AI.framework */; };
@@ -97,13 +92,8 @@
 		16BA8277D61385A797079499 /* TodayScheduleWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TodayScheduleWidget.swift; sourceTree = "<group>"; };
 		1C7E67370CE6319E4CBBD641 /* TodayScheduleWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TodayScheduleWidgetBundle.swift; sourceTree = "<group>"; };
 		1DB52B69F41757AFC19878F9 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5C8C1A4C58C04C0BB3E27902 /* WidgetBadge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetBadge.swift; sourceTree = "<group>"; };
-		5C8C1A4C58C04C0BB3E27905 /* WidgetDayCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetDayCell.swift; sourceTree = "<group>"; };
-		5C8C1A4C58C04C0BB3E27907 /* WidgetCalendarGrid.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetCalendarGrid.swift; sourceTree = "<group>"; };
-		5C8C1A4C58C04C0BB3E27909 /* WidgetCalendarWeekdayHeader.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetCalendarWeekdayHeader.swift; sourceTree = "<group>"; };
-		5C8C1A4C58C04C0BB3E2790B /* TodayScheduleWidget+Calculate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "TodayScheduleWidget+Calculate.swift"; sourceTree = "<group>"; };
-		5C8C1A4C58C04C0BB3E2790D /* WidgetSmallEvent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetSmallEvent.swift; sourceTree = "<group>"; };
 		4EFCE6C6A52CF38C214B3AFF /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5C8C1A4C58C04C0BB3E2790B /* TodayScheduleWidget+Calculate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "TodayScheduleWidget+Calculate.swift"; sourceTree = "<group>"; };
 		7B09AD9A2E268FE500327B42 /* DesignSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DesignSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0D552F51513B008707E9 /* AI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0D562F51513B008707E9 /* Coordinator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Coordinator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +133,31 @@
 			path = SeukCalendar;
 			sourceTree = "<group>";
 		};
+		7BFB88A92F67D78E00982117 /* WidgetBadge */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WidgetBadge;
+			sourceTree = "<group>";
+		};
+		7BFB88AA2F67D79B00982117 /* WidgetCalendarGrid */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WidgetCalendarGrid;
+			sourceTree = "<group>";
+		};
+		7BFB88AB2F67D7AE00982117 /* WidgetCalendarWeekdayHeader */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WidgetCalendarWeekdayHeader;
+			sourceTree = "<group>";
+		};
+		7BFB88AC2F67D7B700982117 /* WidgetDayCell */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WidgetDayCell;
+			sourceTree = "<group>";
+		};
+		7BFB88AD2F67D81000982117 /* WidgetSmallEvent */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WidgetSmallEvent;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,6 +192,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5C8C1A4C58C04C0BB3E27903 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				7BFB88A92F67D78E00982117 /* WidgetBadge */,
+				7BFB88AA2F67D79B00982117 /* WidgetCalendarGrid */,
+				7BFB88AB2F67D7AE00982117 /* WidgetCalendarWeekdayHeader */,
+				7BFB88AC2F67D7B700982117 /* WidgetDayCell */,
+				7BFB88AD2F67D81000982117 /* WidgetSmallEvent */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		7B58BF382DF6800700FF47AB = {
 			isa = PBXGroup;
 			children = (
@@ -208,18 +235,6 @@
 				A5313880E952C74761D382B3 /* TodayScheduleWidget.entitlements */,
 			);
 			path = TodayScheduleWidget;
-			sourceTree = "<group>";
-		};
-		5C8C1A4C58C04C0BB3E27903 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				5C8C1A4C58C04C0BB3E27902 /* WidgetBadge.swift */,
-				5C8C1A4C58C04C0BB3E27907 /* WidgetCalendarGrid.swift */,
-				5C8C1A4C58C04C0BB3E27909 /* WidgetCalendarWeekdayHeader.swift */,
-				5C8C1A4C58C04C0BB3E27905 /* WidgetDayCell.swift */,
-				5C8C1A4C58C04C0BB3E2790D /* WidgetSmallEvent.swift */,
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		B0B31AF72EBF498F00C1F532 /* Recovered References */ = {
@@ -298,6 +313,13 @@
 			);
 			dependencies = (
 			);
+			fileSystemSynchronizedGroups = (
+				7BFB88A92F67D78E00982117 /* WidgetBadge */,
+				7BFB88AA2F67D79B00982117 /* WidgetCalendarGrid */,
+				7BFB88AB2F67D7AE00982117 /* WidgetCalendarWeekdayHeader */,
+				7BFB88AC2F67D7B700982117 /* WidgetDayCell */,
+				7BFB88AD2F67D81000982117 /* WidgetSmallEvent */,
+			);
 			name = TodayScheduleWidget;
 			productName = TodayScheduleWidget;
 			productReference = 9F9767B9AE1050BD52AA356E /* TodayScheduleWidget.appex */;
@@ -361,11 +383,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5C8C1A4C58C04C0BB3E27901 /* WidgetBadge.swift in Sources */,
-				5C8C1A4C58C04C0BB3E27906 /* WidgetCalendarGrid.swift in Sources */,
-				5C8C1A4C58C04C0BB3E27908 /* WidgetCalendarWeekdayHeader.swift in Sources */,
-				5C8C1A4C58C04C0BB3E27904 /* WidgetDayCell.swift in Sources */,
-				5C8C1A4C58C04C0BB3E2790C /* WidgetSmallEvent.swift in Sources */,
 				C32511CB4770232E34F6B6B8 /* TodayScheduleWidgetBundle.swift in Sources */,
 				5C8C1A4C58C04C0BB3E2790A /* TodayScheduleWidget+Calculate.swift in Sources */,
 				6CB44CFBAD0D77BE1D2EC84A /* TodayScheduleWidget.swift in Sources */,
@@ -404,13 +421,13 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TodayScheduleWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "슥캘린더";
-					IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-					LD_RUNPATH_SEARCH_PATHS = (
-						"$(inherited)",
-						"@executable_path/Frameworks",
-						"@executable_path/../../Frameworks",
-					);
-					MARKETING_VERSION = 1.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.youngkyu.SeukCalendar.TodayScheduleWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
@@ -657,13 +674,13 @@
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TodayScheduleWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "슥캘린더";
-					IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-					LD_RUNPATH_SEARCH_PATHS = (
-						"$(inherited)",
-						"@executable_path/Frameworks",
-						"@executable_path/../../Frameworks",
-					);
-					MARKETING_VERSION = 1.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.youngkyu.SeukCalendar.TodayScheduleWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;

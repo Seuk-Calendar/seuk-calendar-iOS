@@ -3,6 +3,8 @@ import SwiftUI
 import WidgetKit
 
 struct WidgetBadge: View {
+  @Environment(\.widgetRenderingMode) private var widgetRenderingMode
+
   private enum Metrics {
     static let labelFont = Widget.Large.small
     static let segmentCornerRadius: CGFloat = Radius.rds050
@@ -38,7 +40,7 @@ private extension WidgetBadge {
   var allDayBadge: some View {
     HStack(spacing: Metrics.dotSpacing) {
       Circle()
-        .fill(configuration.indicatorColor)
+        .fill(configuration.resolvedIndicatorColor(for: widgetRenderingMode))
         .frame(width: Metrics.dotSize, height: Metrics.dotSize)
 
       if let title = configuration.trimmedTitle {
@@ -51,7 +53,7 @@ private extension WidgetBadge {
     HStack(spacing: Metrics.contentSpacing) {
       if configuration.showsLeadingStrip {
         Capsule()
-          .fill(configuration.indicatorColor)
+          .fill(configuration.resolvedIndicatorColor(for: widgetRenderingMode))
           .frame(width: Metrics.stripWidth)
       }
 
@@ -62,7 +64,7 @@ private extension WidgetBadge {
       Spacer(minLength: 0)
     }
     .frame(height: Metrics.segmentHeight)
-    .background(configuration.backgroundColor)
+    .background(configuration.resolvedBackgroundColor(for: widgetRenderingMode))
     .clipShape(
       UnevenRoundedRectangle(
         topLeadingRadius: configuration.hasLeadingCorner ? Metrics.segmentCornerRadius : 0,
@@ -78,93 +80,8 @@ private extension WidgetBadge {
   func badgeTitle(_ title: String) -> some View {
     Text(title)
       .font(Metrics.labelFont)
-      .foregroundStyle(configuration.textColor)
+      .foregroundStyle(configuration.resolvedTextColor(for: widgetRenderingMode))
       .lineLimit(1)
-  }
-}
-
-extension WidgetBadge {
-  struct Configuration: Hashable {
-    enum State: Hashable {
-      case allDay
-      case start
-      case middle
-      case end
-    }
-
-    let state: State
-    let title: String?
-    let indicatorColor: Color
-    let textColor: Color
-    let backgroundColor: Color
-    let showsLeadingMetadata: Bool
-
-    init(
-      state: State,
-      title: String? = nil,
-      indicatorColor: Color = .semanticExtensions.Content.contentWarning,
-      textColor: Color = .semantic.Content.primary,
-      backgroundColor: Color = .semanticExtensions.Background.backgroundLightWarning,
-      showsLeadingMetadata: Bool = false
-    ) {
-      self.state = state
-      self.title = title
-      self.indicatorColor = indicatorColor
-      self.textColor = textColor
-      self.backgroundColor = backgroundColor
-      self.showsLeadingMetadata = showsLeadingMetadata
-    }
-  }
-}
-
-private extension WidgetBadge.Configuration {
-  var trimmedTitle: String? {
-    guard let title else {
-      return nil
-    }
-
-    let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
-    return trimmedTitle.isEmpty ? nil : trimmedTitle
-  }
-
-  var showsMetadata: Bool {
-    showsLeadingStrip || trimmedTitle != nil
-  }
-
-  var showsLeadingStrip: Bool {
-    state.showsLeadingStrip || showsLeadingMetadata
-  }
-
-  var hasLeadingCorner: Bool {
-    state.hasLeadingCorner || showsLeadingMetadata
-  }
-
-  var hasTrailingCorner: Bool {
-    state.hasTrailingCorner
-  }
-}
-
-private extension WidgetBadge.Configuration.State {
-  var showsLeadingStrip: Bool {
-    self == .start
-  }
-
-  var hasLeadingCorner: Bool {
-    switch self {
-    case .start:
-      true
-    case .middle, .end, .allDay:
-      false
-    }
-  }
-
-  var hasTrailingCorner: Bool {
-    switch self {
-    case .end:
-      true
-    case .start, .middle, .allDay:
-      false
-    }
   }
 }
 

@@ -28,10 +28,15 @@ SeukCalendar/
 └── TodayScheduleWidget/
     ├── Components/
     │   ├── WidgetBadge.swift
+    │   ├── WidgetBadge+Configuration.swift
     │   ├── WidgetCalendarGrid.swift
+    │   ├── WidgetCalendarGrid+Configuration.swift
     │   ├── WidgetCalendarWeekdayHeader.swift
+    │   ├── WidgetCalendarWeekdayHeader+Configuration.swift
     │   ├── WidgetDayCell.swift
-    │   └── WidgetSmallEvent.swift
+    │   ├── WidgetDayCell+Configuration.swift
+    │   ├── WidgetSmallEvent.swift
+    │   └── WidgetSmallEvent+Configuration.swift
     ├── TodayScheduleWidgetBundle.swift
     ├── TodayScheduleWidget+Calculate.swift
     ├── TodayScheduleWidget.swift
@@ -63,11 +68,11 @@ WidgetKit extension 타겟.
   - App Group UserDefaults에서 스냅샷 로드
   - 일정 변경 시 앱에서 트리거된 reloadTimelines 반영
 - 위젯 전용 컴포넌트
-  - `Components/WidgetBadge.swift`에서 위젯 내부 일정 뱃지 스타일을 관리
-  - `Components/WidgetCalendarGrid.swift`에서 5주 x 7일 캘린더 그리드와 주간 divider 레이아웃을 관리
-  - `Components/WidgetCalendarWeekdayHeader.swift`에서 locale 기반 요일 헤더와 하단 divider를 관리
-  - `Components/WidgetDayCell.swift`에서 날짜 셀 상태와 뱃지/더보기 레이아웃을 관리
-  - `Components/WidgetSmallEvent.swift`에서 small 위젯 일정 row의 제목/시간 레이아웃을 관리
+  - `Components/WidgetBadge.swift`, `Components/WidgetBadge+Configuration.swift`에서 일정 뱃지 레이아웃과 tinted/clear 대응 컬러를 관리
+  - `Components/WidgetCalendarGrid.swift`, `Components/WidgetCalendarGrid+Configuration.swift`에서 5주 x 7일 캘린더 그리드와 divider 컬러를 관리
+  - `Components/WidgetCalendarWeekdayHeader.swift`, `Components/WidgetCalendarWeekdayHeader+Configuration.swift`에서 locale 기반 요일 헤더와 tinted/clear 대응 컬러를 관리
+  - `Components/WidgetDayCell.swift`, `Components/WidgetDayCell+Configuration.swift`에서 날짜 셀 상태와 today/더보기 컬러 계층을 관리
+  - `Components/WidgetSmallEvent.swift`, `Components/WidgetSmallEvent+Configuration.swift`에서 small 위젯 일정 row 레이아웃과 컬러 계층을 관리
   - `TodayScheduleWidget+Calculate.swift`에서 위젯 날짜 계산과 large/medium 셀 매핑 로직을 분리 관리
 - 딥링크
   - 일정 row 탭 시 `seukcalendar://schedule?date=yyyy-MM-dd&id=<schedule-id>` 오픈
