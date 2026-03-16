@@ -67,6 +67,7 @@ SeukCalendar/
 - `App/Resources/Info.plist`
   - 위젯 딥링크 스킴과 App Group 식별자를 설정별(`Debug`/`Release`)로 주입
   - 앱 번들 이름/표시 이름의 기본 fallback을 설정별로 주입 (`SeukCalendar-Dev` / `SeukCalendar`)
+  - `ITSAppUsesNonExemptEncryption = NO`로 TestFlight/App Store Connect 수출 규정 질문을 자동으로 면제 처리
 - `App/Widget/WidgetScheduleSnapshotStore.swift`
   - App Group UserDefaults(Info.plist 기반 설정값)에 위젯 스냅샷 저장
   - 저장 직후 `WidgetCenter.reloadTimelines` 호출
