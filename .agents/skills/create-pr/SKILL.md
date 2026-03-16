@@ -110,7 +110,7 @@ gh pr create \
 
 **선택 사항**:
 - 리뷰어 지정: `--reviewer "username"`
-- 라벨 추가: `--label "feature"`
+- 라벨 추가: `--label "Enhancement"`
 - 드래프트: `--draft`
 
 ### 7. 생성 완료 보고

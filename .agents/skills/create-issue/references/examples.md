@@ -100,15 +100,14 @@ AI: 알겠습니다. 기존 이슈 #98을 사용합니다.
 AI: 이슈 템플릿을 확인했습니다.
 
 사용 가능한 템플릿:
-1. bug_report.md - 버그 리포트
-2. feature_request.md - 기능 요청
-3. documentation.md - 문서화
+1. bug.yml - 버그 제보
+2. todo.yml - 할 일 추가
 
 어떤 템플릿을 사용하시겠습니까?
 
 사용자: 1번
 
-AI: bug_report.md 템플릿을 사용합니다.
+AI: bug.yml 템플릿을 사용합니다.
 
 이 작업을 GitHub 이슈로 생성할까요?
 
@@ -133,7 +132,7 @@ AI: [이슈 생성 중...]
 ### 대화
 
 ```
-사용자: UI 개선 작업 이슈 만들어줘. enhancement 라벨 붙여줘
+사용자: UI 개선 작업 이슈 만들어줘. Enhancement 라벨 붙여줘
 
 AI: 관련된 기존 이슈가 있는지 확인하겠습니다.
 
@@ -144,7 +143,7 @@ AI: 관련된 기존 이슈가 있는지 확인하겠습니다.
 이 작업을 GitHub 이슈로 생성할까요?
 
 작업 내용: UI 개선 작업
-라벨: enhancement
+라벨: Enhancement
 
 사용자: 응
 
@@ -153,7 +152,7 @@ AI: [이슈 생성 중...]
 gh issue create \
   --title "UI 개선 작업" \
   --body "..." \
-  --label "enhancement" \
+  --label "Enhancement" \
   --assignee "@me"
 
 ✅ 이슈가 생성되었습니다!
@@ -161,7 +160,7 @@ gh issue create \
 📋 이슈 정보:
 - 번호: #126
 - 제목: UI 개선 작업
-- 라벨: enhancement
+- 라벨: Enhancement
 - 담당자: @me (자동 할당)
 - URL: https://github.com/owner/repo/issues/126
 ```
