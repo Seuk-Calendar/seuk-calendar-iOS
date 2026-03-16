@@ -86,6 +86,7 @@ WidgetKit extension 타겟.
 - macOS 빌드 설정
   - `CODE_SIGN_ENTITLEMENTS[sdk=macosx*] = SeukCalendarWidget/SeukCalendarWidget.entitlements`
   - macOS sandbox + App Group 권한을 함께 사용
+  - 위젯 extension은 `LD_RUNPATH_SEARCH_PATHS`로 상위 앱의 `Contents/Frameworks`를 참조해 공용 프레임워크를 로드
 
 ## 의존성
 
