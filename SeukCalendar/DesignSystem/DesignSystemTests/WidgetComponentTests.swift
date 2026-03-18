@@ -22,7 +22,7 @@ struct WidgetComponentTests {
     let configuration = WidgetDayCellComponent.Configuration(
       date: Self.sampleDate,
       isToday: false,
-      dayTextColor: .semantic.Content.contentPrimary,
+      dayTextColor: .semantic.Content.primary,
       segments: [
         Self.segment(label: "첫 일정"),
         Self.segment(label: "둘 일정"),
@@ -44,7 +44,7 @@ struct WidgetComponentTests {
         WidgetDayCellComponent.Configuration(
           date: Self.calendar.date(byAdding: .day, value: index, to: Self.sampleDate) ?? Self.sampleDate,
           isToday: false,
-          dayTextColor: .semantic.Content.contentSecondary
+          dayTextColor: .semantic.Content.secondary
         )
       }
     )
@@ -62,7 +62,7 @@ struct WidgetComponentTests {
           WidgetDayCellComponent.Configuration(
             date: Self.calendar.date(byAdding: .day, value: (weekIndex * 7) + dayIndex, to: baseDate) ?? baseDate,
             isToday: false,
-            dayTextColor: .semantic.Content.contentSecondary
+            dayTextColor: .semantic.Content.secondary
           )
         }
       }
