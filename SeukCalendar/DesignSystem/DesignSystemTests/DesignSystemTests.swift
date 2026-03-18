@@ -3,12 +3,15 @@ import Foundation
 import Testing
 
 struct DesignSystemTests {
-  @Test("WidgetXLargeFont_ExtraBold_폰트이름을_정확히_해석합니다")
-  func widgetXLargeFontResolvesExtraBoldFontName() {
+  @Test("DesignSystem_번들에_포함된_모든_폰트가_등록됩니다")
+  func registersAllBundledFonts() {
     FontManager.shared.register()
 
-    #expect(Widget.Large.xLarge.fontName == "Pretendard-ExtraBold")
-    #expect(Widget.Large.xLarge.uiFont.fontName == "Pretendard-ExtraBold")
+    let bundledFontNames = Self.bundledFontNames
+    let unresolvedFontNames = bundledFontNames.filter { PlatformFont(name: $0, size: 12) == nil }
+
+    #expect(bundledFontNames.isEmpty == false)
+    #expect(unresolvedFontNames.isEmpty)
   }
 
   @Test("makeConfiguration_월간_그리드와_선택일_상태를_생성합니다")
@@ -79,6 +82,30 @@ struct DesignSystemTests {
 }
 
 private extension DesignSystemTests {
+  static var bundledFontNames: [String] {
+    guard let fontsRootURL = Bundle.designSystemBundle.resourceURL?
+      .appendingPathComponent("Fonts", isDirectory: true)
+    else {
+      return []
+    }
+
+    var fontURLs: [URL] = []
+    let enumerator = FileManager.default.enumerator(
+      at: fontsRootURL,
+      includingPropertiesForKeys: nil,
+      options: [.skipsHiddenFiles]
+    )
+
+    while let url = enumerator?.nextObject() as? URL {
+      guard ["otf", "ttf"].contains(url.pathExtension.lowercased()) else { continue }
+      fontURLs.append(url)
+    }
+
+    return fontURLs
+      .map { $0.deletingPathExtension().lastPathComponent }
+      .sorted()
+  }
+
   static var fixedCalendar: Calendar {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = Locale(identifier: "ko_KR")
