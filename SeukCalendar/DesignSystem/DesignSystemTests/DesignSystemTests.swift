@@ -3,6 +3,14 @@ import Foundation
 import Testing
 
 struct DesignSystemTests {
+  @Test("WidgetXLargeFont_ExtraBold_폰트이름을_정확히_해석합니다")
+  func widgetXLargeFontResolvesExtraBoldFontName() {
+    FontManager.shared.register()
+
+    #expect(Widget.Large.xLarge.fontName == "Pretendard-ExtraBold")
+    #expect(Widget.Large.xLarge.uiFont.fontName == "Pretendard-ExtraBold")
+  }
+
   @Test("makeConfiguration_월간_그리드와_선택일_상태를_생성합니다")
   func makeConfigurationBuildsMonthGridAndSelectionState() {
     let configuration = HomeCalendarConfigurationBuilder.makeConfiguration(

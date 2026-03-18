@@ -19,8 +19,12 @@ public protocol FontStyleType {
 }
 
 public extension FontStyleType {
+  var fontName: String {
+    "\(Family.name)-\(weight.rawValue)"
+  }
+
   var uiFont: PlatformFont {
-    return PlatformFont(name: "\(Family.name)-\(weight)", size: size) ?? PlatformFont.systemFont(ofSize: size)
+    return PlatformFont(name: fontName, size: size) ?? PlatformFont.systemFont(ofSize: size)
   }
 
   var lineHeightRatio: CGFloat {
