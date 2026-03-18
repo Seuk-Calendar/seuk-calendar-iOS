@@ -1,6 +1,9 @@
 @testable import DesignSystem
 import Foundation
 import Testing
+#if canImport(UIKit)
+  import UIKit
+#endif
 
 struct DesignSystemTests {
   @Test("DesignSystem_번들에_포함된_모든_폰트가_등록됩니다")
@@ -83,15 +86,16 @@ struct DesignSystemTests {
 
 private extension DesignSystemTests {
   static var bundledFontNames: [String] {
-    guard let fontsRootURL = Bundle.designSystemBundle.resourceURL?
-      .appendingPathComponent("Fonts", isDirectory: true)
-    else {
+    guard let resourceURL = Bundle.designSystemBundle.resourceURL else {
       return []
     }
 
+    let fontsRootURL = resourceURL.appendingPathComponent("Fonts", isDirectory: true)
+    let scanRootURL = FileManager.default.fileExists(atPath: fontsRootURL.path) ? fontsRootURL : resourceURL
+
     var fontURLs: [URL] = []
     let enumerator = FileManager.default.enumerator(
-      at: fontsRootURL,
+      at: scanRootURL,
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
     )
