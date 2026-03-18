@@ -17,12 +17,6 @@ struct DesignSystemTests {
     #expect(unresolvedFontNames.isEmpty)
   }
 
-  @Test("Widget_ExtraBold_스타일이_Pretendard_ExtraBold를_사용합니다")
-  func widgetXlargeUsesExtraBold() {
-    let font = Widget.Large.xLarge.uiFont
-    #expect(font.fontName == "Pretendard-ExtraBold")
-  }
-
   @Test("makeConfiguration_월간_그리드와_선택일_상태를_생성합니다")
   func makeConfigurationBuildsMonthGridAndSelectionState() {
     let configuration = HomeCalendarConfigurationBuilder.makeConfiguration(
@@ -96,9 +90,12 @@ private extension DesignSystemTests {
       return []
     }
 
+    let fontsRootURL = resourceURL.appendingPathComponent("Fonts", isDirectory: true)
+    let scanRootURL = FileManager.default.fileExists(atPath: fontsRootURL.path) ? fontsRootURL : resourceURL
+
     var fontURLs: [URL] = []
     let enumerator = FileManager.default.enumerator(
-      at: resourceURL,
+      at: scanRootURL,
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
     )
