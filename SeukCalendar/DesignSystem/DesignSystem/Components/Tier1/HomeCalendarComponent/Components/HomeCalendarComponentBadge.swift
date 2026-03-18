@@ -129,6 +129,7 @@ extension Font {
     weight: Pretendard.Weight,
     size: CGFloat
   ) -> Font {
+    FontManager.shared.register()
     let fontName = "\(Pretendard.name)-\(weight.rawValue)"
     return .custom(fontName, size: size)
   }

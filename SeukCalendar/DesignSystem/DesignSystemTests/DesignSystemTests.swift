@@ -1,6 +1,9 @@
 @testable import DesignSystem
 import Foundation
 import Testing
+#if canImport(UIKit)
+  import UIKit
+#endif
 
 struct DesignSystemTests {
   @Test("DesignSystem_번들에_포함된_모든_폰트가_등록됩니다")
@@ -12,6 +15,12 @@ struct DesignSystemTests {
 
     #expect(bundledFontNames.isEmpty == false)
     #expect(unresolvedFontNames.isEmpty)
+  }
+
+  @Test("Widget_ExtraBold_스타일이_Pretendard_ExtraBold를_사용합니다")
+  func widgetXlargeUsesExtraBold() {
+    let font = Widget.Large.xLarge.uiFont
+    #expect(font.fontName == "Pretendard-ExtraBold")
   }
 
   @Test("makeConfiguration_월간_그리드와_선택일_상태를_생성합니다")
@@ -83,15 +92,13 @@ struct DesignSystemTests {
 
 private extension DesignSystemTests {
   static var bundledFontNames: [String] {
-    guard let fontsRootURL = Bundle.designSystemBundle.resourceURL?
-      .appendingPathComponent("Fonts", isDirectory: true)
-    else {
+    guard let resourceURL = Bundle.designSystemBundle.resourceURL else {
       return []
     }
 
     var fontURLs: [URL] = []
     let enumerator = FileManager.default.enumerator(
-      at: fontsRootURL,
+      at: resourceURL,
       includingPropertiesForKeys: nil,
       options: [.skipsHiddenFiles]
     )

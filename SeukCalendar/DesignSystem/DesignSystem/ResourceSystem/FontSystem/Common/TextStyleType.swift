@@ -24,6 +24,7 @@ public extension FontStyleType {
   }
 
   var uiFont: PlatformFont {
+    FontManager.shared.register()
     return PlatformFont(name: fontName, size: size) ?? PlatformFont.systemFont(ofSize: size)
   }
 
