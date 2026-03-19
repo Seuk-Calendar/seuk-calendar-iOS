@@ -15,6 +15,8 @@
 Core/
 ├── Core.xcodeproj
 ├── Core/
+│   ├── AdaptiveLayout/
+│   │   └── AdaptiveLayout.swift
 │   ├── Error/
 │   │   └── SCError.swift
 │   ├── Extensions/
@@ -42,6 +44,12 @@ Foundation 타입에 대한 Extension.
 - Date 변환 및 포맷팅
 - Date 상대 시간 오프셋(`Date+Offset.swift`, `TimeOffset`)
 - 기타 Foundation 타입 Extension
+
+### AdaptiveLayout
+
+SwiftUI 적응형 레이아웃 판단 헬퍼.
+
+**위치**: `Core/AdaptiveLayout/AdaptiveLayout.swift`
 
 ### Utils
 

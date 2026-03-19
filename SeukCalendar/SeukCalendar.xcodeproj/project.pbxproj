@@ -100,7 +100,7 @@
 		7B0E0D602F51513B008707E9 /* CalendarFeature.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CalendarFeature.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B0E0D612F51513B008707E9 /* Navigation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Navigation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7B2BA8502EB84AD70089B130 /* CoreModule.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CoreModule.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7BD09ABD2F51374F0035BF41 /* SeukCalendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeukCalendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BD09ABD2F51374F0035BF41 /* SeukCalendar-Dev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SeukCalendar-Dev.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F9767B9AE1050BD52AA356E /* SeukCalendarWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SeukCalendarWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -185,7 +185,7 @@
 		7B58BF422DF6800700FF47AB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7BD09ABD2F51374F0035BF41 /* SeukCalendar.app */,
+				7BD09ABD2F51374F0035BF41 /* SeukCalendar-Dev.app */,
 				9F9767B9AE1050BD52AA356E /* SeukCalendarWidget.appex */,
 			);
 			name = Products;
@@ -244,7 +244,7 @@
 			);
 			name = SeukCalendar;
 			productName = SeukCalendar;
-			productReference = 7BD09ABD2F51374F0035BF41 /* SeukCalendar.app */;
+			productReference = 7BD09ABD2F51374F0035BF41 /* SeukCalendar-Dev.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A9B51C4E55549EAEC040D740 /* SeukCalendarWidget */ = {
@@ -347,13 +347,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-			69C23AB7522E234EDC410293 /* Debug */ = {
-				isa = XCBuildConfiguration;
-				buildSettings = {
-					APP_GROUP_IDENTIFIER = group.com.youngkyu.SeukCalendar.dev;
-					APPLICATION_EXTENSION_API_ONLY = YES;
-					APP_GROUPS = "$(APP_GROUP_IDENTIFIER)";
-					APP_ID_SUFFIX = .dev;
+		69C23AB7522E234EDC410293 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				APP_GROUPS = "$(APP_GROUP_IDENTIFIER)";
+				APP_GROUP_IDENTIFIER = group.com.youngkyu.SeukCalendar.dev;
+				APP_ID_SUFFIX = .dev;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = SeukCalendarWidget/SeukCalendarWidgetiOS.entitlements;
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = SeukCalendarWidget/SeukCalendarWidget.entitlements;
@@ -378,9 +379,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = "com.youngkyu.SeukCalendar$(APP_ID_SUFFIX).SeukCalendarWidget";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.youngkyu.SeukCalendar$(APP_ID_SUFFIX).SeukCalendarWidget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
@@ -389,9 +389,9 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-					TARGETED_DEVICE_FAMILY = "1,2";
-					WIDGET_DEEP_LINK_SCHEME = "seukcalendar-dev";
-				};
+				TARGETED_DEVICE_FAMILY = "1,2";
+				WIDGET_DEEP_LINK_SCHEME = "seukcalendar-dev";
+			};
 			name = Debug;
 		};
 		7B58BF4D2DF6800900FF47AB /* Debug */ = {
@@ -513,12 +513,12 @@
 			};
 			name = Release;
 		};
-			7BD09AC62F5137500035BF41 /* Debug */ = {
-				isa = XCBuildConfiguration;
-				buildSettings = {
-					APP_GROUP_IDENTIFIER = group.com.youngkyu.SeukCalendar.dev;
-					APP_GROUPS = "$(APP_GROUP_IDENTIFIER)";
-					APP_ID_SUFFIX = .dev;
+		7BD09AC62F5137500035BF41 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APP_GROUPS = "$(APP_GROUP_IDENTIFIER)";
+				APP_GROUP_IDENTIFIER = group.com.youngkyu.SeukCalendar.dev;
+				APP_ID_SUFFIX = .dev;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SeukCalendar/App/Resources/SeukCalendar.entitlements;
@@ -563,18 +563,18 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WIDGET_DEEP_LINK_SCHEME = "seukcalendar-dev";
 				"WRAPPER_NAME[sdk=macosx*]" = "SeukCalendar-Dev.app";
-					WIDGET_DEEP_LINK_SCHEME = "seukcalendar-dev";
-					XROS_DEPLOYMENT_TARGET = 26.0;
-				};
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
 			name = Debug;
 		};
-			7BD09AC72F5137500035BF41 /* Release */ = {
-				isa = XCBuildConfiguration;
-				buildSettings = {
-					APP_GROUP_IDENTIFIER = group.com.youngkyu.SeukCalendar;
-					APP_GROUPS = "$(APP_GROUP_IDENTIFIER)";
-					APP_ID_SUFFIX = "";
+		7BD09AC72F5137500035BF41 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APP_GROUPS = "$(APP_GROUP_IDENTIFIER)";
+				APP_GROUP_IDENTIFIER = group.com.youngkyu.SeukCalendar;
+				APP_ID_SUFFIX = "";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SeukCalendar/App/Resources/SeukCalendar.entitlements;
@@ -605,7 +605,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = "com.youngkyu.SeukCalendar$(APP_ID_SUFFIX)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.youngkyu.SeukCalendar$(APP_ID_SUFFIX)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -618,18 +618,19 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-					WIDGET_DEEP_LINK_SCHEME = seukcalendar;
-					XROS_DEPLOYMENT_TARGET = 26.0;
-				};
+				WIDGET_DEEP_LINK_SCHEME = seukcalendar;
+				XROS_DEPLOYMENT_TARGET = 26.0;
+			};
 			name = Release;
 		};
-			F0B3916010427C6F04EBCC25 /* Release */ = {
-				isa = XCBuildConfiguration;
-				buildSettings = {
-					APP_GROUP_IDENTIFIER = group.com.youngkyu.SeukCalendar;
-					APPLICATION_EXTENSION_API_ONLY = YES;
-					APP_GROUPS = "$(APP_GROUP_IDENTIFIER)";
-					APP_ID_SUFFIX = "";
+		F0B3916010427C6F04EBCC25 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				APP_GROUPS = "$(APP_GROUP_IDENTIFIER)";
+				APP_GROUP_IDENTIFIER = group.com.youngkyu.SeukCalendar;
+				APP_ID_SUFFIX = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_ENTITLEMENTS = SeukCalendarWidget/SeukCalendarWidgetiOS.entitlements;
 				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = SeukCalendarWidget/SeukCalendarWidget.entitlements;
@@ -653,9 +654,8 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				MARKETING_VERSION = 1.0;
-					PRODUCT_BUNDLE_IDENTIFIER = "com.youngkyu.SeukCalendar$(APP_ID_SUFFIX).SeukCalendarWidget";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.youngkyu.SeukCalendar$(APP_ID_SUFFIX).SeukCalendarWidget";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
 				SKIP_INSTALL = YES;
@@ -664,10 +664,10 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-					TARGETED_DEVICE_FAMILY = "1,2";
-					WIDGET_DEEP_LINK_SCHEME = seukcalendar;
-					VALIDATE_PRODUCT = YES;
-				};
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				WIDGET_DEEP_LINK_SCHEME = seukcalendar;
+			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */

@@ -34,7 +34,15 @@ public struct FontManager {
         guard !PlatformFont.fontNames(forFamilyName: T.name).contains(name) else { return }
       #endif
 
-      CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+      var registrationError: Unmanaged<CFError>?
+      let isRegistered = CTFontManagerRegisterFontsForURL(url as CFURL, .process, &registrationError)
+
+      guard !isRegistered else { return }
+
+      let errorDescription = registrationError
+        .map { CFErrorCopyDescription($0.takeRetainedValue()) as String? ?? "unknown error" }
+        ?? "unknown error"
+      print("🔴 Font registration failed: \(name) (\(url.path)) - \(errorDescription)")
     }
   }
 

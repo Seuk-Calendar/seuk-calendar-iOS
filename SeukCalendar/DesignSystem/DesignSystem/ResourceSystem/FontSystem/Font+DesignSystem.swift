@@ -132,7 +132,7 @@ public enum Widget {
   public enum Large: FontStyleType {
     public typealias Family = Pretendard
 
-    case small, medium, large, xLarge
+    case small, medium, large, xLarge, xLargeMac
 
     public var weight: Pretendard.Weight {
       switch self {
@@ -142,6 +142,8 @@ public enum Widget {
         .bold
       case .xLarge:
         .extraBold
+      case .xLargeMac:
+        .medium
       }
     }
 
@@ -151,7 +153,7 @@ public enum Widget {
         8
       case .medium, .large:
         10
-      case .xLarge:
+      case .xLarge, .xLargeMac:
         12
       }
     }
@@ -162,7 +164,7 @@ public enum Widget {
         10
       case .medium, .large:
         12
-      case .xLarge:
+      case .xLarge, .xLargeMac:
         16
       }
     }

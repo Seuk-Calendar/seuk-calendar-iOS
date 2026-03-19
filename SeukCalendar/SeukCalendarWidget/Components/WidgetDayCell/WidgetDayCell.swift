@@ -6,7 +6,10 @@ struct WidgetDayCell: View {
   @Environment(\.widgetRenderingMode) private var widgetRenderingMode
 
   private enum Metrics {
-    static let dayNumberFont = Widget.Large.large
+    static var dayNumberFont: any FontStyleType {
+      return Platform.isMac ? Widget.Large.medium : Widget.Large.large
+    }
+
     static let moreNumberFont = Widget.Large.small
     static let rowSpacing = Spacing.sp050
     static let badgeSpacing = Spacing.sp050

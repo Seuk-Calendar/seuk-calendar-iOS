@@ -3,6 +3,8 @@ import Foundation
 import Testing
 #if canImport(UIKit)
   import UIKit
+#elseif canImport(AppKit)
+  import AppKit
 #endif
 
 struct DesignSystemTests {
@@ -12,9 +14,10 @@ struct DesignSystemTests {
 
     let bundledFontNames = Self.bundledFontNames
     let unresolvedFontNames = bundledFontNames.filter { PlatformFont(name: $0, size: 12) == nil }
+    let diagnostics = Self.bundleDiagnostics
 
-    #expect(bundledFontNames.isEmpty == false)
-    #expect(unresolvedFontNames.isEmpty)
+    #expect(bundledFontNames.isEmpty == false, "\(diagnostics)")
+    #expect(unresolvedFontNames.isEmpty, "\(unresolvedFontNames) \(diagnostics)")
   }
 
   @Test("makeConfiguration_월간_그리드와_선택일_상태를_생성합니다")
@@ -90,8 +93,9 @@ private extension DesignSystemTests {
       return []
     }
 
-    let fontsRootURL = resourceURL.appendingPathComponent("Fonts", isDirectory: true)
-    let scanRootURL = FileManager.default.fileExists(atPath: fontsRootURL.path) ? fontsRootURL : resourceURL
+    let resolvedResourceURL = resourceURL.resolvingSymlinksInPath()
+    let fontsRootURL = resolvedResourceURL.appendingPathComponent("Fonts", isDirectory: true)
+    let scanRootURL = FileManager.default.fileExists(atPath: fontsRootURL.path) ? fontsRootURL : resolvedResourceURL
 
     var fontURLs: [URL] = []
     let enumerator = FileManager.default.enumerator(
@@ -108,6 +112,12 @@ private extension DesignSystemTests {
     return fontURLs
       .map { $0.deletingPathExtension().lastPathComponent }
       .sorted()
+  }
+
+  static var bundleDiagnostics: String {
+    let bundlePath = Bundle.designSystemBundle.bundleURL.path
+    let resourceURL = Bundle.designSystemBundle.resourceURL?.path ?? "nil"
+    return "bundlePath=\(bundlePath), resourceURL=\(resourceURL)"
   }
 
   static var fixedCalendar: Calendar {

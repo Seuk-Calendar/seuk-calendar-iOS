@@ -174,7 +174,7 @@ private extension SeukCalendarWidgetEntryView {
   var mediumView: some View {
     VStack(alignment: .leading, spacing: Spacing.sp050) {
       Text(widgetTitleText)
-        .font(Widget.Large.xLarge)
+        .font(Platform.isMac ? Widget.Large.xLargeMac : Widget.Large.xLarge)
         .foregroundStyle(Color.semantic.Content.primary)
         .lineLimit(1)
         .minimumScaleFactor(0.8)
@@ -201,7 +201,7 @@ private extension SeukCalendarWidgetEntryView {
   var largeView: some View {
     VStack(alignment: .leading, spacing: Spacing.sp050) {
       Text(widgetTitleText)
-        .font(Widget.Large.xLarge)
+        .font(Platform.isMac ? Widget.Large.xLargeMac : Widget.Large.xLarge)
         .foregroundStyle(Color.semantic.Content.primary)
         .lineLimit(1)
         .minimumScaleFactor(0.7)
