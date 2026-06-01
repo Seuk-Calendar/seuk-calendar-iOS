@@ -1,4 +1,5 @@
 import CalendarDomain
+import DesignSystem
 import Foundation
 
 public extension CalendarViewModel {
@@ -155,6 +156,41 @@ public extension CalendarViewModel {
 
     static func normalizedAlarms(_ alarms: [ScheduleAlarm]) -> [ScheduleAlarm] {
       Array(Set(alarms)).sorted(by: { $0.offset < $1.offset })
+    }
+  }
+
+  struct ScheduleEditDraft: Equatable {
+    public var title: String
+    public var dateString: String
+    public var startTime: String
+    public var durationMinutesText: String
+    public var location: String
+    public var notes: String
+    public var isAllDay: Bool
+
+    init(event: CalendarEvent, calendar: Calendar = .current) {
+      let dateFormatter = DateFormatter()
+      dateFormatter.calendar = calendar
+      dateFormatter.locale = Locale(identifier: "ko_KR")
+      dateFormatter.timeZone = calendar.timeZone
+      dateFormatter.dateFormat = "yyyy-MM-dd"
+
+      let timeFormatter = DateFormatter()
+      timeFormatter.calendar = calendar
+      timeFormatter.locale = Locale(identifier: "ko_KR")
+      timeFormatter.timeZone = calendar.timeZone
+      timeFormatter.dateFormat = "HH:mm"
+
+      title = event.title
+      dateString = dateFormatter.string(from: event.startDate)
+      startTime = event.isAllDay ? "" : timeFormatter.string(from: event.startDate)
+      durationMinutesText = String(max(
+        Int(event.endDate.timeIntervalSince(event.startDate) / 60),
+        event.isAllDay ? 1440 : 1
+      ))
+      location = event.location ?? ""
+      notes = event.notes ?? ""
+      isAllDay = event.isAllDay
     }
   }
 }

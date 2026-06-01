@@ -6,9 +6,12 @@ public struct CalendarView: View {
   @State private var path: [CalendarEvent] = []
   @State private var pendingScheduleID: String?
   @State private var detailPanelState: DetailPanelState = .hidden
+  @State private var detailPanelDragOffset: CGFloat = 0
   @State private var aiInputOverlayState: AIInputOverlayState = .hidden
   @State private var isParsedEventEditorPresented = false
   @State private var aiInputDraft = ""
+  @State private var deleteConfirmationEvent: CalendarEvent?
+  @State private var scheduleErrorAlert: ScheduleErrorAlert?
 
   @MainActor
   public init(
@@ -35,6 +38,28 @@ public struct CalendarView: View {
         ) {
           parsedEventEditorSheet
         }
+        .alert(
+          "정말로 삭제하시겠습니까?",
+          isPresented: deleteConfirmationBinding,
+          presenting: deleteConfirmationEvent
+        ) { event in
+          Button("삭제", role: .destructive) {
+            deleteSchedule(event)
+          }
+
+          Button("취소", role: .cancel) {
+            deleteConfirmationEvent = nil
+          }
+        } message: { event in
+          Text("'\(event.title)' 일정을 삭제합니다.")
+        }
+        .alert(item: $scheduleErrorAlert) { alert in
+          Alert(
+            title: Text("일정을 처리하지 못했습니다."),
+            message: Text(alert.message),
+            dismissButton: .default(Text("확인"))
+          )
+        }
         .task {
           await viewModel.send(.onAppear).value
           openPendingScheduleIfNeeded()
@@ -43,7 +68,18 @@ public struct CalendarView: View {
           openPendingScheduleIfNeeded()
         }
         .navigationDestination(for: CalendarEvent.self) { event in
-          ScheduleDetailView(event: event)
+          ScheduleEditView(
+            event: event,
+            isSaving: viewModel.isSavingEditedSchedule,
+            isDeleting: viewModel.isDeletingSchedule,
+            errorMessage: viewModel.scheduleMutationErrorMessage,
+            onSave: { draft in
+              saveEditedSchedule(event, draft: draft)
+            },
+            onDelete: {
+              await deleteScheduleFromEditor(event)
+            }
+          )
         }
     }
   }
@@ -52,10 +88,33 @@ public struct CalendarView: View {
 private extension CalendarView {
   enum DetailPanelState: Equatable {
     case hidden
-    case presented
+    case medium
+    case expanded
 
     var isPresented: Bool {
-      self == .presented
+      self != .hidden
+    }
+
+    var baseFraction: CGFloat {
+      switch self {
+      case .hidden:
+        0
+      case .medium:
+        0.5
+      case .expanded:
+        0.86
+      }
+    }
+
+    var accessibilityValue: String {
+      switch self {
+      case .hidden:
+        "닫힘"
+      case .medium:
+        "절반"
+      case .expanded:
+        "확장됨"
+      }
     }
   }
 
@@ -68,9 +127,14 @@ private extension CalendarView {
     }
   }
 
+  struct ScheduleErrorAlert: Identifiable {
+    let id = UUID()
+    let message: String
+  }
+
   func rootContent(in geometry: GeometryProxy) -> some View {
-    let panelHeight = detailPanelState.isPresented ? geometry.size.height * 0.5 : 0
-    let topHeight = max(geometry.size.height - panelHeight, 260)
+    let panelHeight = detailPanelHeight(in: geometry)
+    let topHeight = max(geometry.size.height - panelHeight, detailPanelState.isPresented ? 180 : 260)
 
     return ZStack(alignment: .bottom) {
       VStack(spacing: 0) {
@@ -87,9 +151,14 @@ private extension CalendarView {
           selectedDate: viewModel.selectedDate,
           events: viewModel.events(on: viewModel.selectedDate),
           height: panelHeight,
-          onClose: closeDetailPanel,
+          panelAccessibilityValue: detailPanelState.accessibilityValue,
+          onHandleDragChanged: handleDetailPanelDragChanged,
+          onHandleDragEnded: handleDetailPanelDragEnded,
+          onExpand: expandDetailPanel,
+          onCollapse: collapseDetailPanel,
           onTapAIAdd: openAIInputOverlay,
-          onTapEvent: openScheduleDetail
+          onTapEvent: openScheduleEditor,
+          onRequestDelete: requestScheduleDeletion
         )
         .transition(.move(edge: .bottom).combined(with: .opacity))
       }
@@ -106,6 +175,17 @@ private extension CalendarView {
         .zIndex(2)
       }
     }
+  }
+
+  var deleteConfirmationBinding: Binding<Bool> {
+    Binding(
+      get: { deleteConfirmationEvent != nil },
+      set: { isPresented in
+        if !isPresented {
+          deleteConfirmationEvent = nil
+        }
+      }
+    )
   }
 
   var headerHeightEstimate: CGFloat { 124 }
@@ -298,13 +378,37 @@ private extension CalendarView {
 
   func openDetailPanel() {
     withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
-      detailPanelState = .presented
+      detailPanelState = .medium
     }
   }
 
   func closeDetailPanel() {
     withAnimation(.spring(response: 0.3, dampingFraction: 0.88)) {
       detailPanelState = .hidden
+      detailPanelDragOffset = 0
+    }
+  }
+
+  func expandDetailPanel() {
+    guard detailPanelState.isPresented else {
+      openDetailPanel()
+      return
+    }
+
+    withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+      detailPanelState = .expanded
+      detailPanelDragOffset = 0
+    }
+  }
+
+  func collapseDetailPanel() {
+    withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+      if detailPanelState == .expanded {
+        detailPanelState = .medium
+      } else {
+        detailPanelState = .hidden
+      }
+      detailPanelDragOffset = 0
     }
   }
 
@@ -389,8 +493,91 @@ private extension CalendarView {
     self.pendingScheduleID = nil
   }
 
-  func openScheduleDetail(_ event: CalendarEvent) {
+  func openScheduleEditor(_ event: CalendarEvent) {
     path.append(event)
+  }
+
+  func requestScheduleDeletion(_ event: CalendarEvent) {
+    deleteConfirmationEvent = event
+  }
+
+  func saveEditedSchedule(
+    _ event: CalendarEvent,
+    draft: CalendarViewModel.ScheduleEditDraft
+  ) {
+    Task { @MainActor in
+      await viewModel.send(.updateSchedule(event, draft)).value
+
+      if let message = viewModel.scheduleMutationErrorMessage {
+        scheduleErrorAlert = ScheduleErrorAlert(message: message)
+        return
+      }
+
+      path.removeAll { $0.id == event.id }
+      openDetailPanel()
+    }
+  }
+
+  func deleteSchedule(_ event: CalendarEvent) {
+    Task { @MainActor in
+      await viewModel.send(.deleteSchedule(event.id)).value
+      deleteConfirmationEvent = nil
+
+      if let message = viewModel.scheduleMutationErrorMessage {
+        scheduleErrorAlert = ScheduleErrorAlert(message: message)
+      }
+    }
+  }
+
+  func deleteScheduleFromEditor(_ event: CalendarEvent) async -> Bool {
+    await viewModel.send(.deleteSchedule(event.id)).value
+
+    if let message = viewModel.scheduleMutationErrorMessage {
+      scheduleErrorAlert = ScheduleErrorAlert(message: message)
+      return false
+    }
+
+    path.removeAll { $0.id == event.id }
+    openDetailPanel()
+    return true
+  }
+
+  func detailPanelHeight(in geometry: GeometryProxy) -> CGFloat {
+    guard detailPanelState.isPresented else {
+      return 0
+    }
+
+    let screenHeight = geometry.size.height
+    let minimumHeight = min(max(screenHeight * 0.32, 220), screenHeight * 0.5)
+    let maximumHeight = screenHeight * 0.9
+    let baseHeight = screenHeight * detailPanelState.baseFraction
+    return min(max(baseHeight - detailPanelDragOffset, minimumHeight), maximumHeight)
+  }
+
+  func handleDetailPanelDragChanged(_ translationHeight: CGFloat) {
+    guard detailPanelState.isPresented else {
+      return
+    }
+
+    detailPanelDragOffset = translationHeight
+  }
+
+  func handleDetailPanelDragEnded(_ translationHeight: CGFloat) {
+    guard detailPanelState.isPresented else {
+      return
+    }
+
+    withAnimation(.spring(response: 0.34, dampingFraction: 0.86)) {
+      detailPanelDragOffset = 0
+
+      if translationHeight < -70 {
+        detailPanelState = .expanded
+      } else if translationHeight > 110 {
+        detailPanelState = detailPanelState == .expanded ? .medium : .hidden
+      } else {
+        detailPanelState = detailPanelState == .expanded ? .expanded : .medium
+      }
+    }
   }
 
   func calendarWeekCount(for date: Date) -> Int {
@@ -416,6 +603,6 @@ private extension CalendarView {
     let weekdayReserve: CGFloat = 46
     let weekSpacing = CGFloat(max(weekCount - 1, 0)) * 6
     let usableHeight = max(availableHeight - weekdayReserve - weekSpacing, 160)
-    return max(usableHeight / CGFloat(max(weekCount, 1)), detailPanelState.isPresented ? 32 : 54)
+    return max(usableHeight / CGFloat(max(weekCount, 1)), detailPanelState.isPresented ? 30 : 54)
   }
 }

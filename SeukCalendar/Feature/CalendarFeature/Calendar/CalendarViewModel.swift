@@ -20,10 +20,16 @@ public final class CalendarViewModel {
   public private(set) var parserStatusMessage: String?
   public private(set) var isParsingNaturalLanguage = false
   public private(set) var isSavingParsedEvent = false
+  public private(set) var scheduleMutationErrorMessage: String?
+  public private(set) var isSavingEditedSchedule = false
+  public private(set) var isDeletingSchedule = false
 
   private let repository: any ScheduleRepository
   private let parseEventUseCase: ParseEventUseCase
   private let createScheduleUseCase: CreateScheduleUseCase
+  private let fetchSchedulesUseCase: FetchSchedulesUseCase
+  private let updateScheduleUseCase: UpdateScheduleUseCase
+  private let deleteScheduleUseCase: DeleteScheduleUseCase
   private let calendar: Calendar
   private var hasLoaded = false
   private var pendingActionTask: Task<Void, Never>?
@@ -40,6 +46,9 @@ public final class CalendarViewModel {
     self.repository = repository
     parseEventUseCase = ParseEventUseCase(parser: parser, calendar: calendar)
     createScheduleUseCase = CreateScheduleUseCase(repository: repository)
+    fetchSchedulesUseCase = FetchSchedulesUseCase(repository: repository)
+    updateScheduleUseCase = UpdateScheduleUseCase(repository: repository)
+    deleteScheduleUseCase = DeleteScheduleUseCase(repository: repository)
   }
 
   @discardableResult
@@ -115,6 +124,12 @@ private extension CalendarViewModel {
       return true
     case .moveToToday:
       await handleMoveToToday()
+      return true
+    case let .updateSchedule(event, draft):
+      await handleUpdateSchedule(event, draft: draft)
+      return true
+    case let .deleteSchedule(id):
+      await handleDeleteSchedule(id: id)
       return true
     default:
       return false
@@ -292,6 +307,51 @@ private extension CalendarViewModel {
       await reloadVisibleEvents()
     } catch {
       parseErrorMessage = userMessage(for: error)
+    }
+  }
+
+  func handleUpdateSchedule(
+    _ event: CalendarEvent,
+    draft: ScheduleEditDraft
+  ) async {
+    scheduleMutationErrorMessage = nil
+    isSavingEditedSchedule = true
+    defer { isSavingEditedSchedule = false }
+
+    let isAuthorized = await ensureCalendarPermission()
+    guard isAuthorized else {
+      scheduleMutationErrorMessage = "캘린더 접근 권한을 확인해주세요."
+      return
+    }
+
+    do {
+      let existingSchedule = try await fetchSchedulesUseCase.execute(id: event.id)
+      let schedule = try makeSchedule(event: event, draft: draft, existingSchedule: existingSchedule)
+      _ = try await updateScheduleUseCase.execute(schedule: schedule)
+      await reloadVisibleEvents()
+      applySyncedStatusMessage()
+    } catch {
+      scheduleMutationErrorMessage = userMessage(for: error)
+    }
+  }
+
+  func handleDeleteSchedule(id: String) async {
+    scheduleMutationErrorMessage = nil
+    isDeletingSchedule = true
+    defer { isDeletingSchedule = false }
+
+    let isAuthorized = await ensureCalendarPermission()
+    guard isAuthorized else {
+      scheduleMutationErrorMessage = "캘린더 접근 권한을 확인해주세요."
+      return
+    }
+
+    do {
+      try await deleteScheduleUseCase.execute(id: id)
+      await reloadVisibleEvents()
+      applySyncedStatusMessage()
+    } catch {
+      scheduleMutationErrorMessage = userMessage(for: error)
     }
   }
 
@@ -520,6 +580,104 @@ private extension CalendarViewModel {
       location: schedule.location,
       notes: schedule.notes
     )
+  }
+
+  func makeSchedule(
+    event: CalendarEvent,
+    draft: ScheduleEditDraft,
+    existingSchedule: Schedule?
+  ) throws -> Schedule {
+    let dateComponents = try scheduleDateComponents(from: draft.dateString)
+    let timeComponents = try scheduleTimeComponents(from: draft.startTime, isAllDay: draft.isAllDay)
+    let duration = try scheduleDuration(from: draft.durationMinutesText, isAllDay: draft.isAllDay)
+
+    let title = draft.title.trimmingCharacters(in: .whitespacesAndNewlines)
+    let location = draft.location.trimmingCharacters(in: .whitespacesAndNewlines)
+    let notes = draft.notes.trimmingCharacters(in: .whitespacesAndNewlines)
+
+    return Schedule(
+      id: existingSchedule?.id ?? event.id,
+      calendarIdentifier: existingSchedule?.calendarIdentifier,
+      title: title.isEmpty ? "제목 없음" : title,
+      date: dateComponents,
+      time: draft.isAllDay ? nil : timeComponents,
+      duration: duration,
+      location: location.isEmpty ? nil : location,
+      notes: notes.isEmpty ? nil : notes,
+      isAllDay: draft.isAllDay,
+      recurrence: existingSchedule?.recurrence,
+      alarms: existingSchedule?.alarms ?? []
+    )
+  }
+
+  func scheduleDateComponents(from text: String) throws -> DateComponents {
+    let parts = text
+      .split(separator: "-")
+      .compactMap { Int($0) }
+
+    guard parts.count == 3,
+          let year = parts[safe: 0],
+          let month = parts[safe: 1],
+          let day = parts[safe: 2],
+          (1 ... 12).contains(month),
+          (1 ... 31).contains(day)
+    else {
+      throw ScheduleRepositoryError.invalidScheduleDate
+    }
+
+    return DateComponents(
+      calendar: calendar,
+      timeZone: calendar.timeZone,
+      year: year,
+      month: month,
+      day: day
+    )
+  }
+
+  func scheduleTimeComponents(
+    from text: String,
+    isAllDay: Bool
+  ) throws -> DateComponents? {
+    guard !isAllDay else {
+      return nil
+    }
+
+    let parts = text
+      .split(separator: ":")
+      .compactMap { Int($0) }
+
+    guard parts.count == 2,
+          let hour = parts[safe: 0],
+          let minute = parts[safe: 1],
+          (0 ... 23).contains(hour),
+          (0 ... 59).contains(minute)
+    else {
+      throw ScheduleRepositoryError.invalidScheduleDate
+    }
+
+    return DateComponents(
+      calendar: calendar,
+      timeZone: calendar.timeZone,
+      hour: hour,
+      minute: minute
+    )
+  }
+
+  func scheduleDuration(
+    from text: String,
+    isAllDay: Bool
+  ) throws -> TimeInterval {
+    let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard let minutes = Int(trimmedText), minutes > 0 else {
+      throw ScheduleRepositoryError.invalidScheduleDate
+    }
+
+    if isAllDay {
+      let dayMinutes = max((minutes + 1439) / 1440, 1) * 1440
+      return TimeInterval(dayMinutes * 60)
+    }
+
+    return TimeInterval(minutes * 60)
   }
 
   func userMessage(for error: Error) -> String {

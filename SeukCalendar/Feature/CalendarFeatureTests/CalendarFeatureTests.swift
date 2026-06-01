@@ -283,6 +283,61 @@ struct CalendarFeatureTests {
     #expect(viewModel.naturalLanguageInput.isEmpty)
     #expect(viewModel.visibleEvents.isEmpty == false)
   }
+
+  @Test("updateSchedule_편집_초안으로_일정을_수정하고_목록을_갱신합니다")
+  @MainActor
+  func updateScheduleUpdatesEventAndReloadsEvents() async {
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
+    mockRepository.schedulesToReturn = [CalendarFeatureTests.fixtureSchedule()]
+
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository
+    )
+
+    await viewModel.send(.onAppear).value
+    let event = viewModel.visibleEvents[0]
+    var draft = CalendarViewModel.ScheduleEditDraft(event: event, calendar: Self.fixedCalendar)
+    draft.title = "수정된 일정"
+    draft.dateString = "2026-03-04"
+    draft.startTime = "14:30"
+    draft.durationMinutesText = "90"
+    draft.location = "회의실"
+    draft.notes = "자료 확인"
+
+    await viewModel.send(.updateSchedule(event, draft)).value
+
+    #expect(mockRepository.fetchedScheduleIDs == ["event-1"])
+    #expect(mockRepository.updatedSchedules.count == 1)
+    #expect(mockRepository.updatedSchedules.first?.title == "수정된 일정")
+    #expect(mockRepository.updatedSchedules.first?.date.day == 4)
+    #expect(mockRepository.updatedSchedules.first?.time?.hour == 14)
+    #expect(mockRepository.updatedSchedules.first?.time?.minute == 30)
+    #expect(mockRepository.updatedSchedules.first?.duration == 5400)
+    #expect(mockRepository.updatedSchedules.first?.location == "회의실")
+    #expect(mockRepository.updatedSchedules.first?.notes == "자료 확인")
+    #expect(viewModel.scheduleMutationErrorMessage == nil)
+  }
+
+  @Test("deleteSchedule_일정을_삭제하고_목록을_갱신합니다")
+  @MainActor
+  func deleteScheduleDeletesEventAndReloadsEvents() async {
+    let mockRepository = MockScheduleRepository()
+    mockRepository.authorizationStatusValue = .fullAccess
+
+    let viewModel = CalendarViewModel(
+      selectedDate: Self.fixedDate,
+      calendar: Self.fixedCalendar,
+      repository: mockRepository
+    )
+
+    await viewModel.send(.deleteSchedule("event-1")).value
+
+    #expect(mockRepository.deletedScheduleIDs == ["event-1"])
+    #expect(viewModel.scheduleMutationErrorMessage == nil)
+  }
 }
 
 private extension CalendarFeatureTests {

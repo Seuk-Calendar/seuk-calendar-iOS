@@ -1,3 +1,4 @@
+import DesignSystem
 import Foundation
 
 public extension CalendarViewModel {
@@ -21,5 +22,7 @@ public extension CalendarViewModel {
     case updateParsedNotes(String)
     case updateParsedIsAllDay(Bool)
     case saveParsedEvent
+    case updateSchedule(CalendarEvent, ScheduleEditDraft)
+    case deleteSchedule(String)
   }
 }

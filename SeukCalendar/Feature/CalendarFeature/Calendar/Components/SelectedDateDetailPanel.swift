@@ -5,9 +5,14 @@ struct SelectedDateDetailPanel: View {
   let selectedDate: Date
   let events: [CalendarEvent]
   let height: CGFloat
-  let onClose: () -> Void
+  let panelAccessibilityValue: String
+  let onHandleDragChanged: (CGFloat) -> Void
+  let onHandleDragEnded: (CGFloat) -> Void
+  let onExpand: () -> Void
+  let onCollapse: () -> Void
   let onTapAIAdd: () -> Void
   let onTapEvent: (CalendarEvent) -> Void
+  let onRequestDelete: (CalendarEvent) -> Void
 
   var body: some View {
     VStack(spacing: 0) {
@@ -34,30 +39,39 @@ struct SelectedDateDetailPanel: View {
 
 private extension SelectedDateDetailPanel {
   var handleBar: some View {
-    Button(action: onClose) {
-      VStack(spacing: 12) {
-        Capsule(style: .continuous)
-          .fill(Color.primitives.gray300)
-          .frame(width: 54, height: 6)
-          .padding(.top, 12)
-          .accessibilityHidden(true)
-      }
-      .frame(maxWidth: .infinity)
-      .frame(height: 36)
-      .contentShape(Rectangle())
+    VStack(spacing: 12) {
+      Capsule(style: .continuous)
+        .fill(Color.primitives.gray300)
+        .frame(width: 54, height: 6)
+        .padding(.top, 12)
+        .accessibilityHidden(true)
     }
-    .buttonStyle(.plain)
-    .simultaneousGesture(
-      DragGesture(minimumDistance: 12)
+    .frame(maxWidth: .infinity)
+    .frame(height: 36)
+    .contentShape(Rectangle())
+    .gesture(
+      DragGesture(minimumDistance: 4)
+        .onChanged { value in
+          onHandleDragChanged(value.translation.height)
+        }
         .onEnded { value in
-          guard value.translation.height > 40 else {
-            return
-          }
-          onClose()
+          onHandleDragEnded(value.predictedEndTranslation.height)
         }
     )
-    .accessibilityLabel("일정 상세 닫기")
-    .accessibilityAddTraits(.isButton)
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel("일정 상세 패널 크기")
+    .accessibilityValue(panelAccessibilityValue)
+    .accessibilityHint("위아래로 드래그해 패널 크기를 조절합니다.")
+    .accessibilityAdjustableAction { direction in
+      switch direction {
+      case .increment:
+        onExpand()
+      case .decrement:
+        onCollapse()
+      @unknown default:
+        break
+      }
+    }
   }
 
   var header: some View {
@@ -118,6 +132,19 @@ private extension SelectedDateDetailPanel {
         ForEach(events) { event in
           ScheduleCard(event: event) {
             onTapEvent(event)
+          }
+          .contextMenu {
+            Button {
+              onTapEvent(event)
+            } label: {
+              Label("수정", systemImage: "pencil")
+            }
+
+            Button(role: .destructive) {
+              onRequestDelete(event)
+            } label: {
+              Label("삭제", systemImage: "trash")
+            }
           }
         }
       }

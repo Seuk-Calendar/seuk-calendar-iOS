@@ -26,6 +26,7 @@ Feature/
 │   │   └── Components/
 │   │       ├── NaturalLanguageInputOverlay.swift
 │   │       ├── ParsedEventEditorSheet.swift
+│   │       ├── ScheduleEditView.swift
 │   │       ├── ScheduleDetailView.swift
 │   │       └── SelectedDateDetailPanel.swift
 │   └── CalendarViewFactory.swift
@@ -50,15 +51,18 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - CalendarView.swift: Calendar View
   - 월간 레이아웃 전용 홈 화면
   - 날짜 셀 탭/상하 스와이프 기반 선택 날짜 상세 패널 표시
+  - 핸들바 드래그 기반 상세 패널 확장/축소
   - 상세 패널에서 AI 일정 추가 오버레이 및 일정 등록 시트 진입
+  - 상세 패널 일정 셀 탭/롱프레스 메뉴 기반 일정 수정/삭제 진입
 - CalendarViewModel.swift: Calendar ViewModel (@Observable)
-  - 월간 캘린더 로드/권한/자연어 파싱 + 알림 프리셋 편집 + iCloud 변경 감지 기반 자동 새로고침 처리
+  - 월간 캘린더 로드/권한/자연어 파싱 + 알림 프리셋 편집 + 일정 수정/삭제 + iCloud 변경 감지 기반 자동 새로고침 처리
 - CalendarViewModel+Action.swift: ViewModel Action enum 분리 (`refreshSchedules` 포함)
 - CalendarViewModel+Model.swift: ViewModel 보조 enum/모델(PermissionState/ParsedEventDraft/SyncStatusTone) 분리
 - Components/NaturalLanguageInputOverlay.swift: AI 일정 추가 자연어 입력 오버레이
 - Components/ParsedEventEditorSheet.swift: AI 분석 결과 수정 및 저장 시트
+- Components/ScheduleEditView.swift: 기존 일정 수정 화면, 하단 일정 삭제 버튼 및 삭제 확인 얼럿 제공
 - Components/ScheduleDetailView.swift: 일정 상세 화면
-- Components/SelectedDateDetailPanel.swift: 선택 날짜 일정 목록 하단 패널
+- Components/SelectedDateDetailPanel.swift: 선택 날짜 일정 목록 하단 패널, 핸들바 드래그와 일정 셀 context menu 제공
 
 **ViewFactory**: `CalendarFeature/CalendarViewFactory.swift`
 - 화면 생성 팩토리
@@ -132,8 +136,10 @@ Feature 관련 유틸리티(모든 Feature가 의존).
 - .send()로 Action 전달
 - ViewModel의 공개 상태 구독
 - 월간 캘린더 + 선택 날짜 상세 패널 UI 포함
+- 상세 패널은 핸들바 드래그로 절반/확장/닫힘 상태를 전환
 - 상세 패널 내 AI 일정 추가 버튼으로 자연어 입력 오버레이 표시
 - AI 분석 결과는 등록 시트에서 수정 후 저장
+- 일정 셀 탭은 수정 화면으로 이동하고, 롱프레스 메뉴는 수정/삭제 액션을 제공
 - 등록 시트에서 기본 알림 옵션(없음/시작 시간/5·15·30·60분/1일 전) 추가·삭제 지원
 - `initialScheduleID`가 전달된 경우 해당 일정 상세 화면을 자동 오픈
 
