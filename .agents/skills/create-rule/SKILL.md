@@ -1,6 +1,6 @@
 ---
 name: create-rule
-description: `.agents/rules` 디렉토리에 새로운 룰 문서를 추가합니다. 사용자가 "룰 파일 추가", "규칙 문서 만들어줘", "컨벤션 문서 추가"처럼 요청할 때 파일 생성, 인덱스 반영, 필요 시 check-rules 키워드 매핑 업데이트까지 수행합니다.
+description: .agents/rules 디렉토리에 새로운 룰 문서를 추가합니다. 사용자가 "룰 파일 추가", "규칙 문서 만들어줘", "컨벤션 문서 추가"처럼 요청할 때 파일 생성, 인덱스 반영, 필요 시 check-rules 키워드 매핑 업데이트까지 수행합니다.
 user-invocable: true
 ---
 
