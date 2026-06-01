@@ -31,7 +31,6 @@ struct WidgetCalendarWeekdayHeader: View {
               )
             )
             .lineLimit(1)
-            .minimumScaleFactor(0.7)
             .frame(height: Metrics.weekdayHeight)
             .frame(maxWidth: .infinity, alignment: .center)
         }

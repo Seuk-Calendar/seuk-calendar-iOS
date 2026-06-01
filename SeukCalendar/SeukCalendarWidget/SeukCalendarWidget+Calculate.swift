@@ -83,12 +83,18 @@ extension SeukCalendarWidgetEntryView {
     }
   }
 
-  /// large 위젯에 표시할 5주 x 7일 월간 그리드 날짜 배열을 생성한다.
+  /// large 위젯에 표시할 5주 또는 6주 x 7일 월간 그리드 날짜 배열을 생성한다.
   var monthWeeks: [[Date]] {
-    let monthStart = calendar.dateInterval(of: .month, for: entry.date)?.start ?? calendar.startOfDay(for: entry.date)
+    let monthInterval = calendar.dateInterval(of: .month, for: entry.date)
+    let monthStart = monthInterval?.start ?? calendar.startOfDay(for: entry.date)
+    let monthEnd = monthInterval?.end ?? monthStart
     let gridStart = calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
+    let lastMonthDate = calendar.date(byAdding: .day, value: -1, to: monthEnd) ?? monthStart
+    let gridEnd = calendar.dateInterval(of: .weekOfYear, for: lastMonthDate)?.end ?? monthEnd
+    let dayCount = calendar.dateComponents([.day], from: gridStart, to: gridEnd).day ?? 0
+    let weekCount = min(max((dayCount + 6) / 7, 5), 6)
 
-    return (0 ..< 5).map { weekOffset in
+    return (0 ..< weekCount).map { weekOffset in
       (0 ..< 7).compactMap { dayOffset in
         calendar.date(byAdding: .day, value: (weekOffset * 7) + dayOffset, to: gridStart)
       }

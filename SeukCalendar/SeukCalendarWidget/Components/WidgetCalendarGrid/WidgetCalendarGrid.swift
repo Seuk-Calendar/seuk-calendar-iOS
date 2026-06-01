@@ -8,25 +8,22 @@ struct WidgetCalendarGrid: View {
 
   private enum Metrics {
     static let dividerHeight: CGFloat = 0.5
+    static let supportedWeekCounts = 5 ... 6
   }
 
   let configuration: Configuration
 
   init(configuration: Configuration) {
     self.configuration = configuration
-    assert(configuration.weeks.count == 5, "WidgetCalendarGrid expects 5 weeks.")
+    assert(Metrics.supportedWeekCounts.contains(configuration.weeks.count), "WidgetCalendarGrid expects 5 or 6 weeks.")
     assert(configuration.weeks.allSatisfy { $0.count == 7 }, "WidgetCalendarGrid expects 7 day cells per week.")
   }
 
   var body: some View {
     VStack(spacing: 0) {
       ForEach(Array(configuration.weeks.enumerated()), id: \.offset) { index, week in
-        VStack(spacing: 0) {
-          weekRow(week)
-
-          Spacer(minLength: 0)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        weekRow(week)
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
         if index < configuration.weeks.count - 1 {
           divider
@@ -45,7 +42,7 @@ private extension WidgetCalendarGrid {
           .frame(maxWidth: .infinity)
       }
     }
-    .frame(maxWidth: .infinity, alignment: .leading)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
   }
 
   var divider: some View {
@@ -85,6 +82,7 @@ private extension WidgetCalendarGrid {
       var calendar = Calendar(identifier: .gregorian)
       calendar.locale = Locale(identifier: "ko_KR")
       calendar.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
+      calendar.firstWeekday = 1
       return calendar
     }
 
@@ -96,27 +94,36 @@ private extension WidgetCalendarGrid {
     }
 
     private var previewMonthDate: Date {
-      Self.calendar.date(from: DateComponents(year: 2026, month: 3, day: 12)) ?? .now
+      Self.calendar.date(from: DateComponents(year: 2026, month: 5, day: 12)) ?? .now
     }
 
     private var previewWeeks: [[WidgetDayCell.Configuration]] {
-      let monthStart = Self.calendar.dateInterval(of: .month, for: previewMonthDate)?.start ?? previewMonthDate
-      let gridStart = Self.calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
-
-      return (0 ..< 5).map { weekOffset in
-        (0 ..< 7).compactMap { dayOffset in
-          let offset = (weekOffset * 7) + dayOffset
-          guard let date = Self.calendar.date(byAdding: .day, value: offset, to: gridStart) else {
-            return nil
-          }
-
-          return WidgetDayCell.Configuration(
+      previewWeekDates.map { week in
+        week.map { date in
+          WidgetDayCell.Configuration(
             dayNumber: String(Self.calendar.component(.day, from: date)),
             state: dayCellState(for: date),
             isToday: Self.calendar.isDate(date, inSameDayAs: previewMonthDate),
             badgeSlots: previewBadges,
             moreCount: 2
           )
+        }
+      }
+    }
+
+    private var previewWeekDates: [[Date]] {
+      let monthStart = Self.calendar.dateInterval(of: .month, for: previewMonthDate)?.start ?? previewMonthDate
+      let monthEnd = Self.calendar.dateInterval(of: .month, for: previewMonthDate)?.end ?? previewMonthDate
+      let gridStart = Self.calendar.dateInterval(of: .weekOfYear, for: monthStart)?.start ?? monthStart
+      let lastMonthDate = Self.calendar.date(byAdding: .day, value: -1, to: monthEnd) ?? monthStart
+      let gridEnd = Self.calendar.dateInterval(of: .weekOfYear, for: lastMonthDate)?.end ?? monthEnd
+      let dayCount = Self.calendar.dateComponents([.day], from: gridStart, to: gridEnd).day ?? 0
+      let weekCount = min(max((dayCount + 6) / 7, 5), 6)
+
+      return (0 ..< weekCount).map { weekOffset in
+        (0 ..< 7).compactMap { dayOffset in
+          let offset = (weekOffset * 7) + dayOffset
+          return Self.calendar.date(byAdding: .day, value: offset, to: gridStart)
         }
       }
     }

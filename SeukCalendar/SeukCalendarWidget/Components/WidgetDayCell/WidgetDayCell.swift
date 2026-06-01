@@ -5,7 +5,7 @@ import WidgetKit
 struct WidgetDayCell: View {
   @Environment(\.widgetRenderingMode) private var widgetRenderingMode
 
-  private enum Metrics {
+  enum Metrics {
     static var dayNumberFont: any FontStyleType {
       return Platform.isMac ? Widget.Large.medium : Widget.Large.large
     }
@@ -45,11 +45,8 @@ struct WidgetDayCell: View {
   var body: some View {
     content
       .padding(.horizontal, Metrics.outerHorizontalPadding)
-      .frame(
-        maxWidth: .infinity,
-        minHeight: Metrics.estimatedHeight,
-        alignment: .top
-      )
+      .frame(maxWidth: .infinity, alignment: .top)
+      .frame(height: Metrics.estimatedHeight, alignment: .top)
       .background(backgroundShape)
       .accessibilityElement(children: .combine)
   }
@@ -74,8 +71,7 @@ private extension WidgetDayCell {
       .font(Metrics.dayNumberFont)
       .foregroundStyle(configuration.resolvedDayNumberColor(for: widgetRenderingMode))
       .lineLimit(1)
-      .minimumScaleFactor(0.8)
-      .frame(minHeight: Metrics.dayNumberHeight, alignment: .center)
+      .frame(height: Metrics.dayNumberHeight, alignment: .center)
   }
 
   @ViewBuilder
@@ -83,6 +79,8 @@ private extension WidgetDayCell {
     if configuration.resolvedBadgeSlots.indices.contains(index),
        let badgeConfiguration = configuration.resolvedBadgeSlots[index] {
       WidgetBadge(configuration: badgeConfiguration)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(height: Metrics.badgeRowHeight, alignment: .leading)
     } else {
       Color.clear
         .frame(maxWidth: .infinity)
@@ -97,8 +95,7 @@ private extension WidgetDayCell {
         .font(Metrics.moreNumberFont)
         .foregroundStyle(configuration.resolvedMoreNumberColor(for: widgetRenderingMode))
         .lineLimit(1)
-        .minimumScaleFactor(0.7)
-        .frame(minHeight: Metrics.moreNumberRowHeight, alignment: .center)
+        .frame(height: Metrics.moreNumberRowHeight, alignment: .center)
     } else {
       Color.clear
         .frame(maxWidth: .infinity)

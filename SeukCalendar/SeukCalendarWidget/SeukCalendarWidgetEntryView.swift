@@ -1,5 +1,5 @@
-import SwiftUI
 import DesignSystem
+import SwiftUI
 import WidgetKit
 
 struct SeukCalendarWidgetEntryView: View {
@@ -115,7 +115,6 @@ private extension SeukCalendarWidgetEntryView {
         .font(Platform.isMac ? Widget.Large.xLargeMac : Widget.Large.xLarge)
         .foregroundStyle(Color.semantic.Content.primary)
         .lineLimit(1)
-        .minimumScaleFactor(0.7)
         .frame(maxWidth: .infinity, alignment: .leading)
 
       WidgetCalendarWeekdayHeader(configuration: weekdayHeaderConfiguration)
@@ -123,7 +122,7 @@ private extension SeukCalendarWidgetEntryView {
       WidgetCalendarGrid(
         configuration: .init(weeks: largeCalendarWeeks)
       )
-      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+      .frame(maxWidth: .infinity, alignment: .topLeading)
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     .containerBackground(for: .widget) {
