@@ -1,0 +1,107 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-06-01T10:02:34.897Z",
+  "activeFeatures": [
+    "home-screen-monthly-layout"
+  ],
+  "primaryFeature": "home-screen-monthly-layout",
+  "features": {
+    "home-screen-monthly-layout": {
+      "phase": "check",
+      "matchRate": null,
+      "iterationCount": 0,
+      "documents": {},
+      "taskChain": [
+        {
+          "phase": "plan",
+          "status": "completed",
+          "createdAt": "2026-06-01T08:10:57.411Z",
+          "completedAt": "2026-06-01T08:26:56.678Z"
+        },
+        {
+          "phase": "design",
+          "status": "completed",
+          "createdAt": "2026-06-01T08:10:57.411Z",
+          "completedAt": "2026-06-01T08:30:39.741Z"
+        },
+        {
+          "phase": "do",
+          "status": "completed",
+          "createdAt": "2026-06-01T08:10:57.411Z",
+          "completedAt": "2026-06-01T10:02:34.897Z"
+        },
+        {
+          "phase": "check",
+          "status": "active",
+          "createdAt": "2026-06-01T08:10:57.411Z"
+        },
+        {
+          "phase": "report",
+          "status": "pending",
+          "createdAt": "2026-06-01T08:10:57.411Z"
+        }
+      ],
+      "timestamps": {
+        "started": "2026-06-01T08:10:57.411Z",
+        "lastUpdated": "2026-06-01T10:02:34.897Z"
+      }
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Starter",
+    "phaseHistory": []
+  },
+  "session": {
+    "startedAt": "2026-06-01T08:10:57.410Z",
+    "onboardingCompleted": false,
+    "lastActivity": "2026-06-01T10:02:34.897Z"
+  },
+  "history": [
+    {
+      "feature": "home-screen-monthly-layout",
+      "from": "plan",
+      "to": "design",
+      "timestamp": "2026-06-01T08:26:56.677Z"
+    },
+    {
+      "feature": "home-screen-monthly-layout",
+      "action": "phase_complete",
+      "phase": "plan",
+      "nextPhase": "design",
+      "timestamp": "2026-06-01T08:26:56.678Z"
+    },
+    {
+      "feature": "home-screen-monthly-layout",
+      "from": "design",
+      "to": "design",
+      "timestamp": "2026-06-01T08:28:08.732Z"
+    },
+    {
+      "feature": "home-screen-monthly-layout",
+      "from": "design",
+      "to": "do",
+      "timestamp": "2026-06-01T08:30:39.740Z"
+    },
+    {
+      "feature": "home-screen-monthly-layout",
+      "action": "phase_complete",
+      "phase": "design",
+      "nextPhase": "do",
+      "timestamp": "2026-06-01T08:30:39.741Z"
+    },
+    {
+      "feature": "home-screen-monthly-layout",
+      "from": "do",
+      "to": "check",
+      "timestamp": "2026-06-01T10:02:34.896Z"
+    },
+    {
+      "feature": "home-screen-monthly-layout",
+      "action": "phase_complete",
+      "phase": "do",
+      "nextPhase": "check",
+      "timestamp": "2026-06-01T10:02:34.897Z"
+    }
+  ]
+}

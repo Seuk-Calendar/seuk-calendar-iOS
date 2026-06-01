@@ -8,10 +8,14 @@ struct HomeCalendarComponentWeekView: View {
   @State private var pressedDayID: String?
 
   let week: HomeCalendarComponent.Configuration.Week
+  let displayMode: HomeCalendarComponent.DisplayMode
+  let weekRowHeight: CGFloat?
   let eventListener: HomeCalendarComponent.EventListener?
 
   var body: some View {
-    if usesLegacyLayout {
+    if displayMode == .compactIndicator {
+      compactWeekView
+    } else if usesLegacyLayout {
       legacyWeekView
     } else {
       spanningWeekView
@@ -29,6 +33,10 @@ private extension HomeCalendarComponentWeekView {
       + CGFloat(HomeCalendarConfigurationBuilder.maxVisibleBadgeRows + 1) * Spacing.sp100
   }
 
+  var resolvedLayoutHeight: CGFloat {
+    weekRowHeight ?? Self.layoutHeight
+  }
+
   var usesLegacyLayout: Bool {
     week.badgeRows.isEmpty && week.days.contains { !$0.badges.isEmpty || $0.hiddenBadgeCount > 0 }
   }
@@ -39,20 +47,40 @@ private extension HomeCalendarComponentWeekView {
         HomeCalendarComponentDayCell(
           day: day,
           showsBadges: true,
+          fixedHeight: weekRowHeight,
           action: {
             eventListener?(.tapDate(day.date))
           }
         )
       }
     }
+    .frame(maxWidth: .infinity, minHeight: resolvedLayoutHeight, maxHeight: resolvedLayoutHeight)
+  }
+
+  var compactWeekView: some View {
+    HStack(alignment: .top, spacing: 0) {
+      ForEach(week.days) { day in
+        HomeCalendarComponentDayCell(
+          day: day,
+          showsBadges: false,
+          showsIndicators: true,
+          isPressed: pressedDayID == day.id,
+          fixedHeight: weekRowHeight,
+          action: {
+            tapDate(day)
+          }
+        )
+      }
+    }
+    .frame(maxWidth: .infinity, minHeight: resolvedLayoutHeight, maxHeight: resolvedLayoutHeight)
   }
 
   var spanningWeekView: some View {
     gridContent
       .frame(
         maxWidth: .infinity,
-        minHeight: Self.layoutHeight,
-        maxHeight: Self.layoutHeight,
+        minHeight: resolvedLayoutHeight,
+        maxHeight: resolvedLayoutHeight,
         alignment: .top
       )
       .allowsHitTesting(false)
@@ -68,7 +96,10 @@ private extension HomeCalendarComponentWeekView {
             day: day,
             showsBadges: false,
             isPressed: pressedDayID == day.id,
-            action: {}
+            fixedHeight: Self.dayNumberRowHeight,
+            action: {
+              tapDate(day)
+            }
           )
         }
       }
@@ -126,6 +157,7 @@ private extension HomeCalendarComponentWeekView {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .buttonStyle(.plain)
+        .accessibilityHidden(true)
         .simultaneousGesture(
           DragGesture(minimumDistance: 0)
             .onChanged { _ in

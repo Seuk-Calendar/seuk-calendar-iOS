@@ -64,6 +64,8 @@ DesignSystem/
 - DateWrapComponent: 일반 날짜 텍스트와 오늘 날짜 원형 배지를 공통 렌더링
 - MoreWrapComponent: `+N` overflow 표기를 전담하는 초소형 텍스트 컴포넌트
 - HomeCalendarComponent: Pencil `Home Calendar Component` 디자인을 반영한 홈 카드형 월간 캘린더
+- HomeCalendarComponent.DisplayMode: 홈 월간 캘린더의 확장형 일정 막대(`expanded`)와 상세 패널 상태용 점 indicator(`compactIndicator`) 표시 모드 제공
+- HomeCalendarComponent `weekRowHeight`: 홈 화면처럼 가용 높이를 꽉 채워야 하는 화면에서 주 행 높이를 외부에서 지정할 수 있는 옵션
 - HomeCalendarComponent+Calculate: 월간 그리드/이벤트 칩 구성을 `HomeCalendarComponent` 설정으로 변환하며, 다일 일정은 주 단위 spanning row로 계산한다
 - HomeCalendarComponentWeekView: 날짜 행과 주 단위 이벤트 막대 행을 합성해 다일 일정이 하나의 막대처럼 이어지도록 렌더링한다
 - CalendarWeekView, CalendarDayView, DateCell, ScheduleCard, CalendarEvent: 캘린더 관련 공개 타입을 `HomeCalendarComponent` 디렉토리 아래로 통합 관리

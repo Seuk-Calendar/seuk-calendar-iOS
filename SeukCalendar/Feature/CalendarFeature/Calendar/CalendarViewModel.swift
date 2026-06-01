@@ -8,7 +8,6 @@ import Observation
 @Observable
 public final class CalendarViewModel {
   public private(set) var selectedDate: Date
-  public private(set) var viewMode: ViewMode
   public private(set) var permissionState: PermissionState = .idle
   public private(set) var isLoading = false
   public private(set) var visibleEvents: [CalendarEvent] = []
@@ -32,13 +31,11 @@ public final class CalendarViewModel {
 
   public init(
     selectedDate: Date = Date(),
-    viewMode: ViewMode = .month,
     calendar: Calendar = .current,
     repository: any ScheduleRepository,
     parser: any ScheduleNaturalLanguageParser = UnavailableScheduleNaturalLanguageParser()
   ) {
     self.selectedDate = calendar.startOfDay(for: selectedDate)
-    self.viewMode = viewMode
     self.calendar = calendar
     self.repository = repository
     parseEventUseCase = ParseEventUseCase(parser: parser, calendar: calendar)
@@ -61,26 +58,8 @@ public final class CalendarViewModel {
   public var titleText: String {
     let formatter = DateFormatter()
     formatter.locale = Locale.current
-
-    switch viewMode {
-    case .month:
-      formatter.dateFormat = "yyyy년 M월"
-      return formatter.string(from: selectedDate)
-    case .week:
-      guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: selectedDate) else {
-        formatter.dateFormat = "yyyy년 M월 d일"
-        return formatter.string(from: selectedDate)
-      }
-
-      formatter.dateFormat = "M월 d일"
-      let startText = formatter.string(from: weekInterval.start)
-      let endDate = calendar.date(byAdding: .day, value: 6, to: weekInterval.start) ?? weekInterval.end
-      let endText = formatter.string(from: endDate)
-      return "\(startText) - \(endText)"
-    case .day:
-      formatter.dateFormat = "yyyy년 M월 d일 EEEE"
-      return formatter.string(from: selectedDate)
-    }
+    formatter.dateFormat = "yyyy. M."
+    return formatter.string(from: selectedDate)
   }
 
   public var eventsByDay: [Date: [CalendarEvent]] {
@@ -127,9 +106,6 @@ private extension CalendarViewModel {
       return true
     case .refreshSchedules:
       await handleRefreshSchedules()
-      return true
-    case let .changeMode(mode):
-      await handleChangeMode(mode)
       return true
     case let .selectDate(date):
       await handleSelectDate(date)
@@ -220,13 +196,6 @@ private extension CalendarViewModel {
     default:
       return
     }
-  }
-
-  func handleChangeMode(_ mode: ViewMode) async {
-    guard viewMode != mode else { return }
-
-    viewMode = mode
-    await reloadVisibleEvents()
   }
 
   func handleSelectDate(_ date: Date) async {
@@ -360,14 +329,7 @@ private extension CalendarViewModel {
   }
 
   func shouldReloadAfterSelectingDate(from previousDate: Date, to currentDate: Date) -> Bool {
-    switch viewMode {
-    case .day:
-      return true
-    case .week:
-      return !calendar.isDate(previousDate, equalTo: currentDate, toGranularity: .weekOfYear)
-    case .month:
-      return !calendar.isDate(previousDate, equalTo: currentDate, toGranularity: .month)
-    }
+    !calendar.isDate(previousDate, equalTo: currentDate, toGranularity: .month)
   }
 
   func loadIfNeeded() async {
@@ -498,43 +460,22 @@ private extension CalendarViewModel {
   }
 
   func visibleRange() -> DateInterval {
-    switch viewMode {
-    case .month:
-      guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
-            let start = calendar.dateInterval(of: .weekOfYear, for: monthInterval.start)?.start,
-            let monthEndMinusOne = calendar.date(byAdding: .second, value: -1, to: monthInterval.end),
-            let end = calendar.dateInterval(of: .weekOfYear, for: monthEndMinusOne)?.end
-      else {
-        return DateInterval(start: selectedDate, duration: 0)
-      }
-
-      return DateInterval(start: start, end: end)
-    case .week:
-      guard let weekInterval = calendar.dateInterval(of: .weekOfYear, for: selectedDate) else {
-        return DateInterval(start: selectedDate, duration: 0)
-      }
-      return weekInterval
-    case .day:
-      let dayStart = calendar.startOfDay(for: selectedDate)
-      let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart
-      return DateInterval(start: dayStart, end: dayEnd)
+    guard let monthInterval = calendar.dateInterval(of: .month, for: selectedDate),
+          let start = calendar.dateInterval(of: .weekOfYear, for: monthInterval.start)?.start,
+          let monthEndMinusOne = calendar.date(byAdding: .second, value: -1, to: monthInterval.end),
+          let end = calendar.dateInterval(of: .weekOfYear, for: monthEndMinusOne)?.end
+    else {
+      return DateInterval(start: selectedDate, duration: 0)
     }
+
+    return DateInterval(start: start, end: end)
   }
 
   func moveReferenceDate(by offset: Int) {
     guard offset != 0 else { return }
 
-    switch viewMode {
-    case .month:
-      selectedDate = calendar.date(byAdding: .month, value: offset, to: selectedDate)
-        .map(calendar.startOfDay(for:)) ?? selectedDate
-    case .week:
-      selectedDate = calendar.date(byAdding: .day, value: offset * 7, to: selectedDate)
-        .map(calendar.startOfDay(for:)) ?? selectedDate
-    case .day:
-      selectedDate = calendar.date(byAdding: .day, value: offset, to: selectedDate)
-        .map(calendar.startOfDay(for:)) ?? selectedDate
-    }
+    selectedDate = calendar.date(byAdding: .month, value: offset, to: selectedDate)
+      .map(calendar.startOfDay(for:)) ?? selectedDate
   }
 
   func appendEvent(_ event: CalendarEvent, to grouped: inout [Date: [CalendarEvent]]) {

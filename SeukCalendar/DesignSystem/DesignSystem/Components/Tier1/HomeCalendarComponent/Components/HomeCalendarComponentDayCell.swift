@@ -9,18 +9,24 @@ struct HomeCalendarComponentDayCell: View {
 
   let day: HomeCalendarComponent.Configuration.Day
   let showsBadges: Bool
+  let showsIndicators: Bool
   let isPressed: Bool
+  let fixedHeight: CGFloat?
   let action: () -> Void
 
   init(
     day: HomeCalendarComponent.Configuration.Day,
     showsBadges: Bool,
+    showsIndicators: Bool = false,
     isPressed: Bool = false,
+    fixedHeight: CGFloat? = nil,
     action: @escaping () -> Void
   ) {
     self.day = day
     self.showsBadges = showsBadges
+    self.showsIndicators = showsIndicators
     self.isPressed = isPressed
+    self.fixedHeight = fixedHeight
     self.action = action
   }
 
@@ -40,6 +46,10 @@ struct HomeCalendarComponentDayCell: View {
             }
           }
 
+          if showsIndicators {
+            indicatorDots
+          }
+
           if showsBadges, day.hiddenBadgeCount > 0 {
             Text("+\(day.hiddenBadgeCount)")
               .font(.homeCalendar(weight: .semiBold, size: 8))
@@ -48,18 +58,19 @@ struct HomeCalendarComponentDayCell: View {
               .minimumScaleFactor(0.8)
           }
 
-          if showsBadges {
+          if showsBadges || showsIndicators {
             Spacer(minLength: 0)
           }
         }
         .padding(.horizontal, Spacing.sp050)
         .frame(
           maxWidth: .infinity,
-          minHeight: showsBadges ? 80 : dayNumberHighlightSize ?? 20,
+          minHeight: resolvedHeight,
+          maxHeight: fixedHeight,
           alignment: .top
         )
         .background {
-          if showsBadges, day.isSelected {
+          if showsBadges || showsIndicators, day.isSelected {
             RoundedRectangle(cornerRadius: Radius.rds250, style: .continuous)
               .fill(Color.semantic.Background.tertiary)
           }
@@ -67,6 +78,7 @@ struct HomeCalendarComponentDayCell: View {
         .contentShape(Rectangle())
         .scaleEffect(isPressed ? Self.pressedScale : 1)
         .animation(.spring(response: 0.2, dampingFraction: 0.8), value: isPressed)
+        .accessibilityLabel(Text(accessibilityLabel))
       }
     )
     .buttonStyle(HomeCalendarComponentPressButtonStyle())
@@ -131,6 +143,42 @@ private extension HomeCalendarComponentDayCell {
 
   var dayNumberHighlightSize: CGFloat? {
     day.isToday ? 20 : nil
+  }
+
+  var eventCount: Int {
+    day.badges.count + day.hiddenBadgeCount
+  }
+
+  var dotCount: Int {
+    min(eventCount, 3)
+  }
+
+  var resolvedHeight: CGFloat {
+    fixedHeight ?? (showsBadges ? 80 : dayNumberHighlightSize ?? 20)
+  }
+
+  var indicatorColor: Color {
+    day.isInCurrentMonth ? Color.primitives.blue600 : Color.primitives.blue200
+  }
+
+  var indicatorDots: some View {
+    HStack(spacing: 3) {
+      ForEach(0 ..< dotCount, id: \.self) { _ in
+        Circle()
+          .fill(indicatorColor)
+          .frame(width: 4, height: 4)
+      }
+    }
+    .frame(height: 8)
+    .opacity(dotCount > 0 ? 1 : 0)
+  }
+
+  var accessibilityLabel: String {
+    if eventCount > 0 {
+      return "\(day.dayText)일, 일정 \(eventCount)개"
+    }
+
+    return "\(day.dayText)일"
   }
 }
 

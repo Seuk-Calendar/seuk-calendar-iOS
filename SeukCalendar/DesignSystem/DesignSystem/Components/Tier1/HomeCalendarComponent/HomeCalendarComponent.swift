@@ -2,13 +2,19 @@ import SwiftUI
 
 public struct HomeCalendarComponent: View {
   private let configuration: Configuration
+  private let displayMode: DisplayMode
+  private let weekRowHeight: CGFloat?
   private let eventListener: EventListener?
 
   public init(
     configuration: Configuration,
+    displayMode: DisplayMode = .expanded,
+    weekRowHeight: CGFloat? = nil,
     eventListener: EventListener? = nil
   ) {
     self.configuration = configuration
+    self.displayMode = displayMode
+    self.weekRowHeight = weekRowHeight
     self.eventListener = eventListener
   }
 
@@ -18,6 +24,8 @@ public struct HomeCalendarComponent: View {
     eventsByDay: [Date: [CalendarEvent]],
     calendar: Calendar = .current,
     showsMonthBar: Bool = true,
+    displayMode: DisplayMode = .expanded,
+    weekRowHeight: CGFloat? = nil,
     today: Date = Date(),
     eventListener: EventListener? = nil
   ) {
@@ -29,6 +37,8 @@ public struct HomeCalendarComponent: View {
       showsMonthBar: showsMonthBar,
       today: today
     )
+    self.displayMode = displayMode
+    self.weekRowHeight = weekRowHeight
     self.eventListener = eventListener
   }
 
@@ -47,11 +57,20 @@ public struct HomeCalendarComponent: View {
         ForEach(configuration.weeks) { week in
           HomeCalendarComponentWeekView(
             week: week,
+            displayMode: displayMode,
+            weekRowHeight: weekRowHeight,
             eventListener: eventListener
           )
         }
       }
     }
+  }
+}
+
+public extension HomeCalendarComponent {
+  enum DisplayMode: Hashable, Sendable {
+    case expanded
+    case compactIndicator
   }
 }
 

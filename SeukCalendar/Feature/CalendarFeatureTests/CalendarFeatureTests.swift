@@ -15,7 +15,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository
     )
@@ -36,7 +35,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository
     )
@@ -59,7 +57,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository
     )
@@ -78,7 +75,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository
     )
@@ -99,7 +95,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository
     )
@@ -119,7 +114,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository
     )
@@ -146,7 +140,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository
     )
@@ -171,7 +164,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository
     )
@@ -204,7 +196,6 @@ struct CalendarFeatureTests {
     )
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository,
       parser: mockParser
@@ -238,7 +229,6 @@ struct CalendarFeatureTests {
     )
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository,
       parser: mockParser
@@ -277,7 +267,6 @@ struct CalendarFeatureTests {
 
     let viewModel = CalendarViewModel(
       selectedDate: Self.fixedDate,
-      viewMode: .month,
       calendar: Self.fixedCalendar,
       repository: mockRepository,
       parser: mockParser
