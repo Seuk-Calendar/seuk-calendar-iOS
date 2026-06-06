@@ -13,9 +13,17 @@ extension SeukCalendarWidgetEntryView {
     entry.snapshot.nextEvent(after: entry.date)
   }
 
-  /// 오늘 일정 중 아직 끝나지 않은 일정만 반환한다.
+  /// 잠금화면 rectangular 위젯에 표시할 오늘의 남은 일정만 반환한다.
   var upcomingTodayEvents: [WidgetScheduleSnapshot.Item] {
-    todayEvents.filter { $0.endDate > entry.date }
+    todayEvents
+      .filter { event in
+        if event.isAllDay {
+          return event.endDate > entry.date
+        }
+
+        return event.startDate >= entry.date
+      }
+      .sorted(by: compareAccessoryRectangularEvents)
   }
 
   /// 오늘 일정 중 추가로 숨겨진 일정 수를 계산한다.
@@ -208,6 +216,30 @@ extension SeukCalendarWidgetEntryView {
     }
 
     return WidgetFormatters.timeFormatter.string(from: event.startDate)
+  }
+
+  /// accessory rectangular 위젯 이벤트 정렬 우선순위를 비교한다.
+  func compareAccessoryRectangularEvents(
+    lhs: WidgetScheduleSnapshot.Item,
+    rhs: WidgetScheduleSnapshot.Item
+  ) -> Bool {
+    if lhs.isAllDay != rhs.isAllDay {
+      return !lhs.isAllDay && rhs.isAllDay
+    }
+
+    if lhs.startDate != rhs.startDate {
+      return lhs.startDate < rhs.startDate
+    }
+
+    if lhs.endDate != rhs.endDate {
+      return lhs.endDate < rhs.endDate
+    }
+
+    if lhs.title != rhs.title {
+      return lhs.title < rhs.title
+    }
+
+    return lhs.id < rhs.id
   }
 
   /// small 위젯 이벤트 정렬 우선순위를 비교한다.

@@ -165,7 +165,7 @@ private extension SeukCalendarWidgetEntryView {
         }
 
         if upcomingTodayEvents.count > 2 {
-          Text("- ...")
+          Text("+\(upcomingTodayEvents.count - 2)")
             .font(.system(size: 12, weight: .semibold))
             .lineLimit(1)
         }
