@@ -437,6 +437,11 @@ extension SeukCalendarWidgetEntryView {
     lhs: WeekBadgeSegment,
     rhs: WeekBadgeSegment
   ) -> Bool {
+    // 종일 일정은 시간이 있는 일정 뒤로 배치해 제한된 가시 슬롯을 먼저 차지하지 않게 한다.
+    if lhs.event.isAllDay != rhs.event.isAllDay {
+      return !lhs.event.isAllDay && rhs.event.isAllDay
+    }
+
     // 연속 일정을 먼저 배치해 상단 lane을 선점하게 하고,
     // 그 다음 시작일과 span 길이로 정렬해 주 단위 배치가 안정적으로 유지되게 한다.
     if lhs.isContinuous != rhs.isContinuous {
